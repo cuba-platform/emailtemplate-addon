@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="2.0">
-    <persistence-unit name="yarg-email-template-addon" transaction-type="RESOURCE_LOCAL">
-
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+             version="2.0">
+    <persistence-unit name="yarg-email-template-addon"
+                      transaction-type="RESOURCE_LOCAL">
+        <class>com.haulmont.addon.yargemailtemplateaddon.entity.LayoutEmailTemplate</class>
+        <class>com.haulmont.addon.yargemailtemplateaddon.entity.ContentEmailTemplate</class>
     </persistence-unit>
 </persistence>
