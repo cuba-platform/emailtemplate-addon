@@ -38,7 +38,7 @@ apply(plugin: 'cuba')
 
 cuba {
     artifact {
-        group = 'com.company.yargemailtemplateaddon'
+        group = 'com.haulmont.addon.yargemailtemplateaddon'
         version = '0.1'
         isSnapshot = true
     }
@@ -152,7 +152,7 @@ configure(webModule) {
 
     task deployConf(type: Copy) {
         from file('src')
-        include "com/company/yargemailtemplateaddon/**"
+        include "com/haulmont/addon/yargemailtemplateaddon/**"
         into "$cuba.tomcat.dir/conf/${modulePrefix}"
     }
 

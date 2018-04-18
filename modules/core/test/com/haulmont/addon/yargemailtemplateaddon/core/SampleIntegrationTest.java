@@ -1,6 +1,6 @@
-package com.company.yargemailtemplateaddon.core;
+package com.haulmont.addon.yargemailtemplateaddon.core;
 
-import com.company.yargemailtemplateaddon.YetTestContainer;
+import com.haulmont.addon.yargemailtemplateaddon.YetTestContainer;
 import com.haulmont.cuba.core.EntityManager;
 import com.haulmont.cuba.core.Persistence;
 import com.haulmont.cuba.core.Transaction;
