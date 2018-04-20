@@ -1,19 +1,15 @@
 package com.haulmont.addon.yargemailtemplateaddon.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import com.haulmont.reports.entity.Report;
-import java.util.List;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.chile.core.annotations.NamePattern;
+import com.haulmont.reports.entity.Report;
 
-@NamePattern("%s|attachments")
+import javax.persistence.*;
+import java.util.List;
+
+@NamePattern("%s %s %s %s %s|attachments,name,code,group,report")
 @Table(name = "YET_CONTENT_EMAIL_TEMPLATE")
 @Entity(name = "yet$ContentEmailTemplate")
-public class ContentEmailTemplate extends StandardEntity {
+public class ContentEmailTemplate extends EmailTemplate {
     private static final long serialVersionUID = -1797196186118627176L;
 
     @JoinTable(name = "YET_CONTENT_EMAIL_TEMPLATE_REPORT_LINK",
