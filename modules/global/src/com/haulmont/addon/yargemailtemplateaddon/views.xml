@@ -1,4 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <views xmlns="http://schemas.haulmont.com/cuba/view.xsd">
-
+    <view class="com.haulmont.addon.yargemailtemplateaddon.entity.ContentEmailTemplate"
+          extends="_local"
+          name="contentEmailTemplate-view">
+        <property name="attachments"
+                  view="_minimal"/>
+        <property name="group"
+                  view="_minimal"/>
+        <property name="report"
+                  view="_minimal"/>
+    </view>
+    <view class="com.haulmont.addon.yargemailtemplateaddon.entity.LayoutEmailTemplate"
+          extends="_local"
+          name="layoutEmailTemplate-view">
+        <property name="group"
+                  view="_minimal"/>
+        <property name="report"
+                  view="_minimal"/>
+    </view>
 </views>

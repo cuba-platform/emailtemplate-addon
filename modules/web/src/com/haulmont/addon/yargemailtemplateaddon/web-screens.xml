@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <screen-config xmlns="http://schemas.haulmont.com/cuba/screens.xsd">
-
+    <screen id="yet$LayoutEmailTemplate.edit"
+            template="com/haulmont/addon/yargemailtemplateaddon/web/layoutemailtemplate/layout-email-template-edit.xml"/>
+    <screen id="yet$ContentEmailTemplate.edit"
+            template="com/haulmont/addon/yargemailtemplateaddon/web/contentemailtemplate/content-email-template-edit.xml"/>
 </screen-config>
