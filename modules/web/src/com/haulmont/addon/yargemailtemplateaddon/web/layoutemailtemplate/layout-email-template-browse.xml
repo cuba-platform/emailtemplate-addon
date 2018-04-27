@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+        caption="msg://browseCaption"
+        class="com.haulmont.addon.yargemailtemplateaddon.web.layoutemailtemplate.LayoutEmailTemplateBrowse"
+        focusComponent="layoutEmailTemplatesTable"
+        lookupComponent="layoutEmailTemplatesTable"
+        messagesPack="com.haulmont.addon.yargemailtemplateaddon.web.layoutemailtemplate">
+    <dsContext>
+        <groupDatasource id="layoutEmailTemplatesDs"
+                         class="com.haulmont.addon.yargemailtemplateaddon.entity.LayoutEmailTemplate"
+                         view="layoutEmailTemplate-view_1">
+            <query>
+                <![CDATA[select e from yet$LayoutEmailTemplate e]]>
+            </query>
+        </groupDatasource>
+    </dsContext>
+    <dialogMode height="600"
+                width="800"/>
+    <layout expand="layoutEmailTemplatesTable"
+            spacing="true">
+        <filter id="filter"
+                applyTo="layoutEmailTemplatesTable"
+                datasource="layoutEmailTemplatesDs">
+            <properties include=".*"/>
+        </filter>
+        <groupTable id="layoutEmailTemplatesTable"
+                    width="100%">
+            <actions>
+                <action id="edit"/>
+                <action id="remove"/>
+            </actions>
+            <columns>
+                <column id="name"/>
+                <column id="type"/>
+                <column id="report"/>
+                <column id="code"/>
+            </columns>
+            <rows datasource="layoutEmailTemplatesDs"/>
+            <rowsCount/>
+            <buttonsPanel id="buttonsPanel"
+                          alwaysVisible="true">
+                <popupButton id="createPopupButton"
+                             caption="msg://Create">
+                    <actions>
+                        <action id="createLayoutEmailTemplate"
+                                caption="msg://LayoutEmailTemplate"
+                                invoke="onCreateLayoutEmailTemplate"/>
+                        <action id="createContentEmailTemplate"
+                                caption="msg://ContentEmailTemplate"
+                                invoke="onCreateContentEmailTemplate"/>
+                    </actions>
+                </popupButton>
+                <button id="editBtn"
+                        action="layoutEmailTemplatesTable.edit"/>
+                <button id="removeBtn"
+                        action="layoutEmailTemplatesTable.remove"/>
+                <button id="testTemplate"
+                        caption="msg://Test"
+                        invoke="onTestTemplateClick"/>
+                <button id="sendEmail"
+                        caption="msg://Send"
+                        invoke="onSendEmailClick"/>
+            </buttonsPanel>
+        </groupTable>
+    </layout>
+</window>

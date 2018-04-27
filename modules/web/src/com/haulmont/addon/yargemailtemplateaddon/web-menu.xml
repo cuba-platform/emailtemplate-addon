@@ -2,5 +2,6 @@
 <menu-config xmlns="http://schemas.haulmont.com/cuba/menu.xsd">
     <menu id="application-yet"
           insertBefore="administration">
+        <item screen="yet$LayoutEmailTemplate.browse"/>
     </menu>
 </menu-config>

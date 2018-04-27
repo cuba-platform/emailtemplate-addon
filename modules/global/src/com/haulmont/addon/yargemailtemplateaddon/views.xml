@@ -20,4 +20,10 @@
             <property name="code"/>
         </property>
     </view>
+    <view class="com.haulmont.addon.yargemailtemplateaddon.entity.LayoutEmailTemplate"
+          extends="_local"
+          name="layoutEmailTemplate-view_1">
+        <property name="report"
+                  view="report.view"/>
+    </view>
 </views>
