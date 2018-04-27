@@ -1,4 +1,4 @@
-create table YET_LAYOUT_EMAIL_TEMPLATE (
+create table YET_TEMPLATE_GROUP (
     ID varchar(36) not null,
     VERSION integer not null,
     CREATE_TS timestamp,
@@ -7,10 +7,8 @@ create table YET_LAYOUT_EMAIL_TEMPLATE (
     UPDATED_BY varchar(50),
     DELETE_TS timestamp,
     DELETED_BY varchar(50),
+    --
     NAME varchar(255) not null,
-    CODE varchar(255) not null,
-    GROUP_ID varchar(36) not null,
-    REPORT_ID varchar(36) not null,
     --
     primary key (ID)
 );

@@ -13,10 +13,10 @@
                                   property="attachments"/>
         </datasource>
         <collectionDatasource id="groupsDs"
-                              class="com.haulmont.reports.entity.ReportGroup"
+                              class="com.haulmont.addon.yargemailtemplateaddon.entity.TemplateGroup"
                               view="_minimal">
             <query>
-                <![CDATA[select e from report$ReportGroup e]]>
+                <![CDATA[select e from yet$TemplateGroup e]]>
             </query>
         </collectionDatasource>
         <collectionDatasource id="reportsDs"
@@ -35,11 +35,11 @@
                     datasource="contentEmailTemplateDs">
             <column width="250px">
                 <field property="name"/>
-                <field property="code"/>
                 <field optionsDatasource="groupsDs"
                        property="group"/>
                 <field optionsDatasource="reportsDs"
                        property="report"/>
+                <field property="code"/>
             </column>
         </fieldGroup>
         <groupBox id="attachmentsBox"

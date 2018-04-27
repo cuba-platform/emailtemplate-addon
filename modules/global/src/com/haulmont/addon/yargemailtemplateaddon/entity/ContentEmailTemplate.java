@@ -5,11 +5,11 @@ import com.haulmont.reports.entity.Report;
 
 import javax.persistence.*;
 import java.util.List;
+import com.haulmont.cuba.core.entity.StandardEntity;
 
-@NamePattern("%s %s %s %s %s|attachments,name,code,group,report")
-@Table(name = "YET_CONTENT_EMAIL_TEMPLATE")
+@NamePattern("%s    |name,code,group,report,attachments")
 @Entity(name = "yet$ContentEmailTemplate")
-public class ContentEmailTemplate extends EmailTemplate {
+public class ContentEmailTemplate extends LayoutEmailTemplate {
     private static final long serialVersionUID = -1797196186118627176L;
 
     @JoinTable(name = "YET_CONTENT_EMAIL_TEMPLATE_REPORT_LINK",
