@@ -3,5 +3,6 @@
     <menu id="application-yet"
           insertBefore="administration">
         <item screen="yet$LayoutEmailTemplate.browse"/>
+        <item screen="yet$TemplateGroup.browse"/>
     </menu>
 </menu-config>
