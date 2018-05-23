@@ -46,8 +46,7 @@ public class OutboundTemplateServiceBean implements OutboundTemplateService {
 
     @Override
     public EmailInfo generateMessageByTemplateWithCustomParams(LayoutEmailTemplate emailTemplate, String addresses, String from, List<Map<String, Object>> param) throws ContentReportParamIsAbsentException {
-        //TODO
-        return null;
+        return generateMessageByTemplate(emailTemplate, addresses, from, param);
     }
 
     protected boolean isReportContainsContentParam(Report report) {
