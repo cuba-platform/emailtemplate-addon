@@ -3,9 +3,11 @@ package com.haulmont.addon.yargemailtemplateaddon.entity;
 import com.haulmont.chile.core.annotations.NamePattern;
 import com.haulmont.reports.entity.Report;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import java.util.List;
-import com.haulmont.cuba.core.entity.StandardEntity;
 
 @NamePattern("%s    |name,code,group,report,attachments")
 @Entity(name = "yet$ContentEmailTemplate")

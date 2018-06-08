@@ -8,7 +8,7 @@
     <dsContext>
         <datasource id="layoutEmailTemplateDs"
                     class="com.haulmont.addon.yargemailtemplateaddon.entity.LayoutEmailTemplate"
-                    view="layoutEmailTemplate-view"/>
+                    view="emailTemplate-view"/>
         <collectionDatasource id="groupsDs"
                               class="com.haulmont.addon.yargemailtemplateaddon.entity.TemplateGroup"
                               view="_minimal">

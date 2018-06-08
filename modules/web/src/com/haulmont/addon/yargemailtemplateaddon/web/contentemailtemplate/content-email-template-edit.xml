@@ -8,7 +8,7 @@
     <dsContext>
         <datasource id="contentEmailTemplateDs"
                     class="com.haulmont.addon.yargemailtemplateaddon.entity.ContentEmailTemplate"
-                    view="contentEmailTemplate-view">
+                    view="emailTemplate-view">
             <collectionDatasource id="attachmentsDs"
                                   property="attachments"/>
         </datasource>

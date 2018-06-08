@@ -1,23 +1,13 @@
 package com.haulmont.addon.yargemailtemplateaddon.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.InheritanceType;
-import javax.persistence.Inheritance;
+import com.haulmont.chile.core.annotations.NamePattern;
 import com.haulmont.cuba.core.entity.StandardEntity;
-import javax.persistence.Column;
-import javax.validation.constraints.NotNull;
 import com.haulmont.cuba.core.entity.annotation.Lookup;
 import com.haulmont.cuba.core.entity.annotation.LookupType;
 import com.haulmont.reports.entity.Report;
-import java.util.List;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import com.haulmont.chile.core.annotations.NamePattern;
-import javax.persistence.OneToOne;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @NamePattern("%s %s %s %s|name,code,group,report")
 @Table(name = "YET_LAYOUT_EMAIL_TEMPLATE")

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+        caption="msg://caption"
+        class="com.haulmont.addon.yargemailtemplateaddon.web.outboundemail.Outboundemailscreen"
+        messagesPack="com.haulmont.addon.yargemailtemplateaddon.web.outboundemail">
+    <dialogMode height="600"
+                width="800"/>
+    <layout>
+        <label id="messageLabel"/>
+        <buttonsPanel>
+            <button id="sendButton"
+                    caption="Send"
+                    invoke="onSendButtonClick"/>
+            <button id="cancelButton"
+                    caption="Cancel"
+                    invoke="onCancelButtonClick"/>
+        </buttonsPanel>
+    </layout>
+</window>

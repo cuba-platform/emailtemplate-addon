@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+        caption="msg://editorCaption"
+        class="com.haulmont.addon.yargemailtemplateaddon.web.outboundemail.OutboundEmailEdit"
+        datasource="outboundEmailDs"
+        focusComponent="fieldGroup"
+        messagesPack="com.haulmont.addon.yargemailtemplateaddon.web.outboundemail">
+    <dsContext>
+        <datasource id="outboundEmailDs"
+                    class="com.haulmont.addon.yargemailtemplateaddon.entity.OutboundEmail"/>
+    </dsContext>
+    <dialogMode height="600"
+                width="800"/>
+    <layout expand="buttonsPanel"
+            spacing="true">
+        <fieldGroup id="fieldGroup"
+                    datasource="outboundEmailDs">
+            <column width="250px">
+                <field property="from"/>
+                <field property="addressses"/>
+                <field property="template"/>
+            </column>
+        </fieldGroup>
+        <scrollBox id="propertiesScrollBox"
+                   caption="Properties:"/>
+        <buttonsPanel id="buttonsPanel">
+            <button id="sendButton"
+                    caption="Send"
+                    invoke="onSendButtonClick"/>
+            <button id="testButton"
+                    caption="Test"
+                    invoke="onTestButtonClick"/>
+            <button id="cancelButton"
+                    caption="Cancel"
+                    invoke="onCancelButtonClick"/>
+        </buttonsPanel>
+    </layout>
+</window>

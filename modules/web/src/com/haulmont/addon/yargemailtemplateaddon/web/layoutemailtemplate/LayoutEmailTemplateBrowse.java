@@ -2,6 +2,8 @@ package com.haulmont.addon.yargemailtemplateaddon.web.layoutemailtemplate;
 
 import com.haulmont.addon.yargemailtemplateaddon.entity.ContentEmailTemplate;
 import com.haulmont.addon.yargemailtemplateaddon.entity.LayoutEmailTemplate;
+import com.haulmont.addon.yargemailtemplateaddon.entity.OutboundEmail;
+import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.AbstractEditor;
@@ -22,6 +24,8 @@ public class LayoutEmailTemplateBrowse extends AbstractLookup {
 
     @Inject
     protected Metadata metadata;
+    @Inject
+    protected DataManager dataManager;
     @Inject
     protected GroupDatasource<LayoutEmailTemplate, UUID> layoutEmailTemplatesDs;
     @Inject
@@ -46,7 +50,6 @@ public class LayoutEmailTemplateBrowse extends AbstractLookup {
                 return "yet$LayoutEmailTemplate.browse";
             }
         });
-
     }
 
     public void onCreateLayoutEmailTemplate(Component source) {
@@ -64,8 +67,15 @@ public class LayoutEmailTemplateBrowse extends AbstractLookup {
     }
 
     public void onTestTemplateClick() {
+        onSendEmailClick();
     }
 
     public void onSendEmailClick() {
+        LayoutEmailTemplate template = layoutEmailTemplatesTable.getSingleSelected();
+        OutboundEmail outboundEmail = metadata.create(OutboundEmail.class);
+        if (template != null) {
+            outboundEmail.setTemplate(dataManager.reload(template, "emailTemplate-view"));
+            openEditor("yet$OutboundEmail.edit", outboundEmail, WindowManager.OpenType.DIALOG);
+        }
     }
 }

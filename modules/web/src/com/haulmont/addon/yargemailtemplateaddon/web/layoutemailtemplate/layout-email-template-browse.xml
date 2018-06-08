@@ -8,7 +8,7 @@
     <dsContext>
         <groupDatasource id="layoutEmailTemplatesDs"
                          class="com.haulmont.addon.yargemailtemplateaddon.entity.LayoutEmailTemplate"
-                         view="layoutEmailTemplate-view_1">
+                         view="emailTemplate-view">
             <query>
                 <![CDATA[select e from yet$LayoutEmailTemplate e]]>
             </query>

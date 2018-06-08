@@ -2,12 +2,10 @@ package com.haulmont.addon.yargemailtemplateaddon.service;
 
 import com.haulmont.addon.yargemailtemplateaddon.entity.ContentEmailTemplate;
 import com.haulmont.addon.yargemailtemplateaddon.entity.LayoutEmailTemplate;
-import com.haulmont.addon.yargemailtemplateaddon.exceptions.ContentReportParamIsAbsentException;
 import com.haulmont.cuba.core.global.EmailAttachment;
 import com.haulmont.cuba.core.global.EmailInfo;
 import com.haulmont.reports.ReportingApi;
 import com.haulmont.reports.entity.Report;
-import com.haulmont.reports.entity.ReportInputParameter;
 import com.haulmont.yarg.reporting.ReportOutputDocument;
 import org.springframework.stereotype.Service;
 
@@ -19,13 +17,12 @@ import java.util.stream.IntStream;
 
 @Service(OutboundTemplateService.NAME)
 public class OutboundTemplateServiceBean implements OutboundTemplateService {
-    public static final String CONTENT_PARAM = "content";
 
     @Inject
     protected ReportingApi reportingApi;
 
     @Override
-    public EmailInfo generateMessageByTemplate(LayoutEmailTemplate emailTemplate, String addresses, String from, List<Map<String, Object>> param) throws ContentReportParamIsAbsentException {
+    public EmailInfo generateMessageByTemplate(LayoutEmailTemplate emailTemplate, String addresses, String from, List<Map<String, Object>> param) {
         EmailInfo emailInfo = generateEmailInfoByLayoutTemplate(emailTemplate, addresses, from, param.get(0));
         if (emailTemplate instanceof ContentEmailTemplate) {
             List<Report> attachments = ((ContentEmailTemplate) emailTemplate).getAttachments();
@@ -36,7 +33,7 @@ public class OutboundTemplateServiceBean implements OutboundTemplateService {
     }
 
     @Override
-    public EmailInfo generateMessageByContentTemplate(ContentEmailTemplate emailTemplate, String addresses, String from, List<Map<String, Object>> param) throws ContentReportParamIsAbsentException {
+    public EmailInfo generateMessageByContentTemplate(ContentEmailTemplate emailTemplate, String addresses, String from, List<Map<String, Object>> param) {
         EmailInfo emailInfo = generateEmailInfoByLayoutTemplate(emailTemplate, addresses, from, param.get(0));
         List<Report> attachments = emailTemplate.getAttachments();
         EmailAttachment[] emailAttachments = createEmailAttachments(attachments, param.subList(1, param.size()-1));
@@ -45,30 +42,14 @@ public class OutboundTemplateServiceBean implements OutboundTemplateService {
     }
 
     @Override
-    public EmailInfo generateMessageByTemplateWithCustomParams(LayoutEmailTemplate emailTemplate, String addresses, String from, List<Map<String, Object>> param) throws ContentReportParamIsAbsentException {
+    public EmailInfo generateMessageByTemplateWithCustomParams(LayoutEmailTemplate emailTemplate, String addresses, String from, List<Map<String, Object>> param) {
         return generateMessageByTemplate(emailTemplate, addresses, from, param);
     }
 
-    protected boolean isReportContainsContentParam(Report report) {
-        List<ReportInputParameter> inputParameters = report.getInputParameters();
-        if (inputParameters != null && !inputParameters.isEmpty()) {
-            for (ReportInputParameter parameter: inputParameters) {
-                if (CONTENT_PARAM.equals(parameter.getAlias())) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public EmailInfo generateEmailInfoByLayoutTemplate(LayoutEmailTemplate emailTemplate, String addresses, String from, Map<String, Object> param) throws ContentReportParamIsAbsentException {
+    public EmailInfo generateEmailInfoByLayoutTemplate(LayoutEmailTemplate emailTemplate, String addresses, String from, Map<String, Object> param) {
         Report report = emailTemplate.getReport();
-        if (!isReportContainsContentParam(report)) {
-            throw new ContentReportParamIsAbsentException();
-        }
         ReportOutputDocument outputDocument = reportingApi.createReport(report, param);
         String body = new String(outputDocument.getContent());
-
         return new EmailInfo(addresses, outputDocument.getDocumentName(), from, body, null);
     }
 
