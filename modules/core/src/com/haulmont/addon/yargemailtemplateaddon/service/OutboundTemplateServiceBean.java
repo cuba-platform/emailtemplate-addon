@@ -24,7 +24,7 @@ public class OutboundTemplateServiceBean implements OutboundTemplateService {
     @Override
     public EmailInfo generateMessageByTemplate(LayoutEmailTemplate emailTemplate, String addresses, String from, List<Map<String, Object>> param) {
         EmailInfo emailInfo = generateEmailInfoByLayoutTemplate(emailTemplate, addresses, from, param.get(0));
-        if (emailTemplate instanceof ContentEmailTemplate) {
+        if (emailTemplate instanceof ContentEmailTemplate && param.size() > 1) {
             List<Report> attachments = ((ContentEmailTemplate) emailTemplate).getAttachments();
             EmailAttachment[] emailAttachments = createEmailAttachments(attachments, param.subList(1, param.size()-1));
             emailInfo.setAttachments(emailAttachments);
@@ -35,9 +35,11 @@ public class OutboundTemplateServiceBean implements OutboundTemplateService {
     @Override
     public EmailInfo generateMessageByContentTemplate(ContentEmailTemplate emailTemplate, String addresses, String from, List<Map<String, Object>> param) {
         EmailInfo emailInfo = generateEmailInfoByLayoutTemplate(emailTemplate, addresses, from, param.get(0));
-        List<Report> attachments = emailTemplate.getAttachments();
-        EmailAttachment[] emailAttachments = createEmailAttachments(attachments, param.subList(1, param.size()-1));
-        emailInfo.setAttachments(emailAttachments);
+        if (param.size() > 1) {
+            List<Report> attachments = emailTemplate.getAttachments();
+            EmailAttachment[] emailAttachments = createEmailAttachments(attachments, param.subList(1, param.size()-1));
+            emailInfo.setAttachments(emailAttachments);
+        }
         return emailInfo;
     }
 
