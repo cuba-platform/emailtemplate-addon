@@ -9,3 +9,8 @@ modules/*/build/*
 out
 test-run
 /studio-settings.xml
+.ideaDataSources/*
+.shelf/
+modules/core/build/
+modules/global/build/
+modules/web/build/
