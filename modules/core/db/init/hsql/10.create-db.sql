@@ -13,7 +13,7 @@ create table YET_LAYOUT_EMAIL_TEMPLATE (
     NAME varchar(255) not null,
     TYPE_ varchar(50) not null,
     GROUP_ID varchar(36),
-    REPORT_ID varchar(36),
+    REPORT_ID varchar(36) not null,
     CODE varchar(255) not null,
     --
     primary key (ID)

@@ -27,7 +27,8 @@ public class LayoutEmailTemplate extends StandardEntity {
     @JoinColumn(name = "GROUP_ID")
     protected TemplateGroup group;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @Lookup(type = LookupType.DROPDOWN)
     @JoinColumn(name = "REPORT_ID")
     protected Report report;
