@@ -22,7 +22,8 @@
             </column>
         </fieldGroup>
         <scrollBox id="propertiesScrollBox"
-                   caption="Properties:"/>
+                   caption="Properties:"
+                   spacing="true"/>
         <buttonsPanel id="buttonsPanel">
             <button id="sendButton"
                     caption="Send"

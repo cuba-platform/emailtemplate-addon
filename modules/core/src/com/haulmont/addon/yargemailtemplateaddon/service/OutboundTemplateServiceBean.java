@@ -18,6 +18,8 @@ import java.util.stream.IntStream;
 @Service(OutboundTemplateService.NAME)
 public class OutboundTemplateServiceBean implements OutboundTemplateService {
 
+    private final String CONTENT_TYPE = "text/html; charset=UTF-8";
+
     @Inject
     protected ReportingApi reportingApi;
 
@@ -26,7 +28,7 @@ public class OutboundTemplateServiceBean implements OutboundTemplateService {
         EmailInfo emailInfo = generateEmailInfoByLayoutTemplate(emailTemplate, addresses, from, param.get(0));
         if (emailTemplate instanceof ContentEmailTemplate && param.size() > 1) {
             List<Report> attachments = ((ContentEmailTemplate) emailTemplate).getAttachments();
-            EmailAttachment[] emailAttachments = createEmailAttachments(attachments, param.subList(1, param.size()-1));
+            EmailAttachment[] emailAttachments = createEmailAttachments(attachments, param.subList(1, param.size()));
             emailInfo.setAttachments(emailAttachments);
         }
         return emailInfo;
@@ -37,7 +39,7 @@ public class OutboundTemplateServiceBean implements OutboundTemplateService {
         EmailInfo emailInfo = generateEmailInfoByLayoutTemplate(emailTemplate, addresses, from, param.get(0));
         if (param.size() > 1) {
             List<Report> attachments = emailTemplate.getAttachments();
-            EmailAttachment[] emailAttachments = createEmailAttachments(attachments, param.subList(1, param.size()-1));
+            EmailAttachment[] emailAttachments = createEmailAttachments(attachments, param.subList(1, param.size()));
             emailInfo.setAttachments(emailAttachments);
         }
         return emailInfo;
@@ -52,7 +54,7 @@ public class OutboundTemplateServiceBean implements OutboundTemplateService {
         Report report = emailTemplate.getReport();
         ReportOutputDocument outputDocument = reportingApi.createReport(report, param);
         String body = new String(outputDocument.getContent());
-        return new EmailInfo(addresses, outputDocument.getDocumentName(), from, body, null);
+        return new EmailInfo(addresses, outputDocument.getDocumentName(), from, body, CONTENT_TYPE, null);
     }
 
     protected EmailAttachment[] createEmailAttachments(List<Report> reportAttachments, List<Map<String, Object>> params) {

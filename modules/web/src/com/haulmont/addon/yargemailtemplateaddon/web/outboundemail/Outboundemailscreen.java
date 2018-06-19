@@ -58,6 +58,8 @@ public class Outboundemailscreen extends AbstractWindow {
             }
             showNotification(builder.toString());
             log.warn(e.toString());
+        } finally {
+            close("windowClose");
         }
     }
 
@@ -68,7 +70,6 @@ public class Outboundemailscreen extends AbstractWindow {
         EmailAttachment[] attachments = emailInfo.getAttachments();
         if (attachments != null) {
             for (EmailAttachment attachment: attachments) {
-                builder.append("\n");
                 builder.append(new String(attachment.getData()));
             }
         }

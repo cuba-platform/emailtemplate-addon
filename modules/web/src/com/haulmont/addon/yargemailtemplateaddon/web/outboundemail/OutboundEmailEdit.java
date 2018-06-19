@@ -6,24 +6,18 @@ import com.haulmont.addon.yargemailtemplateaddon.entity.OutboundEmail;
 import com.haulmont.addon.yargemailtemplateaddon.service.OutboundTemplateService;
 import com.haulmont.bali.util.ParamsMap;
 import com.haulmont.cuba.client.ClientConfig;
-import com.haulmont.cuba.core.app.EmailService;
-import com.haulmont.cuba.core.global.EmailAttachment;
-import com.haulmont.cuba.core.global.EmailException;
 import com.haulmont.cuba.core.global.EmailInfo;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.WindowParam;
-import com.haulmont.cuba.gui.components.AbstractEditor;
-import com.haulmont.cuba.gui.components.PickerField;
-import com.haulmont.cuba.gui.components.ScrollBoxLayout;
-import com.haulmont.cuba.gui.components.TextField;
+import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.impl.AbstractDatasource;
+import com.haulmont.cuba.gui.xml.layout.ComponentsFactory;
 import com.haulmont.reports.entity.Report;
 import com.haulmont.reports.exception.ReportParametersValidationException;
 import com.haulmont.reports.gui.ReportParameterValidator;
 import com.haulmont.reports.gui.report.run.InputParametersFrame;
 import org.apache.commons.lang.BooleanUtils;
-import org.slf4j.Logger;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -54,9 +48,7 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
     @Inject
     protected OutboundTemplateService outboundTemplateService;
     @Inject
-    protected EmailService emailService;
-    @Inject
-    protected Logger log;
+    protected ComponentsFactory componentsFactory;
 
     protected List<InputParametersFrame> inputParametersFrames = new ArrayList<>();
     protected List<Report> reports = new ArrayList<>();
@@ -77,10 +69,13 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
             reports.addAll(((ContentEmailTemplate) emailTemplate).getAttachments());
         }
 
-        for (Report report : reports) {
+        for (Report report: reports) {
             Map<String, Object> parameters = new HashMap<>(reports.size());
             parameters.put("report", report);
-            InputParametersFrame frame = (InputParametersFrame) openFrame(propertiesScrollBox, "report$inputParametersFrame", parameters);
+
+            VBoxLayout vBoxLayout = componentsFactory.createComponent(VBoxLayout.class);
+            propertiesScrollBox.add(vBoxLayout);
+            InputParametersFrame frame = (InputParametersFrame) openFrame(vBoxLayout, "report$inputParametersFrame", parameters);
             inputParametersFrames.add(frame);
         }
     }
@@ -98,7 +93,7 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
 
     protected boolean crossValidateParameters() {
         boolean isValid = true;
-        for (InputParametersFrame frame : inputParametersFrames) {
+        for (InputParametersFrame frame: inputParametersFrames) {
             if (BooleanUtils.isTrue(frame.getReport().getValidationOn())) {
                 try {
                     reportParameterValidator.crossValidateParameters(frame.getReport(),
