@@ -115,7 +115,7 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
     }
 
     public void onTestButtonClick() {
-        if (!validateAll()) {
+        if (!crossValidateParameters()) {
             return;
         }
         List<Map<String, Object>> params = inputParametersFrames.stream().map(InputParametersFrame::collectParameters).collect(Collectors.toList());
