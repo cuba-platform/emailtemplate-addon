@@ -18,8 +18,6 @@ import java.util.stream.IntStream;
 @Service(OutboundTemplateService.NAME)
 public class OutboundTemplateServiceBean implements OutboundTemplateService {
 
-    private final String CONTENT_TYPE = "text/html; charset=UTF-8";
-
     @Inject
     protected ReportingApi reportingApi;
 
@@ -54,7 +52,7 @@ public class OutboundTemplateServiceBean implements OutboundTemplateService {
         Report report = emailTemplate.getReport();
         ReportOutputDocument outputDocument = reportingApi.createReport(report, param);
         String body = new String(outputDocument.getContent());
-        return new EmailInfo(addresses, outputDocument.getDocumentName(), from, body, CONTENT_TYPE, null);
+        return new EmailInfo(addresses, outputDocument.getDocumentName(), from, body, EmailInfo.HTML_CONTENT_TYPE, null);
     }
 
     protected EmailAttachment[] createEmailAttachments(List<Report> reportAttachments, List<Map<String, Object>> params) {
