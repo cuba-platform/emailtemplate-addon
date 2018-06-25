@@ -119,7 +119,9 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
             return;
         }
         List<Map<String, Object>> params = inputParametersFrames.stream().map(InputParametersFrame::collectParameters).collect(Collectors.toList());
-        EmailInfo emailInfo = outboundTemplateService.generateMessageByTemplate(emailTemplate, addresssesField.getRawValue(), fromField.getRawValue(), params);
+        EmailInfo emailInfo = outboundTemplateService.generateEmail(emailTemplate, params);
+        emailInfo.setAddresses(addresssesField.getRawValue());
+        emailInfo.setFrom(fromField.getRawValue());
 
         openWindow("outboundEmailScreen", WindowManager.OpenType.DIALOG, ParamsMap.of("body", emailInfo));
     }
@@ -129,7 +131,9 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
             return;
         }
         List<Map<String, Object>> params = inputParametersFrames.stream().map(InputParametersFrame::collectParameters).collect(Collectors.toList());
-        EmailInfo emailInfo = outboundTemplateService.generateMessageByTemplate(emailTemplate, addresssesField.getRawValue(), fromField.getRawValue(), params);
+        EmailInfo emailInfo = outboundTemplateService.generateEmail(emailTemplate, params);
+        emailInfo.setAddresses(addresssesField.getRawValue());
+        emailInfo.setFrom(fromField.getRawValue());
 
         openWindow("outboundEmailScreen", WindowManager.OpenType.DIALOG, ParamsMap.of(
                 "body", emailInfo,

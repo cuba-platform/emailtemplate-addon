@@ -54,7 +54,6 @@ public class Outboundemailscreen extends AbstractWindow {
             StringBuilder builder = new StringBuilder();
             for (String s: e.getMessages()) {
                 builder.append(s);
-                builder.append("\n");
             }
             showNotification(builder.toString());
             log.warn(e.toString());
