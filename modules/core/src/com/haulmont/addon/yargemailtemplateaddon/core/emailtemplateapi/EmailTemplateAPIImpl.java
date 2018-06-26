@@ -2,6 +2,7 @@ package com.haulmont.addon.yargemailtemplateaddon.core.emailtemplateapi;
 
 import com.haulmont.addon.yargemailtemplateaddon.entity.ContentEmailTemplate;
 import com.haulmont.addon.yargemailtemplateaddon.entity.LayoutEmailTemplate;
+import com.haulmont.bali.util.ParamsMap;
 import com.haulmont.cuba.core.global.EmailAttachment;
 import com.haulmont.cuba.core.global.EmailInfo;
 import com.haulmont.reports.ReportingApi;
@@ -47,9 +48,7 @@ public class EmailTemplateAPIImpl implements EmailTemplateAPI {
 
     @Override
     public EmailInfo generateEmail(LayoutEmailTemplate layoutTemplate, String caption, String content) {
-        Map<String, Object> contentParam = new HashMap<>(1);
-        contentParam.put("content", content);
-        EmailInfo emailInfo = generateEmailInfoByLayoutTemplate(layoutTemplate, contentParam);
+        EmailInfo emailInfo = generateEmailInfoByLayoutTemplate(layoutTemplate, ParamsMap.of("content", content));
         emailInfo.setCaption(caption);
         return emailInfo;
     }
