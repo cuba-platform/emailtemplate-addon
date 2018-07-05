@@ -1,9 +1,11 @@
 package com.haulmont.addon.yargemailtemplateaddon.web.outboundemail;
 
+import com.haulmont.addon.yargemailtemplateaddon.dto.ReportWithParams;
 import com.haulmont.addon.yargemailtemplateaddon.entity.ContentEmailTemplate;
 import com.haulmont.addon.yargemailtemplateaddon.entity.LayoutEmailTemplate;
 import com.haulmont.addon.yargemailtemplateaddon.entity.OutboundEmail;
 import com.haulmont.addon.yargemailtemplateaddon.service.OutboundTemplateService;
+import com.haulmont.addon.yargemailtemplateaddon.web.screens.MultiReportParametersFrame;
 import com.haulmont.bali.util.ParamsMap;
 import com.haulmont.cuba.client.ClientConfig;
 import com.haulmont.cuba.core.global.EmailInfo;
@@ -16,16 +18,13 @@ import com.haulmont.cuba.gui.xml.layout.ComponentsFactory;
 import com.haulmont.reports.entity.Report;
 import com.haulmont.reports.exception.ReportParametersValidationException;
 import com.haulmont.reports.gui.ReportParameterValidator;
-import com.haulmont.reports.gui.report.run.InputParametersFrame;
 import org.apache.commons.lang.BooleanUtils;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
 
@@ -50,13 +49,13 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
     @Inject
     protected ComponentsFactory componentsFactory;
 
-    protected List<InputParametersFrame> inputParametersFrames = new ArrayList<>();
-    protected List<Report> reports = new ArrayList<>();
     protected LayoutEmailTemplate emailTemplate;
+    protected MultiReportParametersFrame parametersFrame;
 
     @Override
     public void init(Map<String, Object> params) {
         super.init(params);
+        List<Report> reports = new ArrayList<>();
 
         templateField.setEnabled(false);
         emailTemplate = outboundEmail.getTemplate();
@@ -69,15 +68,10 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
             reports.addAll(((ContentEmailTemplate) emailTemplate).getAttachments());
         }
 
-        for (Report report: reports) {
-            Map<String, Object> parameters = new HashMap<>(reports.size());
-            parameters.put("report", report);
-
-            VBoxLayout vBoxLayout = componentsFactory.createComponent(VBoxLayout.class);
-            propertiesScrollBox.add(vBoxLayout);
-            InputParametersFrame frame = (InputParametersFrame) openFrame(vBoxLayout, "report$inputParametersFrame", parameters);
-            inputParametersFrames.add(frame);
-        }
+        VBoxLayout vBoxLayout = componentsFactory.createComponent(VBoxLayout.class);
+        propertiesScrollBox.add(vBoxLayout);
+        parametersFrame = (MultiReportParametersFrame) openFrame(vBoxLayout,
+                "multiReportParametersFrame", ParamsMap.of("reports", reports));
     }
 
     @Override
@@ -93,16 +87,15 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
 
     protected boolean crossValidateParameters() {
         boolean isValid = true;
-        for (InputParametersFrame frame: inputParametersFrames) {
-            if (BooleanUtils.isTrue(frame.getReport().getValidationOn())) {
+        for (ReportWithParams reportWithParams: parametersFrame.collectParameters()) {
+            if (BooleanUtils.isTrue(reportWithParams.getReport().getValidationOn())) {
                 try {
-                    reportParameterValidator.crossValidateParameters(frame.getReport(),
-                            frame.collectParameters());
+                    reportParameterValidator.crossValidateParameters(reportWithParams.getReport(),
+                            reportWithParams.getParams());
                 } catch (ReportParametersValidationException e) {
                     NotificationType notificationType = NotificationType.valueOf(clientConfig.getValidationNotificationType());
                     showNotification(messages.getMainMessage("validationFail.caption"), e.getMessage(), notificationType);
                     isValid = false;
-                    break;
                 }
             }
         }
@@ -118,8 +111,8 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
         if (!crossValidateParameters()) {
             return;
         }
-        List<Map<String, Object>> params = inputParametersFrames.stream().map(InputParametersFrame::collectParameters).collect(Collectors.toList());
-        EmailInfo emailInfo = outboundTemplateService.generateEmail(emailTemplate, params);
+        List<ReportWithParams> reportsWithParams = parametersFrame.collectParameters();
+        EmailInfo emailInfo = outboundTemplateService.generateEmail(emailTemplate, reportsWithParams);
         emailInfo.setAddresses(addresssesField.getRawValue());
         emailInfo.setFrom(fromField.getRawValue());
 
@@ -130,8 +123,8 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
         if (!validateAll()) {
             return;
         }
-        List<Map<String, Object>> params = inputParametersFrames.stream().map(InputParametersFrame::collectParameters).collect(Collectors.toList());
-        EmailInfo emailInfo = outboundTemplateService.generateEmail(emailTemplate, params);
+        List<ReportWithParams> reportsWithParams = parametersFrame.collectParameters();
+        EmailInfo emailInfo = outboundTemplateService.generateEmail(emailTemplate, reportsWithParams);
         emailInfo.setAddresses(addresssesField.getRawValue());
         emailInfo.setFrom(fromField.getRawValue());
 

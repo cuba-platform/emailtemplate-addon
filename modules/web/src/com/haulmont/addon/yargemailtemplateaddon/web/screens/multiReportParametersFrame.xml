@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+        class="com.haulmont.addon.yargemailtemplateaddon.web.screens.MultiReportParametersFrame"
+        messagesPack="com.haulmont.addon.yargemailtemplateaddon.web.screens">
+    <dialogMode height="600"
+                width="800"/>
+    <layout spacing="true">
+        <grid id="parametersGrid" spacing="true" width="100%">
+            <columns>
+                <column/>
+                <column flex="1"/>
+            </columns>
+            <rows>
+                <row>
+                </row>
+            </rows>
+        </grid>
+    </layout>
+</window>
