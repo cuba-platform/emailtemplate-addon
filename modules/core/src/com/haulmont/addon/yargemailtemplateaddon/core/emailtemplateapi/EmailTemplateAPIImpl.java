@@ -1,5 +1,6 @@
 package com.haulmont.addon.yargemailtemplateaddon.core.emailtemplateapi;
 
+import com.haulmont.addon.yargemailtemplateaddon.dto.ReportWithParams;
 import com.haulmont.addon.yargemailtemplateaddon.entity.ContentEmailTemplate;
 import com.haulmont.addon.yargemailtemplateaddon.entity.LayoutEmailTemplate;
 import com.haulmont.bali.util.ParamsMap;
@@ -12,11 +13,9 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Component(EmailTemplateAPI.NAME)
 public class EmailTemplateAPIImpl implements EmailTemplateAPI {
@@ -25,22 +24,20 @@ public class EmailTemplateAPIImpl implements EmailTemplateAPI {
     protected ReportingApi reportingApi;
 
     @Override
-    public EmailInfo generateEmail(LayoutEmailTemplate layoutTemplate, List<Map<String, Object>> params) {
-        EmailInfo emailInfo = generateEmailInfoByLayoutTemplate(layoutTemplate, params.get(0));
+    public EmailInfo generateEmail(LayoutEmailTemplate layoutTemplate, List<ReportWithParams> params) {
+        EmailInfo emailInfo = generateEmailInfoByLayoutTemplate(params.get(0));
         if (layoutTemplate instanceof ContentEmailTemplate && params.size() > 1) {
-            List<Report> attachments = ((ContentEmailTemplate) layoutTemplate).getAttachments();
-            EmailAttachment[] emailAttachments = createEmailAttachments(attachments, params.subList(1, params.size()));
+            EmailAttachment[] emailAttachments = createEmailAttachments(params.subList(1, params.size()));
             emailInfo.setAttachments(emailAttachments);
         }
         return emailInfo;
     }
 
     @Override
-    public EmailInfo generateEmail(ContentEmailTemplate contentTemplate, List<Map<String, Object>> params) {
-        EmailInfo emailInfo = generateEmailInfoByLayoutTemplate(contentTemplate, params.get(0));
+    public EmailInfo generateEmail(ContentEmailTemplate contentTemplate, List<ReportWithParams> params) {
+        EmailInfo emailInfo = generateEmailInfoByLayoutTemplate(params.get(0));
         if (params.size() > 1) {
-            List<Report> attachments = contentTemplate.getAttachments();
-            EmailAttachment[] emailAttachments = createEmailAttachments(attachments, params.subList(1, params.size()));
+            EmailAttachment[] emailAttachments = createEmailAttachments(params.subList(1, params.size()));
             emailInfo.setAttachments(emailAttachments);
         }
         return emailInfo;
@@ -48,26 +45,29 @@ public class EmailTemplateAPIImpl implements EmailTemplateAPI {
 
     @Override
     public EmailInfo generateEmail(LayoutEmailTemplate layoutTemplate, String caption, String content) {
-        EmailInfo emailInfo = generateEmailInfoByLayoutTemplate(layoutTemplate, ParamsMap.of("content", content));
+        ReportWithParams reportWithParams = new ReportWithParams(layoutTemplate.getReport());
+        reportWithParams.setParams(ParamsMap.of("content", content));
+        EmailInfo emailInfo = generateEmailInfoByLayoutTemplate(reportWithParams);
         emailInfo.setCaption(caption);
         return emailInfo;
     }
 
-    protected EmailInfo generateEmailInfoByLayoutTemplate(LayoutEmailTemplate emailTemplate, Map<String, Object> param) {
-        Report report = emailTemplate.getReport();
-        ReportOutputDocument outputDocument = reportingApi.createReport(report, param);
+    protected EmailInfo generateEmailInfoByLayoutTemplate(ReportWithParams reportWithParams) {
+        ReportOutputDocument outputDocument = reportingApi.createReport(
+                reportWithParams.getReport(),
+                reportWithParams.getParams());
         String body = new String(outputDocument.getContent());
         return new EmailInfo(null, outputDocument.getDocumentName(), body, EmailInfo.HTML_CONTENT_TYPE);
     }
 
-    protected EmailAttachment[] createEmailAttachments(List<Report> reportAttachments, List<Map<String, Object>> params) {
+    protected EmailAttachment[] createEmailAttachments(List<ReportWithParams> reportsWithParams) {
         EmailAttachment[] emailAttachments = null;
 
-        if (CollectionUtils.isNotEmpty(reportAttachments)) {
+        if (CollectionUtils.isNotEmpty(reportsWithParams)) {
             List<EmailAttachment> attachmentsList =
-                    IntStream.range(0, Math.min(reportAttachments.size(), params.size()))
-                            .mapToObj(i -> createEmailAttachmentByReportAndParams(reportAttachments.get(i), params.get(i))).collect(Collectors.toList());
-            emailAttachments = attachmentsList.toArray(new EmailAttachment[Math.min(reportAttachments.size(), params.size())]);
+                    reportsWithParams.stream().map(reportsWithParam -> createEmailAttachmentByReportAndParams(
+                            reportsWithParam.getReport(), reportsWithParam.getParams())).collect(Collectors.toList());
+            emailAttachments = attachmentsList.toArray(new EmailAttachment[reportsWithParams.size()]);
         }
         return emailAttachments;
     }
