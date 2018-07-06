@@ -18,7 +18,6 @@ public class ReportWithParams implements Serializable {
         return report;
     }
 
-
     public Map<String, Object> getParams() {
         return params;
     }
@@ -28,10 +27,14 @@ public class ReportWithParams implements Serializable {
     }
 
     public Object put(String key, Object value) {
-        return params.put(key, value);
+        if (params != null) {
+            return params.put(key, value);
+        } else return null;
     }
 
     public boolean remove(String key, Object value) {
-        return params.remove(key, value);
+        if (params != null) {
+            return params.remove(key, value);
+        } else return false;
     }
 }
