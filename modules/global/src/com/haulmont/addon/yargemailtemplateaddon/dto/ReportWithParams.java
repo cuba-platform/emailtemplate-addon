@@ -1,9 +1,9 @@
 package com.haulmont.addon.yargemailtemplateaddon.dto;
 
 import com.haulmont.reports.entity.Report;
-import org.apache.commons.collections4.MapUtils;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 public class ReportWithParams implements Serializable {
@@ -13,6 +13,7 @@ public class ReportWithParams implements Serializable {
 
     public ReportWithParams(Report report) {
         this.report = report;
+        params = new HashMap<>();
     }
 
     public Report getReport() {
@@ -20,7 +21,7 @@ public class ReportWithParams implements Serializable {
     }
 
     public Map<String, Object> getParams() {
-        return MapUtils.emptyIfNull(params);
+        return params;
     }
 
     public void setParams(Map<String, Object> params) {
@@ -28,10 +29,10 @@ public class ReportWithParams implements Serializable {
     }
 
     public Object put(String key, Object value) {
-        return MapUtils.emptyIfNull(params).put(key, value);
+        return params.put(key, value);
     }
 
     public boolean remove(String key, Object value) {
-        return MapUtils.emptyIfNull(params).remove(key, value);
+        return params.remove(key, value);
     }
 }

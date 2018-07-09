@@ -46,7 +46,7 @@ public class EmailTemplateAPIImpl implements EmailTemplateAPI {
     @Override
     public EmailInfo generateEmail(LayoutEmailTemplate layoutTemplate, String caption, String content) {
         ReportWithParams reportWithParams = new ReportWithParams(layoutTemplate.getReport());
-        reportWithParams.setParams(ParamsMap.of("content", content));
+        reportWithParams.put("content", content);
         EmailInfo emailInfo = generateEmailInfoByLayoutTemplate(reportWithParams);
         emailInfo.setCaption(caption);
         return emailInfo;

@@ -89,14 +89,12 @@ public class MultiReportParametersFrame extends AbstractFrame {
     public List<ReportWithParams> collectParameters() {
         List<ReportWithParams> reportDataList = new ArrayList<>();
         for (Tuple2<Report, Map<String, Field>> reportWithParams : parameterComponents) {
-            Map<String, Object> parameters = new HashMap<>();
+            ReportWithParams reportData = new ReportWithParams(reportWithParams.getFirst());
             for (String paramName: reportWithParams.getSecond().keySet()) {
                 Field parameterField = reportWithParams.getSecond().get(paramName);
                 Object value = parameterField.getValue();
-                parameters.put(paramName, value);
+                reportData.put(paramName, value);
             }
-            ReportWithParams reportData = new ReportWithParams(reportWithParams.getFirst());
-            reportData.setParams(parameters);
 
             reportDataList.add(reportData);
         }
