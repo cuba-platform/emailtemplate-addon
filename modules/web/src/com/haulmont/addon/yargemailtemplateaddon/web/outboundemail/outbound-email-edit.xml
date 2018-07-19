@@ -8,9 +8,16 @@
     <dsContext>
         <datasource id="outboundEmailDs"
                     class="com.haulmont.addon.yargemailtemplateaddon.entity.OutboundEmail"/>
+        <collectionDatasource id="layoutTemplatesDs"
+                              class="com.haulmont.addon.yargemailtemplateaddon.entity.LayoutEmailTemplate"
+                              view="_minimal">
+            <query>
+                <![CDATA[select e from yet$LayoutEmailTemplate e where TYPE(e) = yet$LayoutEmailTemplate]]>
+            </query>
+        </collectionDatasource>
     </dsContext>
-    <dialogMode height="600"
-                width="800"/>
+    <dialogMode height="AUTO"
+                width="AUTO"/>
     <layout expand="buttonsPanel"
             spacing="true">
         <fieldGroup id="fieldGroup"
@@ -18,7 +25,11 @@
             <column width="250px">
                 <field property="from"/>
                 <field property="addressses"/>
-                <field property="template"/>
+                <field caption="msg://Layout template"
+                       optionsDatasource="layoutTemplatesDs"
+                       property="layoutTemplate"/>
+                <field caption="msg://Content template"
+                       property="contentTemplate"/>
             </column>
         </fieldGroup>
         <scrollBox id="propertiesScrollBox"

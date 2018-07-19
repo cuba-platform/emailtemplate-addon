@@ -13,7 +13,9 @@ public interface OutboundTemplateService {
     String NAME = "yet_OutboundTemplateService";
 
 
-    EmailInfo generateEmail(LayoutEmailTemplate layoutTemplate, List<ReportWithParams> params);
+    EmailInfo generateEmail(LayoutEmailTemplate layoutTemplate, ContentEmailTemplate contentTemplate, Map<String, Object> params);
+
+    EmailInfo generateEmail(LayoutEmailTemplate layoutTemplate, ContentEmailTemplate contentTemplate, List<ReportWithParams> params);
 
     EmailInfo generateEmail(ContentEmailTemplate contentTemplate, List<ReportWithParams> params);
 

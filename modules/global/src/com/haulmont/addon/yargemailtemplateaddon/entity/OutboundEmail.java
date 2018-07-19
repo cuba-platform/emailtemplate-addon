@@ -5,8 +5,10 @@ import com.haulmont.chile.core.annotations.MetaProperty;
 import javax.validation.constraints.NotNull;
 import com.haulmont.cuba.core.entity.BaseUuidEntity;
 import com.haulmont.chile.core.annotations.NamePattern;
+import com.haulmont.cuba.core.entity.annotation.Lookup;
+import com.haulmont.cuba.core.entity.annotation.LookupType;
 
-@NamePattern(" %s %s|from,addressses,template")
+@NamePattern(" %s %s|from,addressses,layoutTemplate,contentTemplate")
 @MetaClass(name = "yet$OutboundEmail")
 public class OutboundEmail extends BaseUuidEntity {
     private static final long serialVersionUID = 6494336757048633734L;
@@ -19,12 +21,30 @@ public class OutboundEmail extends BaseUuidEntity {
     @MetaProperty(mandatory = true)
     protected String addressses;
 
+
+    @Lookup(type = LookupType.DROPDOWN)
     @NotNull
     @MetaProperty(mandatory = true)
-    protected LayoutEmailTemplate template;
+    protected LayoutEmailTemplate layoutTemplate;
 
-    public void setTemplate(LayoutEmailTemplate template) {
-        this.template = template;
+    @MetaProperty
+    protected ContentEmailTemplate contentTemplate;
+
+    public void setContentTemplate(ContentEmailTemplate contentTemplate) {
+        this.contentTemplate = contentTemplate;
+    }
+
+    public ContentEmailTemplate getContentTemplate() {
+        return contentTemplate;
+    }
+
+
+    public void setLayoutTemplate(LayoutEmailTemplate layoutTemplate) {
+        this.layoutTemplate = layoutTemplate;
+    }
+
+    public LayoutEmailTemplate getLayoutTemplate() {
+        return layoutTemplate;
     }
 
 
@@ -43,10 +63,6 @@ public class OutboundEmail extends BaseUuidEntity {
 
     public String getAddressses() {
         return addressses;
-    }
-
-    public LayoutEmailTemplate getTemplate() {
-        return template;
     }
 
 

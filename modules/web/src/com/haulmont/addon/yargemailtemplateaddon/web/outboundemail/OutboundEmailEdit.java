@@ -5,7 +5,7 @@ import com.haulmont.addon.yargemailtemplateaddon.entity.ContentEmailTemplate;
 import com.haulmont.addon.yargemailtemplateaddon.entity.LayoutEmailTemplate;
 import com.haulmont.addon.yargemailtemplateaddon.entity.OutboundEmail;
 import com.haulmont.addon.yargemailtemplateaddon.service.OutboundTemplateService;
-import com.haulmont.addon.yargemailtemplateaddon.web.screens.MultiReportParametersFrame;
+import com.haulmont.addon.yargemailtemplateaddon.web.frames.MultiReportParametersFrame;
 import com.haulmont.bali.util.ParamsMap;
 import com.haulmont.cuba.client.ClientConfig;
 import com.haulmont.cuba.core.global.EmailInfo;
@@ -34,8 +34,10 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
     protected TextField addresssesField;
     @Named("fieldGroup.from")
     protected TextField fromField;
-    @Named("fieldGroup.template")
-    protected PickerField templateField;
+    @Named("fieldGroup.layoutTemplate")
+    protected LookupPickerField layoutTemplateField;
+    @Named("fieldGroup.contentTemplate")
+    protected PickerField contentTemplateField;
     @Inject
     protected Datasource<OutboundEmail> outboundEmailDs;
     @Inject
@@ -49,7 +51,8 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
     @Inject
     protected ComponentsFactory componentsFactory;
 
-    protected LayoutEmailTemplate emailTemplate;
+    protected LayoutEmailTemplate layoutTemplate;
+    protected ContentEmailTemplate contentTemplate;
     protected MultiReportParametersFrame parametersFrame;
 
     @Override
@@ -57,21 +60,24 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
         super.init(params);
         List<Report> reports = new ArrayList<>();
 
-        templateField.setEnabled(false);
-        emailTemplate = outboundEmail.getTemplate();
-        if (emailTemplate == null) {
-            return;
-        }
-        reports.add(emailTemplate.getReport());
+        layoutTemplateField.setEnabled(false);
+        contentTemplateField.setEnabled(false);
 
-        if (emailTemplate instanceof ContentEmailTemplate) {
-            reports.addAll(((ContentEmailTemplate) emailTemplate).getAttachments());
+        layoutTemplate = outboundEmail.getLayoutTemplate();
+        contentTemplate = outboundEmail.getContentTemplate();
+
+        reports.add(layoutTemplate.getReport());
+        if (contentTemplate != null) {
+            reports.add(contentTemplate.getReport());
+            if (contentTemplate.getAttachments() != null) {
+                reports.addAll(contentTemplate.getAttachments());
+            }
         }
 
         VBoxLayout vBoxLayout = componentsFactory.createComponent(VBoxLayout.class);
         propertiesScrollBox.add(vBoxLayout);
         parametersFrame = (MultiReportParametersFrame) openFrame(vBoxLayout,
-                "multiReportParametersFrame", ParamsMap.of("reports", reports));
+                "multiReportParametersFrame", ParamsMap.of(MultiReportParametersFrame.REPORT_PARAMETER, reports));
     }
 
     @Override
@@ -108,11 +114,11 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
     }
 
     public void onTestButtonClick() {
-        if (!crossValidateParameters()) {
+        if (!validateAll()) {
             return;
         }
         List<ReportWithParams> reportsWithParams = parametersFrame.collectParameters();
-        EmailInfo emailInfo = outboundTemplateService.generateEmail(emailTemplate, reportsWithParams);
+        EmailInfo emailInfo = outboundTemplateService.generateEmail(layoutTemplate, contentTemplate, reportsWithParams);
         emailInfo.setAddresses(addresssesField.getRawValue());
         emailInfo.setFrom(fromField.getRawValue());
 
@@ -124,7 +130,7 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
             return;
         }
         List<ReportWithParams> reportsWithParams = parametersFrame.collectParameters();
-        EmailInfo emailInfo = outboundTemplateService.generateEmail(emailTemplate, reportsWithParams);
+        EmailInfo emailInfo = outboundTemplateService.generateEmail(layoutTemplate, contentTemplate, reportsWithParams);
         emailInfo.setAddresses(addresssesField.getRawValue());
         emailInfo.setFrom(fromField.getRawValue());
 

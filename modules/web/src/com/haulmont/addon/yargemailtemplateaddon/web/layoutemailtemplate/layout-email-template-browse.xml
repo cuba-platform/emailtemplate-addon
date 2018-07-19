@@ -55,11 +55,11 @@
                 <button id="removeBtn"
                         action="layoutEmailTemplatesTable.remove"/>
                 <button id="testTemplate"
-                        caption="msg://Test"
-                        invoke="onTestTemplateClick"/>
+                        action="layoutEmailTemplatesTable.testAction"
+                        caption="msg://Test"/>
                 <button id="sendEmail"
-                        caption="msg://Send"
-                        invoke="onSendEmailClick"/>
+                        action="layoutEmailTemplatesTable.sendAction"
+                        caption="msg://Send"/>
             </buttonsPanel>
         </groupTable>
     </layout>

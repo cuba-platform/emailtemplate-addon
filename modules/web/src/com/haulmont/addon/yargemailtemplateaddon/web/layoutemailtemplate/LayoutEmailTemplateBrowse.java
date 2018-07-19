@@ -3,14 +3,14 @@ package com.haulmont.addon.yargemailtemplateaddon.web.layoutemailtemplate;
 import com.haulmont.addon.yargemailtemplateaddon.entity.ContentEmailTemplate;
 import com.haulmont.addon.yargemailtemplateaddon.entity.LayoutEmailTemplate;
 import com.haulmont.addon.yargemailtemplateaddon.entity.OutboundEmail;
+import com.haulmont.addon.yargemailtemplateaddon.web.outboundemail.LayoutTemplateChoiceScreen;
+import com.haulmont.bali.util.ParamsMap;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.WindowManager;
-import com.haulmont.cuba.gui.components.AbstractEditor;
-import com.haulmont.cuba.gui.components.AbstractLookup;
-import com.haulmont.cuba.gui.components.Component;
-import com.haulmont.cuba.gui.components.GroupTable;
+import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.actions.EditAction;
+import com.haulmont.cuba.gui.components.actions.ItemTrackingAction;
 import com.haulmont.cuba.gui.data.GroupDatasource;
 
 import javax.inject.Inject;
@@ -34,6 +34,14 @@ public class LayoutEmailTemplateBrowse extends AbstractLookup {
     @Override
     public void init(Map<String, Object> params) {
         super.init(params);
+
+        Action sendAction = new ItemTrackingAction(layoutEmailTemplatesTable, "sendAction").
+                withHandler(actionPerformedEvent -> onSendEmailClick());
+        layoutEmailTemplatesTable.addAction(sendAction);
+
+        Action testAction = new ItemTrackingAction(layoutEmailTemplatesTable, "testAction").
+                withHandler(actionPerformedEvent -> onTestTemplateClick());
+        layoutEmailTemplatesTable.addAction(testAction);
 
         layoutEmailTemplatesTable.addAction(new EditAction(layoutEmailTemplatesTable) {
             @Override
@@ -66,15 +74,18 @@ public class LayoutEmailTemplateBrowse extends AbstractLookup {
         editor.addCloseListener(actionId -> layoutEmailTemplatesDs.refresh());
     }
 
-    public void onTestTemplateClick() {
+    protected void onTestTemplateClick() {
         onSendEmailClick();
     }
 
-    public void onSendEmailClick() {
+    protected void onSendEmailClick() {
         LayoutEmailTemplate template = layoutEmailTemplatesTable.getSingleSelected();
         OutboundEmail outboundEmail = metadata.create(OutboundEmail.class);
-        if (template != null) {
-            outboundEmail.setTemplate(dataManager.reload(template, "emailTemplate-view"));
+        if (template instanceof ContentEmailTemplate) {
+            outboundEmail.setContentTemplate((ContentEmailTemplate) dataManager.reload(template, "emailTemplate-view"));
+            openWindow("layoutTemplateChoiceScreen", WindowManager.OpenType.DIALOG, ParamsMap.of(LayoutTemplateChoiceScreen.PARAM_EMAIL, outboundEmail));
+        } else {
+            outboundEmail.setLayoutTemplate(dataManager.reload(template, "emailTemplate-view"));
             openEditor("yet$OutboundEmail.edit", outboundEmail, WindowManager.OpenType.DIALOG);
         }
     }

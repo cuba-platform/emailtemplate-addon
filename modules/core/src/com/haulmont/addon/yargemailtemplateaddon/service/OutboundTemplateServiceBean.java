@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Map;
 
 @Service(OutboundTemplateService.NAME)
 public class OutboundTemplateServiceBean implements OutboundTemplateService {
@@ -16,9 +17,15 @@ public class OutboundTemplateServiceBean implements OutboundTemplateService {
     @Inject
     protected EmailTemplateAPI emailTemplateAPI;
 
+
     @Override
-    public EmailInfo generateEmail(LayoutEmailTemplate layoutTemplate, List<ReportWithParams> params) {
-        return emailTemplateAPI.generateEmail(layoutTemplate, params);
+    public EmailInfo generateEmail(LayoutEmailTemplate layoutTemplate, ContentEmailTemplate contentTemplate, Map<String, Object> params) {
+        return emailTemplateAPI.generateEmail(layoutTemplate, contentTemplate, params);
+    }
+
+    @Override
+    public EmailInfo generateEmail(LayoutEmailTemplate layoutTemplate, ContentEmailTemplate contentTemplate, List<ReportWithParams> params) {
+        return emailTemplateAPI.generateEmail(layoutTemplate, contentTemplate, params);
     }
 
     @Override

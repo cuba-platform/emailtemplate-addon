@@ -18,7 +18,7 @@
         </collectionDatasource>
         <collectionDatasource id="reportsDs"
                               class="com.haulmont.reports.entity.Report"
-                              view="_minimal">
+                              view="_base">
             <query>
                 <![CDATA[select e from report$Report e]]>
             </query>

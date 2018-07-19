@@ -35,4 +35,9 @@ public class ReportWithParams implements Serializable {
     public boolean remove(String key, Object value) {
         return params.remove(key, value);
     }
+
+    public boolean isEmptyParams() {
+        return params.isEmpty();
+    }
+
 }
