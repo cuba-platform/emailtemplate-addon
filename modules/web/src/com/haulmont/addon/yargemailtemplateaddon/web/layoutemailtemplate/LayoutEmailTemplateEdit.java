@@ -30,7 +30,7 @@ public class LayoutEmailTemplateEdit extends AbstractEditor<LayoutEmailTemplate>
             }
         }
         NotificationType notificationType = NotificationType.valueOf(clientConfig.getValidationNotificationType());
-        showNotification(messages.getMainMessage("validationFail.caption"), "Report isn't containing \"content\" parameter", notificationType);
+        showNotification(messages.getMainMessage("validationFail.caption"), messages.getMainMessage("contentParamValidationFail"), notificationType);
         return false;
     }
 }
