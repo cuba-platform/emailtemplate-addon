@@ -33,7 +33,7 @@
             </column>
         </fieldGroup>
         <scrollBox id="propertiesScrollBox"
-                   caption="Properties:"
+                   caption="msg://Parameters:"
                    spacing="true"/>
         <buttonsPanel id="buttonsPanel">
             <button id="sendButton"

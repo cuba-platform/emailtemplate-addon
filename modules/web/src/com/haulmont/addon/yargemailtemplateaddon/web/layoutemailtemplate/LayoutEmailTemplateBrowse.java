@@ -3,8 +3,6 @@ package com.haulmont.addon.yargemailtemplateaddon.web.layoutemailtemplate;
 import com.haulmont.addon.yargemailtemplateaddon.entity.ContentEmailTemplate;
 import com.haulmont.addon.yargemailtemplateaddon.entity.LayoutEmailTemplate;
 import com.haulmont.addon.yargemailtemplateaddon.entity.OutboundEmail;
-import com.haulmont.addon.yargemailtemplateaddon.web.outboundemail.LayoutTemplateChoiceScreen;
-import com.haulmont.bali.util.ParamsMap;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.WindowManager;
@@ -83,10 +81,9 @@ public class LayoutEmailTemplateBrowse extends AbstractLookup {
         OutboundEmail outboundEmail = metadata.create(OutboundEmail.class);
         if (template instanceof ContentEmailTemplate) {
             outboundEmail.setContentTemplate((ContentEmailTemplate) dataManager.reload(template, "emailTemplate-view"));
-            openWindow("layoutTemplateChoiceScreen", WindowManager.OpenType.DIALOG, ParamsMap.of(LayoutTemplateChoiceScreen.PARAM_EMAIL, outboundEmail));
         } else {
             outboundEmail.setLayoutTemplate(dataManager.reload(template, "emailTemplate-view"));
-            openEditor("yet$OutboundEmail.edit", outboundEmail, WindowManager.OpenType.DIALOG);
         }
+        openEditor("yet$OutboundEmail.edit", outboundEmail, WindowManager.OpenType.DIALOG);
     }
 }

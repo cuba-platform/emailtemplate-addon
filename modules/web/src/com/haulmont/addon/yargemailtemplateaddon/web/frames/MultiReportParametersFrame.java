@@ -30,6 +30,8 @@ public class MultiReportParametersFrame extends AbstractFrame {
 
     protected List<Report> reports;
 
+    protected Report layoutReport;
+
     protected List<Tuple2<Report, Map<String, Field>>> parameterComponents = new ArrayList<>();
 
     protected ParameterFieldCreator parameterFieldCreator = new ParameterFieldCreator(this);
@@ -44,10 +46,25 @@ public class MultiReportParametersFrame extends AbstractFrame {
         if (CollectionUtils.isEmpty(reports)) {
             return;
         }
-        parametersGrid.setRows(getRowCountForParameters());
+        createComponents();
+    }
+
+    public void setLayoutReport(Report report) {
+        layoutReport = report;
+    }
+
+    public void createComponents() {
+        parameterComponents.clear();
+        parametersGrid.removeAll();
+
+        List<Report> allReports = new ArrayList<>(reports);
+        if (layoutReport != null) {
+            allReports.add(layoutReport);
+        }
+        parametersGrid.setRows(getRowCountForParameters(allReports));
 
         int currentGridRow = 0;
-        for (Report report: reports) {
+        for (Report report: allReports) {
             if (!report.getIsTmp()) {
                 report = dataSupplier.reload(report, ReportService.MAIN_VIEW_NAME);
             }
@@ -67,9 +84,9 @@ public class MultiReportParametersFrame extends AbstractFrame {
         }
     }
 
-    protected int getRowCountForParameters() {
+    protected int getRowCountForParameters(List<Report> allReports) {
         int rowsCount = 0;
-        for (Report report: reports) {
+        for (Report report: allReports) {
             if (!report.getIsTmp()) {
                 report = dataSupplier.reload(report, ReportService.MAIN_VIEW_NAME);
             }
@@ -143,7 +160,4 @@ public class MultiReportParametersFrame extends AbstractFrame {
         return field;
     }
 
-    public List<Report> getReports() {
-        return reports;
-    }
 }

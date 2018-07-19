@@ -60,13 +60,14 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
         super.init(params);
         List<Report> reports = new ArrayList<>();
 
-        layoutTemplateField.setEnabled(false);
         contentTemplateField.setEnabled(false);
 
         layoutTemplate = outboundEmail.getLayoutTemplate();
         contentTemplate = outboundEmail.getContentTemplate();
 
-        reports.add(layoutTemplate.getReport());
+        if (layoutTemplate != null) {
+            reports.add(layoutTemplate.getReport());
+        }
         if (contentTemplate != null) {
             reports.add(contentTemplate.getReport());
             if (contentTemplate.getAttachments() != null) {
@@ -78,6 +79,11 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
         propertiesScrollBox.add(vBoxLayout);
         parametersFrame = (MultiReportParametersFrame) openFrame(vBoxLayout,
                 "multiReportParametersFrame", ParamsMap.of(MultiReportParametersFrame.REPORT_PARAMETER, reports));
+
+        layoutTemplateField.addValueChangeListener(e -> {
+            parametersFrame.setLayoutReport(((LayoutEmailTemplate) e.getValue()).getReport());
+            parametersFrame.createComponents();
+        });
     }
 
     @Override

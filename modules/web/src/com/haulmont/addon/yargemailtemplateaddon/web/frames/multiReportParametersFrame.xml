@@ -5,14 +5,15 @@
     <dialogMode height="600"
                 width="800"/>
     <layout spacing="true">
-        <grid id="parametersGrid" spacing="true" width="100%">
+        <grid id="parametersGrid"
+              spacing="true"
+              width="100%">
             <columns>
                 <column/>
-                <column flex="1"/>
+                <column flex="1.0"/>
             </columns>
             <rows>
-                <row>
-                </row>
+                <row/>
             </rows>
         </grid>
     </layout>
