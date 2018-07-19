@@ -1,4 +1,4 @@
-package com.haulmont.addon.yargemailtemplateaddon.web.screens;
+package com.haulmont.addon.yargemailtemplateaddon.web.frames;
 
 import com.haulmont.addon.yargemailtemplateaddon.dto.ReportWithParams;
 import com.haulmont.cuba.core.entity.Entity;

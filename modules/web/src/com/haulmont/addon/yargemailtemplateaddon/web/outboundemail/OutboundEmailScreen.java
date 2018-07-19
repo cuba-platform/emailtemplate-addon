@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import javax.inject.Inject;
 import java.util.Map;
 
-public class Outboundemailscreen extends AbstractWindow {
+public class OutboundEmailScreen extends AbstractWindow {
 
     public static final String PARAM_SEND = "send";
 

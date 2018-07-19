@@ -15,5 +15,7 @@
     <screen id="outboundEmailScreen"
             template="com/haulmont/addon/yargemailtemplateaddon/web/outboundemail/outboundEmailScreen.xml"/>
     <screen id="multiReportParametersFrame"
-            template="com/haulmont/addon/yargemailtemplateaddon/web/screens/multiReportParametersFrame.xml"/>
+            template="com/haulmont/addon/yargemailtemplateaddon/web/frames/multiReportParametersFrame.xml"/>
+    <screen id="layoutTemplateChoiceScreen"
+            template="com/haulmont/addon/yargemailtemplateaddon/web/outboundemail/layoutTemplateChoiceScreen.xml"/>
 </screen-config>
