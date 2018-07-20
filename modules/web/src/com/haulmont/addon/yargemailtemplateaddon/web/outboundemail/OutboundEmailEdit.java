@@ -58,30 +58,26 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
     @Override
     public void init(Map<String, Object> params) {
         super.init(params);
-        List<Report> reports = new ArrayList<>();
-
         contentTemplateField.setEnabled(false);
 
         layoutTemplate = outboundEmail.getLayoutTemplate();
         contentTemplate = outboundEmail.getContentTemplate();
 
-        if (layoutTemplate != null) {
-            reports.add(layoutTemplate.getReport());
-        }
+        LayoutEmailTemplate layoutEmailTemplate;
         if (contentTemplate != null) {
-            reports.add(contentTemplate.getReport());
-            if (contentTemplate.getAttachments() != null) {
-                reports.addAll(contentTemplate.getAttachments());
-            }
+            layoutEmailTemplate = contentTemplate;
+        } else {
+            layoutEmailTemplate = layoutTemplate;
         }
 
         VBoxLayout vBoxLayout = componentsFactory.createComponent(VBoxLayout.class);
         propertiesScrollBox.add(vBoxLayout);
         parametersFrame = (MultiReportParametersFrame) openFrame(vBoxLayout,
-                "multiReportParametersFrame", ParamsMap.of(MultiReportParametersFrame.REPORT_PARAMETER, reports));
+                "multiReportParametersFrame", ParamsMap.of(MultiReportParametersFrame.TEMPLATE, layoutEmailTemplate));
 
         layoutTemplateField.addValueChangeListener(e -> {
-            parametersFrame.setLayoutReport(((LayoutEmailTemplate) e.getValue()).getReport());
+            LayoutEmailTemplate template = (LayoutEmailTemplate) e.getValue();
+            parametersFrame.setLayoutReport(template);
             parametersFrame.createComponents();
         });
     }

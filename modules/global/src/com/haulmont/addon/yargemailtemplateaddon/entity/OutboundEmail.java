@@ -23,8 +23,7 @@ public class OutboundEmail extends BaseUuidEntity {
 
 
     @Lookup(type = LookupType.DROPDOWN)
-    @NotNull
-    @MetaProperty(mandatory = true)
+    @MetaProperty
     protected LayoutEmailTemplate layoutTemplate;
 
     @MetaProperty

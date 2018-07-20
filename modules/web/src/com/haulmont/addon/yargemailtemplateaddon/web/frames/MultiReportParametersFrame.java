@@ -1,6 +1,8 @@
 package com.haulmont.addon.yargemailtemplateaddon.web.frames;
 
 import com.haulmont.addon.yargemailtemplateaddon.dto.ReportWithParams;
+import com.haulmont.addon.yargemailtemplateaddon.entity.ContentEmailTemplate;
+import com.haulmont.addon.yargemailtemplateaddon.entity.LayoutEmailTemplate;
 import com.haulmont.cuba.core.entity.Entity;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
@@ -19,7 +21,7 @@ import javax.inject.Inject;
 import java.util.*;
 
 public class MultiReportParametersFrame extends AbstractFrame {
-    public static final String REPORT_PARAMETER = "reports";
+    public static final String TEMPLATE = "template";
 
     @Inject
     protected GridLayout parametersGrid;
@@ -28,9 +30,11 @@ public class MultiReportParametersFrame extends AbstractFrame {
     @Inject
     protected DataSupplier dataSupplier;
 
-    protected List<Report> reports;
 
-    protected Report layoutReport;
+    protected LayoutEmailTemplate layoutTemplate;
+    protected ContentEmailTemplate contentTemplate;
+
+    protected List<Report> reports = new ArrayList<>();
 
     protected List<Tuple2<Report, Map<String, Field>>> parameterComponents = new ArrayList<>();
 
@@ -41,7 +45,23 @@ public class MultiReportParametersFrame extends AbstractFrame {
     @Override
     public void init(Map<String, Object> params) {
         super.init(params);
-        reports = (List<Report>) params.get(REPORT_PARAMETER);
+        LayoutEmailTemplate template = (LayoutEmailTemplate) params.get(TEMPLATE);
+
+        if (template instanceof ContentEmailTemplate) {
+            contentTemplate = (ContentEmailTemplate) template;
+        } else {
+            layoutTemplate = template;
+        }
+
+        if (layoutTemplate != null) {
+            reports.add(layoutTemplate.getReport());
+        }
+        if (contentTemplate != null) {
+            reports.add(contentTemplate.getReport());
+            if (contentTemplate.getAttachments() != null) {
+                reports.addAll(contentTemplate.getAttachments());
+            }
+        }
 
         if (CollectionUtils.isEmpty(reports)) {
             return;
@@ -49,22 +69,25 @@ public class MultiReportParametersFrame extends AbstractFrame {
         createComponents();
     }
 
-    public void setLayoutReport(Report report) {
-        layoutReport = report;
+    public void setLayoutReport(LayoutEmailTemplate layoutTemplate) {
+        if (this.layoutTemplate != null) {
+            reports.remove(this.layoutTemplate.getReport());
+        }
+        this.layoutTemplate = layoutTemplate;
+        if (layoutTemplate == null) {
+            return;
+        }
+        reports.add(layoutTemplate.getReport());
     }
 
     public void createComponents() {
         parameterComponents.clear();
         parametersGrid.removeAll();
 
-        List<Report> allReports = new ArrayList<>(reports);
-        if (layoutReport != null) {
-            allReports.add(layoutReport);
-        }
-        parametersGrid.setRows(getRowCountForParameters(allReports));
+        parametersGrid.setRows(getRowCountForParameters(reports));
 
         int currentGridRow = 0;
-        for (Report report: allReports) {
+        for (Report report: reports) {
             if (!report.getIsTmp()) {
                 report = dataSupplier.reload(report, ReportService.MAIN_VIEW_NAME);
             }
@@ -100,7 +123,7 @@ public class MultiReportParametersFrame extends AbstractFrame {
                 }
             }
         }
-        return rowsCount;
+        return rowsCount == 0 ? 1 : rowsCount;
     }
 
     public List<ReportWithParams> collectParameters() {
