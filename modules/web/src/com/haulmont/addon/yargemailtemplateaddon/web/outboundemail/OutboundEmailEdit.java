@@ -4,6 +4,7 @@ import com.haulmont.addon.yargemailtemplateaddon.dto.ReportWithParams;
 import com.haulmont.addon.yargemailtemplateaddon.entity.ContentEmailTemplate;
 import com.haulmont.addon.yargemailtemplateaddon.entity.LayoutEmailTemplate;
 import com.haulmont.addon.yargemailtemplateaddon.entity.OutboundEmail;
+import com.haulmont.addon.yargemailtemplateaddon.exceptions.TemplatesIsNotFoundException;
 import com.haulmont.addon.yargemailtemplateaddon.service.OutboundTemplateService;
 import com.haulmont.addon.yargemailtemplateaddon.web.frames.MultiReportParametersFrame;
 import com.haulmont.bali.util.ParamsMap;
@@ -15,14 +16,13 @@ import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.impl.AbstractDatasource;
 import com.haulmont.cuba.gui.xml.layout.ComponentsFactory;
-import com.haulmont.reports.entity.Report;
 import com.haulmont.reports.exception.ReportParametersValidationException;
 import com.haulmont.reports.gui.ReportParameterValidator;
 import org.apache.commons.lang.BooleanUtils;
+import org.slf4j.Logger;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -50,6 +50,8 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
     protected OutboundTemplateService outboundTemplateService;
     @Inject
     protected ComponentsFactory componentsFactory;
+    @Inject
+    private Logger log;
 
     protected LayoutEmailTemplate layoutTemplate;
     protected ContentEmailTemplate contentTemplate;
@@ -129,11 +131,16 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
             return;
         }
         List<ReportWithParams> reportsWithParams = parametersFrame.collectParameters();
-        EmailInfo emailInfo = outboundTemplateService.generateEmail(layoutTemplate, contentTemplate, reportsWithParams);
-        emailInfo.setAddresses(addresssesField.getRawValue());
-        emailInfo.setFrom(fromField.getRawValue());
+        EmailInfo emailInfo = null;
+        try {
+            emailInfo = outboundTemplateService.generateEmail(layoutTemplate, contentTemplate, reportsWithParams);
+            emailInfo.setAddresses(addresssesField.getRawValue());
+            emailInfo.setFrom(fromField.getRawValue());
 
-        openWindow("outboundEmailScreen", WindowManager.OpenType.DIALOG, ParamsMap.of("body", emailInfo));
+            openWindow("outboundEmailScreen", WindowManager.OpenType.DIALOG, ParamsMap.of("body", emailInfo));
+        } catch (TemplatesIsNotFoundException e) {
+            log.warn(e.getMessage());
+        }
     }
 
     public void onSendButtonClick() {
@@ -141,12 +148,17 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
             return;
         }
         List<ReportWithParams> reportsWithParams = parametersFrame.collectParameters();
-        EmailInfo emailInfo = outboundTemplateService.generateEmail(layoutTemplate, contentTemplate, reportsWithParams);
-        emailInfo.setAddresses(addresssesField.getRawValue());
-        emailInfo.setFrom(fromField.getRawValue());
+        EmailInfo emailInfo = null;
+        try {
+            emailInfo = outboundTemplateService.generateEmail(layoutTemplate, contentTemplate, reportsWithParams);
+            emailInfo.setAddresses(addresssesField.getRawValue());
+            emailInfo.setFrom(fromField.getRawValue());
 
-        openWindow("outboundEmailScreen", WindowManager.OpenType.DIALOG, ParamsMap.of(
-                "body", emailInfo,
-                "send", Boolean.TRUE));
+            openWindow("outboundEmailScreen", WindowManager.OpenType.DIALOG, ParamsMap.of(
+                    "body", emailInfo,
+                    "send", Boolean.TRUE));
+        } catch (TemplatesIsNotFoundException e) {
+            log.warn(e.getMessage());
+        }
     }
 }
