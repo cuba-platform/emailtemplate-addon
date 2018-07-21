@@ -90,7 +90,7 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
 
     @Override
     public boolean validateAll() {
-        return super.validateAll() && crossValidateParameters();
+        return super.validateAll() && layoutTemplateFieldValidate() && crossValidateParameters();
     }
 
     protected boolean crossValidateParameters() {
@@ -109,6 +109,15 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
         }
 
         return isValid;
+    }
+
+    protected boolean layoutTemplateFieldValidate() {
+        if (contentTemplateField.getValue() == null && layoutTemplateField.getValue() == null) {
+            NotificationType notificationType = NotificationType.valueOf(clientConfig.getValidationNotificationType());
+            showNotification(messages.getMainMessage("validationFail.caption"), messages.getMessage(
+                    getClass(),"layoutTemplateFieldValidationFail"), notificationType);
+            return false;
+        } else return true;
     }
 
     public void onCancelButtonClick() {
