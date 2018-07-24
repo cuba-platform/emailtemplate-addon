@@ -28,6 +28,10 @@ import java.util.Map;
 
 public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
 
+    public static final String IS_TEST = "isTest";
+
+    @WindowParam(name = IS_TEST, required = true)
+    protected Boolean isTest;
     @WindowParam(name = "ITEM", required = true)
     protected OutboundEmail outboundEmail;
     @Named("fieldGroup.addressses")
@@ -38,6 +42,8 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
     protected LookupPickerField layoutTemplateField;
     @Named("fieldGroup.contentTemplate")
     protected PickerField contentTemplateField;
+    @Inject
+    private Button sendButton;
     @Inject
     protected Datasource<OutboundEmail> outboundEmailDs;
     @Inject
@@ -61,6 +67,12 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
     public void init(Map<String, Object> params) {
         super.init(params);
         contentTemplateField.setEnabled(false);
+
+        if(BooleanUtils.isTrue(isTest)) {
+            addresssesField.setVisible(false);
+            fromField.setVisible(false);
+            sendButton.setVisible(false);
+        }
 
         layoutTemplate = outboundEmail.getLayoutTemplate();
         contentTemplate = outboundEmail.getContentTemplate();

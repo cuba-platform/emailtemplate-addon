@@ -3,6 +3,8 @@ package com.haulmont.addon.yargemailtemplateaddon.web.layoutemailtemplate;
 import com.haulmont.addon.yargemailtemplateaddon.entity.ContentEmailTemplate;
 import com.haulmont.addon.yargemailtemplateaddon.entity.LayoutEmailTemplate;
 import com.haulmont.addon.yargemailtemplateaddon.entity.OutboundEmail;
+import com.haulmont.addon.yargemailtemplateaddon.web.outboundemail.OutboundEmailEdit;
+import com.haulmont.bali.util.ParamsMap;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.WindowManager;
@@ -73,10 +75,14 @@ public class LayoutEmailTemplateBrowse extends AbstractLookup {
     }
 
     protected void onTestTemplateClick() {
-        onSendEmailClick();
+        viewEmailTemplate(true);
     }
 
     protected void onSendEmailClick() {
+        viewEmailTemplate(false);
+    }
+
+    protected void viewEmailTemplate(Boolean isTest) {
         LayoutEmailTemplate template = layoutEmailTemplatesTable.getSingleSelected();
         OutboundEmail outboundEmail = metadata.create(OutboundEmail.class);
         if (template instanceof ContentEmailTemplate) {
@@ -84,6 +90,6 @@ public class LayoutEmailTemplateBrowse extends AbstractLookup {
         } else {
             outboundEmail.setLayoutTemplate(dataManager.reload(template, "emailTemplate-view"));
         }
-        openEditor("yet$OutboundEmail.edit", outboundEmail, WindowManager.OpenType.DIALOG);
+        openEditor("yet$OutboundEmail.edit", outboundEmail, WindowManager.OpenType.DIALOG, ParamsMap.of(OutboundEmailEdit.IS_TEST, isTest));
     }
 }
