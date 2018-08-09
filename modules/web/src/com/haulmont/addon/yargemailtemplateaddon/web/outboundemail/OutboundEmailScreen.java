@@ -5,9 +5,11 @@ import com.haulmont.cuba.core.global.EmailAttachment;
 import com.haulmont.cuba.core.global.EmailException;
 import com.haulmont.cuba.core.global.EmailInfo;
 import com.haulmont.cuba.gui.WindowParam;
-import com.haulmont.cuba.gui.components.AbstractWindow;
-import com.haulmont.cuba.gui.components.Button;
-import com.haulmont.cuba.gui.components.Label;
+import com.haulmont.cuba.gui.components.*;
+import com.haulmont.cuba.gui.components.actions.BaseAction;
+import com.haulmont.cuba.gui.export.ByteArrayDataProvider;
+import com.haulmont.cuba.gui.export.ExportDisplay;
+import com.haulmont.cuba.gui.xml.layout.ComponentsFactory;
 import org.slf4j.Logger;
 
 import javax.inject.Inject;
@@ -20,11 +22,17 @@ public class OutboundEmailScreen extends AbstractWindow {
     @WindowParam(name = "body", required = true)
     protected EmailInfo emailInfo;
     @Inject
-    protected Label messageLabel;
+    private Label bodyLabel;
+    @Inject
+    private ScrollBoxLayout attachmentsBox;
     @Inject
     protected Button sendButton;
     @Inject
     protected EmailService emailService;
+    @Inject
+    private ExportDisplay exportDisplay;
+    @Inject
+    private ComponentsFactory componentsFactory;
     @Inject
     protected Logger log;
 
@@ -32,9 +40,11 @@ public class OutboundEmailScreen extends AbstractWindow {
     public void init(Map<String, Object> params) {
         super.init(params);
 
-        String string = getBodyWithAttachments(emailInfo);
-        messageLabel.setHtmlEnabled(true);
-        messageLabel.setValue(string);
+        String body = emailInfo.getBody();
+        bodyLabel.setHtmlEnabled(true);
+        bodyLabel.setValue(body);
+
+        generateLinkButtonsByAttachments(emailInfo.getAttachments());
 
         if (Boolean.TRUE.equals(params.get(PARAM_SEND))) {
             sendButton.setVisible(true);
@@ -62,16 +72,21 @@ public class OutboundEmailScreen extends AbstractWindow {
         }
     }
 
-    protected String getBodyWithAttachments(EmailInfo emailInfo) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(emailInfo.getBody());
-
-        EmailAttachment[] attachments = emailInfo.getAttachments();
-        if (attachments != null) {
-            for (EmailAttachment attachment: attachments) {
-                builder.append(new String(attachment.getData()));
-            }
+    protected void generateLinkButtonsByAttachments(EmailAttachment[] attachments) {
+        for (EmailAttachment attachment: attachments) {
+            LinkButton linkButton = componentsFactory.createComponent(LinkButton.class);
+            linkButton.setAction(new BaseAction("openLink") {
+                @Override
+                public void actionPerform(Component component) {
+                    exportDisplay.show(new ByteArrayDataProvider(attachment.getData()), attachment.getName());
+                }
+                @Override
+                public String getCaption() {
+                    return attachment.getName();
+                }
+            });
+            attachmentsBox.add(linkButton);
         }
-        return builder.toString();
     }
+
 }

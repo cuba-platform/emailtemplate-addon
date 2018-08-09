@@ -6,7 +6,12 @@
     <dialogMode height="600"
                 width="800"/>
     <layout>
-        <label id="messageLabel"/>
+        <label id="bodyLabel"/>
+        <split height="100px"
+               orientation="vertical"
+               width="200px"/>
+        <scrollBox id="attachmentsBox"
+                   height="100px"/>
         <buttonsPanel>
             <button id="sendButton"
                     caption="Send"
