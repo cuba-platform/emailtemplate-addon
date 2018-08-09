@@ -3,7 +3,7 @@ package com.haulmont.addon.yargemailtemplateaddon.core.emailtemplateapi;
 import com.haulmont.addon.yargemailtemplateaddon.dto.ReportWithParams;
 import com.haulmont.addon.yargemailtemplateaddon.entity.ContentEmailTemplate;
 import com.haulmont.addon.yargemailtemplateaddon.entity.LayoutEmailTemplate;
-import com.haulmont.addon.yargemailtemplateaddon.exceptions.TemplatesIsNotFoundException;
+import com.haulmont.addon.yargemailtemplateaddon.exceptions.TemplatesAreNotFoundException;
 import com.haulmont.cuba.core.global.EmailAttachment;
 import com.haulmont.cuba.core.global.EmailInfo;
 import com.haulmont.cuba.core.global.Messages;
@@ -30,7 +30,7 @@ public class EmailTemplateAPIImpl implements EmailTemplateAPI {
     private Messages messages;
 
     @Override
-    public EmailInfo generateEmail(LayoutEmailTemplate layoutTemplate, ContentEmailTemplate contentTemplate, List<ReportWithParams> params) throws TemplatesIsNotFoundException {
+    public EmailInfo generateEmail(LayoutEmailTemplate layoutTemplate, ContentEmailTemplate contentTemplate, List<ReportWithParams> params) throws TemplatesAreNotFoundException {
         ReportWithParams layoutReportWithParams = null;
         if (layoutTemplate != null) {
             Report layoutReport = layoutTemplate.getReport();
@@ -58,7 +58,7 @@ public class EmailTemplateAPIImpl implements EmailTemplateAPI {
             emailInfo = generateEmailInfoByLayoutTemplate(layoutReportWithParams);
         } else if (contentReportWithParams != null) {
             emailInfo = generateEmailInfoByLayoutTemplate(contentReportWithParams);
-        } else throw new TemplatesIsNotFoundException(messages.getMessage(getClass(), "voidTemplates"));
+        } else throw new TemplatesAreNotFoundException(messages.getMessage(getClass(), "voidTemplates"));
 
         emailInfo.setAttachments(emailAttachments);
 
@@ -66,7 +66,7 @@ public class EmailTemplateAPIImpl implements EmailTemplateAPI {
     }
 
     @Override
-    public EmailInfo generateEmail(LayoutEmailTemplate layoutTemplate, ContentEmailTemplate contentTemplate, Map<String, Object> params) throws TemplatesIsNotFoundException {
+    public EmailInfo generateEmail(LayoutEmailTemplate layoutTemplate, ContentEmailTemplate contentTemplate, Map<String, Object> params) throws TemplatesAreNotFoundException {
         List<ReportWithParams> paramList = new ArrayList<>();
 
         Report layoutReport = layoutTemplate.getReport();
@@ -83,9 +83,9 @@ public class EmailTemplateAPIImpl implements EmailTemplateAPI {
     }
 
     @Override
-    public EmailInfo generateEmail(ContentEmailTemplate contentTemplate, List<ReportWithParams> params) throws TemplatesIsNotFoundException {
+    public EmailInfo generateEmail(ContentEmailTemplate contentTemplate, List<ReportWithParams> params) throws TemplatesAreNotFoundException {
         if (contentTemplate == null) {
-            throw new TemplatesIsNotFoundException(messages.getMessage(getClass(), "voidContentTemplate"));
+            throw new TemplatesAreNotFoundException(messages.getMessage(getClass(), "voidContentTemplate"));
         }
         Report contentReport = contentTemplate.getReport();
         ReportWithParams contentReportWithParams = params.stream().filter(e -> e.getReport().equals(contentReport)).findFirst().orElse(new ReportWithParams(contentReport));
@@ -102,9 +102,9 @@ public class EmailTemplateAPIImpl implements EmailTemplateAPI {
     }
 
     @Override
-    public EmailInfo generateEmail(LayoutEmailTemplate layoutTemplate, String caption, String content) throws TemplatesIsNotFoundException {
+    public EmailInfo generateEmail(LayoutEmailTemplate layoutTemplate, String caption, String content) throws TemplatesAreNotFoundException {
         if (layoutTemplate == null) {
-            throw new TemplatesIsNotFoundException(messages.getMessage(getClass(), "voidLayoutTemplate"));
+            throw new TemplatesAreNotFoundException(messages.getMessage(getClass(), "voidLayoutTemplate"));
         }
         ReportWithParams reportWithParams = new ReportWithParams(layoutTemplate.getReport());
         reportWithParams.put("content", content);

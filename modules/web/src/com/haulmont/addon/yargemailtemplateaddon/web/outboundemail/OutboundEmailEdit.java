@@ -4,7 +4,7 @@ import com.haulmont.addon.yargemailtemplateaddon.dto.ReportWithParams;
 import com.haulmont.addon.yargemailtemplateaddon.entity.ContentEmailTemplate;
 import com.haulmont.addon.yargemailtemplateaddon.entity.LayoutEmailTemplate;
 import com.haulmont.addon.yargemailtemplateaddon.entity.OutboundEmail;
-import com.haulmont.addon.yargemailtemplateaddon.exceptions.TemplatesIsNotFoundException;
+import com.haulmont.addon.yargemailtemplateaddon.exceptions.TemplatesAreNotFoundException;
 import com.haulmont.addon.yargemailtemplateaddon.service.OutboundTemplateService;
 import com.haulmont.addon.yargemailtemplateaddon.web.frames.MultiReportParametersFrame;
 import com.haulmont.bali.util.ParamsMap;
@@ -150,7 +150,7 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
             emailInfo.setFrom(fromField.getRawValue());
 
             openWindow("outboundEmailScreen", WindowManager.OpenType.DIALOG, ParamsMap.of("body", emailInfo));
-        } catch (TemplatesIsNotFoundException e) {
+        } catch (TemplatesAreNotFoundException e) {
             log.warn(e.getMessage());
         }
     }
@@ -169,7 +169,7 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
             openWindow("outboundEmailScreen", WindowManager.OpenType.DIALOG, ParamsMap.of(
                     "body", emailInfo,
                     "send", Boolean.TRUE));
-        } catch (TemplatesIsNotFoundException e) {
+        } catch (TemplatesAreNotFoundException e) {
             log.warn(e.getMessage());
         }
     }
