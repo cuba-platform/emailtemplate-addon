@@ -7,13 +7,13 @@ import com.haulmont.cuba.core.entity.Entity;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.DataSupplier;
+import com.haulmont.cuba.gui.xml.layout.ComponentsFactory;
 import com.haulmont.reports.app.service.ReportService;
 import com.haulmont.reports.entity.Report;
 import com.haulmont.reports.entity.ReportInputParameter;
 import com.haulmont.reports.gui.report.run.ParameterClassResolver;
 import com.haulmont.reports.gui.report.run.ParameterFieldCreator;
 import com.haulmont.reports.gui.report.validators.ReportParamFieldValidator;
-import groovy.lang.Tuple2;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 
@@ -29,14 +29,15 @@ public class MultiReportParametersFrame extends AbstractFrame {
     protected ReportService reportService;
     @Inject
     protected DataSupplier dataSupplier;
-
+    @Inject
+    private ComponentsFactory componentsFactory;
 
     protected LayoutEmailTemplate layoutTemplate;
     protected ContentEmailTemplate contentTemplate;
 
-    protected List<Report> reports = new ArrayList<>();
+    protected Set<Report> reports = new HashSet<>();
 
-    protected List<Tuple2<Report, Map<String, Field>>> parameterComponents = new ArrayList<>();
+    protected Map<Report, Map<String, Field>> parameterComponents = new HashMap<>();
 
     protected ParameterFieldCreator parameterFieldCreator = new ParameterFieldCreator(this);
 
@@ -84,7 +85,7 @@ public class MultiReportParametersFrame extends AbstractFrame {
         parameterComponents.clear();
         parametersGrid.removeAll();
 
-        parametersGrid.setRows(getRowCountForParameters(reports));
+        parametersGrid.setRows(getRowCountForParameters());
 
         int currentGridRow = 0;
         for (Report report: reports) {
@@ -94,6 +95,8 @@ public class MultiReportParametersFrame extends AbstractFrame {
 
             if (report != null) {
                 if (CollectionUtils.isNotEmpty(report.getInputParameters())) {
+                    createReportNameLabel(report, currentGridRow);
+                    currentGridRow++;
                     Map<String, Field> componentsMap = new HashMap<>();
                     for (ReportInputParameter parameter : report.getInputParameters()) {
                         if (BooleanUtils.isNotTrue(parameter.getHidden())) {
@@ -101,20 +104,21 @@ public class MultiReportParametersFrame extends AbstractFrame {
                             currentGridRow++;
                         }
                     }
-                    parameterComponents.add(new Tuple2<>(report, componentsMap));
+                    parameterComponents.put(report, componentsMap);
                 }
             }
         }
     }
 
-    protected int getRowCountForParameters(List<Report> allReports) {
+    protected int getRowCountForParameters() {
         int rowsCount = 0;
-        for (Report report: allReports) {
+        for (Report report: reports) {
             if (!report.getIsTmp()) {
                 report = dataSupplier.reload(report, ReportService.MAIN_VIEW_NAME);
             }
             if (report != null) {
                 if (CollectionUtils.isNotEmpty(report.getInputParameters())) {
+                    rowsCount++;
                     for (ReportInputParameter parameter : report.getInputParameters()) {
                         if (BooleanUtils.isNotTrue(parameter.getHidden())) {
                             rowsCount++;
@@ -128,10 +132,10 @@ public class MultiReportParametersFrame extends AbstractFrame {
 
     public List<ReportWithParams> collectParameters() {
         List<ReportWithParams> reportDataList = new ArrayList<>();
-        for (Tuple2<Report, Map<String, Field>> reportWithParams : parameterComponents) {
-            ReportWithParams reportData = new ReportWithParams(reportWithParams.getFirst());
-            for (String paramName: reportWithParams.getSecond().keySet()) {
-                Field parameterField = reportWithParams.getSecond().get(paramName);
+        for (Report report : parameterComponents.keySet()) {
+            ReportWithParams reportData = new ReportWithParams(report);
+            for (String paramName: parameterComponents.get(report).keySet()) {
+                Field parameterField = parameterComponents.get(report).get(paramName);
                 Object value = parameterField.getValue();
                 reportData.put(paramName, value);
             }
@@ -139,6 +143,13 @@ public class MultiReportParametersFrame extends AbstractFrame {
             reportDataList.add(reportData);
         }
         return reportDataList;
+    }
+
+    protected void createReportNameLabel(Report report, int currentGridRow) {
+        Label label = componentsFactory.createComponent(Label.class);
+        label.setWidth(Component.AUTO_SIZE);
+        label.setValue(report.getName());
+        parametersGrid.add(label, 0, currentGridRow);
     }
 
     protected Field createComponent(ReportInputParameter parameter, int currentGridRow) {
