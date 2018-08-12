@@ -44,7 +44,9 @@ public class OutboundEmailScreen extends AbstractWindow {
         bodyLabel.setHtmlEnabled(true);
         bodyLabel.setValue(body);
 
-        generateLinkButtonsByAttachments(emailInfo.getAttachments());
+        if (emailInfo.getAttachments() != null) {
+            generateLinkButtonsByAttachments(emailInfo.getAttachments());
+        }
 
         if (Boolean.TRUE.equals(params.get(PARAM_SEND))) {
             sendButton.setVisible(true);
