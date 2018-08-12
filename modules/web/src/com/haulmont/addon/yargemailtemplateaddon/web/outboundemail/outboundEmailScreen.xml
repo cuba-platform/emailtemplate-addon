@@ -3,8 +3,8 @@
         caption="msg://caption"
         class="com.haulmont.addon.yargemailtemplateaddon.web.outboundemail.OutboundEmailScreen"
         messagesPack="com.haulmont.addon.yargemailtemplateaddon.web.outboundemail">
-    <dialogMode height="600"
-                width="800"/>
+    <dialogMode height="AUTO"
+                width="AUTO"/>
     <layout>
         <label id="bodyLabel"/>
         <split height="100px"
@@ -15,9 +15,11 @@
         <buttonsPanel>
             <button id="sendButton"
                     caption="Send"
+                    icon="SEND"
                     invoke="onSendButtonClick"/>
             <button id="cancelButton"
                     caption="Cancel"
+                    icon="CANCEL"
                     invoke="onCancelButtonClick"/>
         </buttonsPanel>
     </layout>
