@@ -149,7 +149,7 @@ public class MultiReportParametersFrame extends AbstractFrame {
         Label label = componentsFactory.createComponent(Label.class);
         label.setWidth(Component.AUTO_SIZE);
         label.setValue(report.getName());
-        parametersGrid.add(label, 0, currentGridRow);
+        parametersGrid.add(label, 0, currentGridRow, 1, currentGridRow);
     }
 
     protected Field createComponent(ReportInputParameter parameter, int currentGridRow) {
