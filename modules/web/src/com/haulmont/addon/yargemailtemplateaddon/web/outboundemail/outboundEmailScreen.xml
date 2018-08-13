@@ -7,7 +7,8 @@
                 width="AUTO"/>
     <layout>
         <label id="bodyLabel"/>
-        <split height="100px"
+        <split caption="msg://Attachments"
+               height="10px"
                orientation="vertical"
                width="200px"/>
         <scrollBox id="attachmentsBox"
