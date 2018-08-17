@@ -14,3 +14,7 @@ test-run
 modules/core/build/
 modules/global/build/
 modules/web/build/
+.ideaDataSources/
+deploy/
+modules/core/test-home/
+test-home/
