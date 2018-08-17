@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+        caption="msg://editorCaption"
+        class="com.haulmont.addon.emailtemplates.web.outboundemail.OutboundEmailEdit"
+        datasource="outboundEmailDs"
+        focusComponent="fieldGroup"
+        messagesPack="com.haulmont.addon.emailtemplates.web.outboundemail">
+    <dsContext>
+        <datasource id="outboundEmailDs"
+                    class="com.haulmont.addon.emailtemplates.entity.OutboundEmail"/>
+        <collectionDatasource id="layoutTemplatesDs"
+                              class="com.haulmont.addon.emailtemplates.entity.LayoutEmailTemplate"
+                              view="_minimal">
+            <query>
+                <![CDATA[select e from yet$LayoutEmailTemplate e where TYPE(e) = yet$LayoutEmailTemplate]]>
+            </query>
+        </collectionDatasource>
+    </dsContext>
+    <dialogMode height="AUTO"
+                width="AUTO"/>
+    <layout expand="buttonsPanel"
+            spacing="true">
+        <fieldGroup id="fieldGroup"
+                    datasource="outboundEmailDs">
+            <column width="250px">
+                <field property="from"/>
+                <field property="addressses"/>
+                <field caption="msg://Layout template"
+                       optionsDatasource="layoutTemplatesDs"
+                       property="layoutTemplate"/>
+                <field caption="msg://Content template"
+                       property="contentTemplate"/>
+            </column>
+        </fieldGroup>
+        <scrollBox id="propertiesScrollBox"
+                   caption="msg://Parameters:"
+                   spacing="true"/>
+        <buttonsPanel id="buttonsPanel">
+            <button id="sendButton"
+                    caption="Send"
+                    invoke="onSendButtonClick"/>
+            <button id="testButton"
+                    caption="Test"
+                    invoke="onTestButtonClick"/>
+            <button id="cancelButton"
+                    caption="Cancel"
+                    invoke="onCancelButtonClick"/>
+        </buttonsPanel>
+    </layout>
+</window>

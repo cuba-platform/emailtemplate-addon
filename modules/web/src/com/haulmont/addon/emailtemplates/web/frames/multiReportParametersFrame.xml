@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+        class="com.haulmont.addon.emailtemplates.web.frames.MultiReportParametersFrame"
+        messagesPack="com.haulmont.addon.emailtemplates.web.frames">
+    <dialogMode height="600"
+                width="800"/>
+    <layout spacing="true">
+        <grid id="parametersGrid"
+              spacing="true"
+              width="100%">
+            <columns>
+                <column/>
+                <column flex="1.0"/>
+            </columns>
+            <rows>
+                <row/>
+            </rows>
+        </grid>
+    </layout>
+</window>

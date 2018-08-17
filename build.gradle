@@ -38,7 +38,7 @@ apply(plugin: 'cuba')
 
 cuba {
     artifact {
-        group = 'com.haulmont.addon.yargemailtemplateaddon'
+        group = 'com.haulmont.addon.emailtemplates'
         version = '0.1'
         isSnapshot = true
     }
@@ -55,8 +55,8 @@ dependencies {
 
 def hsql = 'org.hsqldb:hsqldb:2.2.9'
 
-def dbNameParam = 'yet'
-def dbTestNameParam = 'yet-test'
+def dbNameParam = 'emailtemplates'
+def dbTestNameParam = 'emailtemplates-test'
 
 configure([globalModule, coreModule, webModule]) {
     apply(plugin: 'java')
@@ -193,7 +193,7 @@ configure(webModule) {
 
     task deployConf(type: Copy) {
         from file('src')
-        include "com/haulmont/addon/yargemailtemplateaddon/**"
+        include "com/haulmont/addon/emailtemplates/**"
         into "$cuba.tomcat.dir/conf/${modulePrefix}"
     }
 

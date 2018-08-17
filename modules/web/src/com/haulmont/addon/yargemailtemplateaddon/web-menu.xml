@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<menu-config xmlns="http://schemas.haulmont.com/cuba/menu.xsd">
-    <menu id="application-yet"
-          insertBefore="administration">
-        <item screen="yet$LayoutEmailTemplate.browse"/>
-        <item screen="yet$TemplateGroup.browse"/>
-    </menu>
-</menu-config>
