@@ -1,8 +1,7 @@
 package com.haulmont.addon.emailtemplates.web.outboundemail;
 
 import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
-import com.haulmont.addon.emailtemplates.entity.ContentEmailTemplate;
-import com.haulmont.addon.emailtemplates.entity.LayoutEmailTemplate;
+import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.OutboundEmail;
 import com.haulmont.addon.emailtemplates.exceptions.TemplatesAreNotFoundException;
 import com.haulmont.addon.emailtemplates.service.OutboundTemplateService;
@@ -34,16 +33,15 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
     protected Boolean isTest;
     @WindowParam(name = "ITEM", required = true)
     protected OutboundEmail outboundEmail;
-    @Named("fieldGroup.addressses")
-    protected TextField addresssesField;
+    @Named("fieldGroup.emailTemplate")
+    private PickerField emailTemplateField;
     @Named("fieldGroup.from")
-    protected TextField fromField;
-    @Named("fieldGroup.layoutTemplate")
-    protected LookupPickerField layoutTemplateField;
-    @Named("fieldGroup.contentTemplate")
-    protected PickerField contentTemplateField;
+    private TextField fromField;
+    @Named("fieldGroup.addresses")
+    private TextField addressesField;
     @Inject
     private Button sendButton;
+
     @Inject
     protected Datasource<OutboundEmail> outboundEmailDs;
     @Inject
@@ -59,41 +57,29 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
     @Inject
     private Logger log;
 
-    protected LayoutEmailTemplate layoutTemplate;
-    protected ContentEmailTemplate contentTemplate;
+    protected EmailTemplate emailTemplate;
     protected MultiReportParametersFrame parametersFrame;
 
     @Override
     public void init(Map<String, Object> params) {
         super.init(params);
-        contentTemplateField.setEnabled(false);
 
-        if(BooleanUtils.isTrue(isTest)) {
-            addresssesField.setVisible(false);
+        if (BooleanUtils.isTrue(isTest)) {
+            addressesField.setVisible(false);
             fromField.setVisible(false);
             sendButton.setVisible(false);
         }
 
-        layoutTemplate = outboundEmail.getLayoutTemplate();
-        contentTemplate = outboundEmail.getContentTemplate();
-
-        LayoutEmailTemplate layoutEmailTemplate;
-        if (contentTemplate != null) {
-            layoutEmailTemplate = contentTemplate;
-        } else {
-            layoutEmailTemplate = layoutTemplate;
-            layoutTemplateField.setEnabled(false);
-            contentTemplateField.setVisible(false);
-        }
+        emailTemplate = outboundEmail.getEmailTemplate();
 
         VBoxLayout vBoxLayout = componentsFactory.createComponent(VBoxLayout.class);
         propertiesScrollBox.add(vBoxLayout);
         parametersFrame = (MultiReportParametersFrame) openFrame(vBoxLayout,
-                "multiReportParametersFrame", ParamsMap.of(MultiReportParametersFrame.TEMPLATE, layoutEmailTemplate));
+                "multiReportParametersFrame", ParamsMap.of(MultiReportParametersFrame.TEMPLATE, emailTemplate));
 
-        layoutTemplateField.addValueChangeListener(e -> {
-            LayoutEmailTemplate template = (LayoutEmailTemplate) e.getValue();
-            parametersFrame.setLayoutReport(template);
+        emailTemplateField.addValueChangeListener(e -> {
+            EmailTemplate template = (EmailTemplate) e.getValue();
+            parametersFrame.setTemplateReport(template);
             parametersFrame.createComponents();
         });
     }
@@ -111,7 +97,7 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
 
     protected boolean crossValidateParameters() {
         boolean isValid = true;
-        for (ReportWithParams reportWithParams: parametersFrame.collectParameters()) {
+        for (ReportWithParams reportWithParams : parametersFrame.collectParameters()) {
             if (BooleanUtils.isTrue(reportWithParams.getReport().getValidationOn())) {
                 try {
                     reportParameterValidator.crossValidateParameters(reportWithParams.getReport(),
@@ -136,13 +122,12 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
             return;
         }
         List<ReportWithParams> reportsWithParams = parametersFrame.collectParameters();
-        EmailInfo emailInfo = null;
         try {
-            emailInfo = outboundTemplateService.generateEmail(layoutTemplate, contentTemplate, reportsWithParams);
-            emailInfo.setAddresses(addresssesField.getRawValue());
+            EmailInfo emailInfo = outboundTemplateService.generateEmail(emailTemplate, reportsWithParams);
+            emailInfo.setAddresses(addressesField.getRawValue());
             emailInfo.setFrom(fromField.getRawValue());
 
-            openWindow("outboundEmailScreen", WindowManager.OpenType.DIALOG, ParamsMap.of("body", emailInfo));
+            openWindow("outboundEmailScreen", WindowManager.OpenType.DIALOG, ParamsMap.of("email", emailInfo));
         } catch (TemplatesAreNotFoundException e) {
             log.warn(e.getMessage());
         }
@@ -153,14 +138,13 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
             return;
         }
         List<ReportWithParams> reportsWithParams = parametersFrame.collectParameters();
-        EmailInfo emailInfo = null;
         try {
-            emailInfo = outboundTemplateService.generateEmail(layoutTemplate, contentTemplate, reportsWithParams);
-            emailInfo.setAddresses(addresssesField.getRawValue());
+            EmailInfo emailInfo = outboundTemplateService.generateEmail(emailTemplate, reportsWithParams);
+            emailInfo.setAddresses(addressesField.getRawValue());
             emailInfo.setFrom(fromField.getRawValue());
 
             openWindow("outboundEmailScreen", WindowManager.OpenType.DIALOG, ParamsMap.of(
-                    "body", emailInfo,
+                    "email", emailInfo,
                     "send", Boolean.TRUE));
         } catch (TemplatesAreNotFoundException e) {
             log.warn(e.getMessage());

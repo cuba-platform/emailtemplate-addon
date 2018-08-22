@@ -9,7 +9,7 @@ import com.haulmont.cuba.core.entity.annotation.LookupType;
 
 import javax.validation.constraints.NotNull;
 
-@NamePattern(" %s %s|from,addressses,layoutTemplate,contentTemplate")
+@NamePattern(" %s %s|from,addresses,emailTemplate,contentTemplate")
 @MetaClass(name = "yet$OutboundEmail")
 public class OutboundEmail extends BaseUuidEntity {
     private static final long serialVersionUID = 6494336757048633734L;
@@ -18,33 +18,30 @@ public class OutboundEmail extends BaseUuidEntity {
     @MetaProperty(mandatory = true)
     protected String from;
 
+
     @NotNull
     @MetaProperty(mandatory = true)
-    protected String addressses;
-
+    protected String addresses;
 
     @Lookup(type = LookupType.DROPDOWN)
     @MetaProperty
-    protected LayoutEmailTemplate layoutTemplate;
+    protected EmailTemplate emailTemplate;
 
-    @MetaProperty
-    protected ContentEmailTemplate contentTemplate;
-
-    public void setContentTemplate(ContentEmailTemplate contentTemplate) {
-        this.contentTemplate = contentTemplate;
+    public void setAddresses(String addresses) {
+        this.addresses = addresses;
     }
 
-    public ContentEmailTemplate getContentTemplate() {
-        return contentTemplate;
+    public String getAddresses() {
+        return addresses;
     }
 
 
-    public void setLayoutTemplate(LayoutEmailTemplate layoutTemplate) {
-        this.layoutTemplate = layoutTemplate;
+    public void setEmailTemplate(EmailTemplate emailTemplate) {
+        this.emailTemplate = emailTemplate;
     }
 
-    public LayoutEmailTemplate getLayoutTemplate() {
-        return layoutTemplate;
+    public EmailTemplate getEmailTemplate() {
+        return emailTemplate;
     }
 
 
@@ -52,18 +49,11 @@ public class OutboundEmail extends BaseUuidEntity {
         this.from = from;
     }
 
-
     public String getFrom() {
         return from;
     }
 
-    public void setAddressses(String addressses) {
-        this.addressses = addressses;
-    }
 
-    public String getAddressses() {
-        return addressses;
-    }
 
 
 }

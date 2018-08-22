@@ -8,50 +8,56 @@ import com.haulmont.reports.entity.Report;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
-@NamePattern("%s %s %s %s|name,code,group,report")
-@Table(name = "YET_LAYOUT_EMAIL_TEMPLATE")
-@Entity(name = "yet$LayoutEmailTemplate")
-public class LayoutEmailTemplate extends StandardEntity {
+@NamePattern("%s %s %s %s|name,code,group,emailBody")
+@Table(name = "EMAILTEMPLATES_EMAIL_TEMPLATE")
+@Entity(name = "emailtemplates$EmailTemplate")
+public class EmailTemplate extends StandardEntity {
     private static final long serialVersionUID = -6290882811419921297L;
     @NotNull
     @Column(name = "NAME", nullable = false)
     protected String name;
 
-    @NotNull
-    @Column(name = "TYPE_", nullable = false)
-    protected String type;
 
     @Lookup(type = LookupType.DROPDOWN)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "GROUP_ID")
     protected TemplateGroup group;
 
+
+    @Lookup(type = LookupType.DROPDOWN)
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @Lookup(type = LookupType.DROPDOWN)
-    @JoinColumn(name = "REPORT_ID")
-    protected Report report;
+    @JoinColumn(name = "EMAIL_BODY_ID")
+    protected Report emailBody;
+
+    @JoinTable(name = "EMAILTEMPLATES_LAYOUT_EMAIL_TEMPLATE_REPORT_LINK",
+        joinColumns = @JoinColumn(name = "LAYOUT_EMAIL_TEMPLATE_ID"),
+        inverseJoinColumns = @JoinColumn(name = "REPORT_ID"))
+    @ManyToMany
+    protected List<Report> attachments;
 
     @NotNull
     @Column(name = "CODE", nullable = false)
     protected String code;
 
-    public Report getReport() {
-        return report;
+
+    public void setAttachments(List<Report> attachments) {
+        this.attachments = attachments;
     }
 
-    public void setReport(Report report) {
-        this.report = report;
+    public List<Report> getAttachments() {
+        return attachments;
     }
 
 
-    public void setType(TemplateType type) {
-        this.type = type == null ? null : type.getId();
+    public void setEmailBody(Report emailBody) {
+        this.emailBody = emailBody;
     }
 
-    public TemplateType getType() {
-        return type == null ? null : TemplateType.fromId(type);
+    public Report getEmailBody() {
+        return emailBody;
     }
 
 
@@ -71,6 +77,7 @@ public class LayoutEmailTemplate extends StandardEntity {
     public String getName() {
         return name;
     }
+
 
     public void setCode(String code) {
         this.code = code;

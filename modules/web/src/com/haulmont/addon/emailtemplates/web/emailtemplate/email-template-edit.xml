@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
         caption="msg://editorCaption"
-        class="com.haulmont.addon.emailtemplates.web.contentemailtemplate.ContentEmailTemplateEdit"
-        datasource="contentEmailTemplateDs"
+        class="com.haulmont.addon.emailtemplates.web.emailtemplate.EmailTemplateEdit"
+        datasource="emailTemplateDs"
         focusComponent="fieldGroup"
-        messagesPack="com.haulmont.addon.emailtemplates.web.contentemailtemplate">
+        messagesPack="com.haulmont.addon.emailtemplates.web.emailtemplate">
     <dsContext>
-        <datasource id="contentEmailTemplateDs"
-                    class="com.haulmont.addon.emailtemplates.entity.ContentEmailTemplate"
+        <datasource id="emailTemplateDs"
+                    class="com.haulmont.addon.emailtemplates.entity.EmailTemplate"
                     view="emailTemplate-view">
             <collectionDatasource id="attachmentsDs"
                                   property="attachments"/>
@@ -19,7 +19,7 @@
                 <![CDATA[select e from yet$TemplateGroup e]]>
             </query>
         </collectionDatasource>
-        <collectionDatasource id="reportsDs"
+        <collectionDatasource id="emailBodiesDs"
                               class="com.haulmont.reports.entity.Report"
                               view="_minimal">
             <query>
@@ -32,18 +32,18 @@
     <layout expand="windowActions"
             spacing="true">
         <fieldGroup id="fieldGroup"
-                    datasource="contentEmailTemplateDs">
+                    datasource="emailTemplateDs">
             <column width="250px">
                 <field property="name"/>
                 <field optionsDatasource="groupsDs"
                        property="group"/>
-                <field optionsDatasource="reportsDs"
-                       property="report"/>
+                <field optionsDatasource="emailBodiesDs"
+                       property="emailBody"/>
                 <field property="code"/>
             </column>
         </fieldGroup>
         <groupBox id="attachmentsBox"
-                  caption="msg://com.haulmont.addon.emailtemplates.entity/ContentEmailTemplate.attachments">
+                  caption="msg://com.haulmont.addon.emailtemplates.entity/EmailTemplate.attachments">
             <table id="attachmentsTable"
                    height="200px"
                    width="100%">
@@ -52,9 +52,12 @@
                     <action id="remove"/>
                 </actions>
                 <columns>
-                    <column id="locName"/>
                     <column id="name"/>
                     <column id="localeNames"/>
+                    <column id="code"/>
+                    <column id="group"/>
+                    <column id="reportType"/>
+                    <column id="description"/>
                 </columns>
                 <rows datasource="attachmentsDs"/>
                 <buttonsPanel>

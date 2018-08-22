@@ -1,25 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <views xmlns="http://schemas.haulmont.com/cuba/view.xsd">
-    <view class="com.haulmont.addon.emailtemplates.entity.LayoutEmailTemplate"
-          extends="_minimal"
-          name="emailTemplate-view">
-        <property name="report"
-                  view="_minimal">
-            <property name="code"/>
-        </property>
-        <property name="type"/>
-    </view>
-    <view class="com.haulmont.addon.emailtemplates.entity.ContentEmailTemplate"
-          extends="_minimal"
+    <view class="com.haulmont.addon.emailtemplates.entity.EmailTemplate"
+          extends="_base"
           name="emailTemplate-view">
         <property name="attachments"
-                  view="_minimal">
-            <property name="code"/>
+                  view="report.view">
         </property>
-        <property name="report"
-                  view="_minimal">
-            <property name="code"/>
-        </property>
-        <property name="type"/>
     </view>
 </views>

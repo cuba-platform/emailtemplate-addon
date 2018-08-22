@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+        caption="msg://browseCaption"
+        class="com.haulmont.addon.emailtemplates.web.emailtemplate.EmailTemplateBrowse"
+        focusComponent="emailTemplatesTable"
+        lookupComponent="emailTemplatesTable"
+        messagesPack="com.haulmont.addon.emailtemplates.web.emailtemplate">
+    <dsContext>
+        <groupDatasource id="emailTemplatesDs"
+                         class="com.haulmont.addon.emailtemplates.entity.EmailTemplate"
+                         view="_base">
+            <query>
+                <![CDATA[select e from emailtemplates$EmailTemplate e]]>
+            </query>
+        </groupDatasource>
+    </dsContext>
+    <dialogMode height="600"
+                width="800"/>
+    <layout expand="emailTemplatesTable"
+            spacing="true">
+        <filter id="filter"
+                applyTo="emailTemplatesTable"
+                datasource="emailTemplatesDs">
+            <properties include=".*"/>
+        </filter>
+        <groupTable id="emailTemplatesTable"
+                    width="100%">
+            <actions>
+                <action id="create"/>
+                <action id="edit"/>
+                <action id="remove"/>
+                <action id="sendAction"/>
+                <action id="testAction"/>
+            </actions>
+            <columns>
+                <column id="name"
+                        caption="msg://Name"/>
+                <column id="group"
+                        caption="msg://Group"/>
+                <column id="emailBody"
+                        caption="msg://Email body"/>
+                <column id="code"
+                        caption="msg://Code"/>
+            </columns>
+            <rows datasource="emailTemplatesDs"/>
+            <rowsCount/>
+            <buttonsPanel id="buttonsPanel"
+                          alwaysVisible="true">
+                <button id="createBtn"
+                        action="emailTemplatesTable.create"/>
+                <button id="editBtn"
+                        action="emailTemplatesTable.edit"/>
+                <button id="removeBtn"
+                        action="emailTemplatesTable.remove"/>
+                <button id="testButton"
+                        action="emailTemplatesTable.testAction"
+                        caption="msg://Test"/>
+                <button id="sendButton"
+                        action="emailTemplatesTable.sendAction"
+                        caption="msg://Send"/>
+            </buttonsPanel>
+        </groupTable>
+    </layout>
+</window>

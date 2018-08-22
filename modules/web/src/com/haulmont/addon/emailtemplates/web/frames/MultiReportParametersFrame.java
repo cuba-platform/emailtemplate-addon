@@ -1,8 +1,7 @@
 package com.haulmont.addon.emailtemplates.web.frames;
 
 import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
-import com.haulmont.addon.emailtemplates.entity.ContentEmailTemplate;
-import com.haulmont.addon.emailtemplates.entity.LayoutEmailTemplate;
+import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.cuba.core.entity.Entity;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
@@ -32,8 +31,7 @@ public class MultiReportParametersFrame extends AbstractFrame {
     @Inject
     private ComponentsFactory componentsFactory;
 
-    protected LayoutEmailTemplate layoutTemplate;
-    protected ContentEmailTemplate contentTemplate;
+    protected EmailTemplate emailTemplate;
 
     protected Set<Report> reports = new HashSet<>();
 
@@ -46,21 +44,12 @@ public class MultiReportParametersFrame extends AbstractFrame {
     @Override
     public void init(Map<String, Object> params) {
         super.init(params);
-        LayoutEmailTemplate template = (LayoutEmailTemplate) params.get(TEMPLATE);
+        emailTemplate = (EmailTemplate) params.get(TEMPLATE);
 
-        if (template instanceof ContentEmailTemplate) {
-            contentTemplate = (ContentEmailTemplate) template;
-        } else {
-            layoutTemplate = template;
-        }
-
-        if (layoutTemplate != null) {
-            reports.add(layoutTemplate.getReport());
-        }
-        if (contentTemplate != null) {
-            reports.add(contentTemplate.getReport());
-            if (contentTemplate.getAttachments() != null) {
-                reports.addAll(contentTemplate.getAttachments());
+        if (emailTemplate != null) {
+            reports.add(emailTemplate.getEmailBody());
+            if (emailTemplate.getAttachments() != null) {
+                reports.addAll(emailTemplate.getAttachments());
             }
         }
 
@@ -70,15 +59,15 @@ public class MultiReportParametersFrame extends AbstractFrame {
         createComponents();
     }
 
-    public void setLayoutReport(LayoutEmailTemplate layoutTemplate) {
-        if (this.layoutTemplate != null) {
-            reports.remove(this.layoutTemplate.getReport());
+    public void setTemplateReport(EmailTemplate emailTemplate) {
+        if (this.emailTemplate != null) {
+            reports.remove(this.emailTemplate.getEmailBody());
         }
-        this.layoutTemplate = layoutTemplate;
-        if (layoutTemplate == null) {
+        this.emailTemplate = emailTemplate;
+        if (emailTemplate == null) {
             return;
         }
-        reports.add(layoutTemplate.getReport());
+        reports.add(emailTemplate.getEmailBody());
     }
 
     public void createComponents() {

@@ -19,7 +19,7 @@ public class OutboundEmailScreen extends AbstractWindow {
 
     public static final String PARAM_SEND = "send";
 
-    @WindowParam(name = "body", required = true)
+    @WindowParam(name = "email", required = true)
     protected EmailInfo emailInfo;
     @Inject
     private Label bodyLabel;

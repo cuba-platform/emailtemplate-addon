@@ -1,8 +1,7 @@
 package com.haulmont.addon.emailtemplates.core;
 
 import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
-import com.haulmont.addon.emailtemplates.entity.ContentEmailTemplate;
-import com.haulmont.addon.emailtemplates.entity.LayoutEmailTemplate;
+import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.exceptions.TemplatesAreNotFoundException;
 import com.haulmont.cuba.core.global.EmailAttachment;
 import com.haulmont.cuba.core.global.EmailInfo;
@@ -26,101 +25,40 @@ public class EmailTemplateAPIImpl implements EmailTemplateAPI {
 
     @Inject
     protected ReportingApi reportingApi;
-    @Inject
-    private Messages messages;
 
     @Override
-    public EmailInfo generateEmail(LayoutEmailTemplate layoutTemplate, ContentEmailTemplate contentTemplate, List<ReportWithParams> params) throws TemplatesAreNotFoundException {
-        ReportWithParams layoutReportWithParams = null;
-        if (layoutTemplate != null) {
-            Report layoutReport = layoutTemplate.getReport();
-            layoutReportWithParams = params.stream().filter(e -> e.getReport().equals(layoutReport)).findFirst().orElse(new ReportWithParams(layoutReport));
-        }
-
-        ReportWithParams contentReportWithParams = null;
-        String body = null;
-        EmailAttachment[] emailAttachments = null;
-        if (contentTemplate != null) {
-            Report contentReport = contentTemplate.getReport();
-            contentReportWithParams = params.stream().filter(e -> e.getReport().equals(contentReport)).findFirst().orElse(new ReportWithParams(contentReport));
+    public EmailInfo generateEmail(EmailTemplate emailTemplate, List<ReportWithParams> params) throws TemplatesAreNotFoundException {
+        if (emailTemplate != null && emailTemplate.getEmailBody() != null) {
+            Report bodyReport = emailTemplate.getEmailBody();
+            ReportWithParams bodyReportWithParams = params.stream().filter(e -> e.getReport().equals(bodyReport)).findFirst().orElse(new ReportWithParams(bodyReport));
             List<ReportWithParams> attachmentsWithParams = new ArrayList<>();
-            for (Report report : contentTemplate.getAttachments()) {
+            for (Report report : emailTemplate.getAttachments()) {
                 ReportWithParams reportWithParams = params.stream().filter(e -> e.getReport().equals(report)).findFirst().orElse(new ReportWithParams(report));
                 attachmentsWithParams.add(reportWithParams);
             }
-            emailAttachments = createEmailAttachments(attachmentsWithParams);
-            body = getEmailBodyByContent(contentReportWithParams);
-        }
-
-        EmailInfo emailInfo = null;
-        if (layoutReportWithParams != null) {
-            layoutReportWithParams.put("content", body);
-            emailInfo = generateEmailInfoByLayoutTemplate(layoutReportWithParams);
-        } else if (contentReportWithParams != null) {
-            emailInfo = generateEmailInfoByLayoutTemplate(contentReportWithParams);
-        } else throw new TemplatesAreNotFoundException(messages.getMessage(getClass(), "voidTemplates"));
-
-        emailInfo.setAttachments(emailAttachments);
-
-        return emailInfo;
+            EmailInfo emailInfo = generateEmailInfoWithoutAttachments(bodyReportWithParams);
+            EmailAttachment[] emailAttachments = createEmailAttachments(attachmentsWithParams).toArray(new EmailAttachment[attachmentsWithParams.size()]);
+            emailInfo.setAttachments(emailAttachments);
+            return emailInfo;
+        } else throw new TemplatesAreNotFoundException();
     }
 
     @Override
-    public EmailInfo generateEmail(LayoutEmailTemplate layoutTemplate, ContentEmailTemplate contentTemplate, Map<String, Object> params) throws TemplatesAreNotFoundException {
+    public EmailInfo generateEmail(EmailTemplate emailTemplate, Map<String, Object> params) throws TemplatesAreNotFoundException {
         List<ReportWithParams> paramList = new ArrayList<>();
 
-        Report layoutReport = layoutTemplate.getReport();
-        paramList.add(createParamsMapForReport(layoutReport, params));
-
-        if (contentTemplate != null) {
-            Report contentReport = contentTemplate.getReport();
-            paramList.add(createParamsMapForReport(contentReport, params));
-            for (Report report : contentTemplate.getAttachments()) {
+        if (emailTemplate != null && emailTemplate.getEmailBody() != null) {
+            Report bodyReport = emailTemplate.getEmailBody();
+            paramList.add(createParamsMapForReport(bodyReport, params));
+            for (Report report : emailTemplate.getAttachments()) {
                 paramList.add(createParamsMapForReport(report, params));
             }
-        }
-        return generateEmail(layoutTemplate, contentTemplate, paramList);
+        } else throw new TemplatesAreNotFoundException();
+
+        return generateEmail(emailTemplate, paramList);
     }
 
-    @Override
-    public EmailInfo generateEmail(ContentEmailTemplate contentTemplate, List<ReportWithParams> params) throws TemplatesAreNotFoundException {
-        if (contentTemplate == null) {
-            throw new TemplatesAreNotFoundException(messages.getMessage(getClass(), "voidContentTemplate"));
-        }
-        Report contentReport = contentTemplate.getReport();
-        ReportWithParams contentReportWithParams = params.stream().filter(e -> e.getReport().equals(contentReport)).findFirst().orElse(new ReportWithParams(contentReport));
-        List<ReportWithParams> attachmentsWithParams = new ArrayList<>();
-        for (Report report : contentTemplate.getAttachments()) {
-            ReportWithParams reportWithParams = params.stream().filter(e -> e.getReport().equals(report)).findFirst().orElse(new ReportWithParams(report));
-            attachmentsWithParams.add(reportWithParams);
-        }
-        EmailAttachment[] emailAttachments = createEmailAttachments(attachmentsWithParams);
-
-        EmailInfo emailInfo = generateEmailInfoByLayoutTemplate(contentReportWithParams);
-        emailInfo.setAttachments(emailAttachments);
-        return emailInfo;
-    }
-
-    @Override
-    public EmailInfo generateEmail(LayoutEmailTemplate layoutTemplate, String caption, String content) throws TemplatesAreNotFoundException {
-        if (layoutTemplate == null) {
-            throw new TemplatesAreNotFoundException(messages.getMessage(getClass(), "voidLayoutTemplate"));
-        }
-        ReportWithParams reportWithParams = new ReportWithParams(layoutTemplate.getReport());
-        reportWithParams.put("content", content);
-        EmailInfo emailInfo = generateEmailInfoByLayoutTemplate(reportWithParams);
-        emailInfo.setCaption(caption);
-        return emailInfo;
-    }
-
-    protected String getEmailBodyByContent(ReportWithParams reportWithParams) {
-        ReportOutputDocument outputDocument = reportingApi.createReport(
-                reportWithParams.getReport(),
-                reportWithParams.getParams());
-        return new String(outputDocument.getContent());
-    }
-
-    protected EmailInfo generateEmailInfoByLayoutTemplate(ReportWithParams reportWithParams) {
+    protected EmailInfo generateEmailInfoWithoutAttachments(ReportWithParams reportWithParams) {
         ReportOutputDocument outputDocument = reportingApi.createReport(
                 reportWithParams.getReport(),
                 reportWithParams.getParams());
@@ -128,16 +66,15 @@ public class EmailTemplateAPIImpl implements EmailTemplateAPI {
         return new EmailInfo(null, outputDocument.getDocumentName(), body, EmailInfo.HTML_CONTENT_TYPE);
     }
 
-    protected EmailAttachment[] createEmailAttachments(List<ReportWithParams> reportsWithParams) {
-        EmailAttachment[] emailAttachments = null;
-
+    protected List<EmailAttachment> createEmailAttachments(List<ReportWithParams> reportsWithParams) {
+        List<EmailAttachment> attachmentsList = null;
         if (CollectionUtils.isNotEmpty(reportsWithParams)) {
-            List<EmailAttachment> attachmentsList =
+            attachmentsList =
                     reportsWithParams.stream().map(reportsWithParam -> createEmailAttachmentByReportAndParams(
                             reportsWithParam.getReport(), reportsWithParam.getParams())).collect(Collectors.toList());
-            emailAttachments = attachmentsList.toArray(new EmailAttachment[reportsWithParams.size()]);
+
         }
-        return emailAttachments;
+        return attachmentsList;
     }
 
     protected EmailAttachment createEmailAttachmentByReportAndParams(Report report, Map<String, Object> params) {
