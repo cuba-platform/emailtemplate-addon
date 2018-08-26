@@ -2,7 +2,7 @@ package com.haulmont.addon.emailtemplates.core;
 
 import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
-import com.haulmont.addon.emailtemplates.exceptions.TemplatesAreNotFoundException;
+import com.haulmont.addon.emailtemplates.exceptions.TemplateNotFoundException;
 import com.haulmont.cuba.core.global.EmailAttachment;
 import com.haulmont.cuba.core.global.EmailInfo;
 import com.haulmont.cuba.core.global.Messages;
@@ -20,14 +20,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Component(EmailTemplateAPI.NAME)
-public class EmailTemplateAPIImpl implements EmailTemplateAPI {
+@Component(EmailTemplatesAPI.NAME)
+public class EmailTemplates implements EmailTemplatesAPI {
 
     @Inject
     protected ReportingApi reportingApi;
+    @Inject
+    private Messages messages;
 
     @Override
-    public EmailInfo generateEmail(EmailTemplate emailTemplate, List<ReportWithParams> params) throws TemplatesAreNotFoundException {
+    public EmailInfo generateEmail(EmailTemplate emailTemplate, List<ReportWithParams> params) throws TemplateNotFoundException {
         if (emailTemplate != null && emailTemplate.getEmailBody() != null) {
             Report bodyReport = emailTemplate.getEmailBody();
             ReportWithParams bodyReportWithParams = params.stream().filter(e -> e.getReport().equals(bodyReport)).findFirst().orElse(new ReportWithParams(bodyReport));
@@ -40,11 +42,11 @@ public class EmailTemplateAPIImpl implements EmailTemplateAPI {
             EmailAttachment[] emailAttachments = createEmailAttachments(attachmentsWithParams).toArray(new EmailAttachment[attachmentsWithParams.size()]);
             emailInfo.setAttachments(emailAttachments);
             return emailInfo;
-        } else throw new TemplatesAreNotFoundException();
+        } else throw new TemplateNotFoundException(messages.getMessage(getClass(), "voidTemplate"));
     }
 
     @Override
-    public EmailInfo generateEmail(EmailTemplate emailTemplate, Map<String, Object> params) throws TemplatesAreNotFoundException {
+    public EmailInfo generateEmail(EmailTemplate emailTemplate, Map<String, Object> params) throws TemplateNotFoundException {
         List<ReportWithParams> paramList = new ArrayList<>();
 
         if (emailTemplate != null && emailTemplate.getEmailBody() != null) {
@@ -53,7 +55,7 @@ public class EmailTemplateAPIImpl implements EmailTemplateAPI {
             for (Report report : emailTemplate.getAttachments()) {
                 paramList.add(createParamsMapForReport(report, params));
             }
-        } else throw new TemplatesAreNotFoundException();
+        } else throw new TemplateNotFoundException(messages.getMessage(getClass(), "voidTemplate"));
 
         return generateEmail(emailTemplate, paramList);
     }

@@ -1,9 +1,9 @@
 package com.haulmont.addon.emailtemplates.service;
 
-import com.haulmont.addon.emailtemplates.core.EmailTemplateAPI;
+import com.haulmont.addon.emailtemplates.core.EmailTemplatesAPI;
 import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
-import com.haulmont.addon.emailtemplates.exceptions.TemplatesAreNotFoundException;
+import com.haulmont.addon.emailtemplates.exceptions.TemplateNotFoundException;
 import com.haulmont.cuba.core.global.EmailInfo;
 import org.springframework.stereotype.Service;
 
@@ -15,17 +15,17 @@ import java.util.Map;
 public class OutboundTemplateServiceBean implements OutboundTemplateService {
 
     @Inject
-    protected EmailTemplateAPI emailTemplateAPI;
+    protected EmailTemplatesAPI emailTemplatesAPI;
 
 
     @Override
-    public EmailInfo generateEmail(EmailTemplate emailTemplate, Map<String, Object> params) throws TemplatesAreNotFoundException {
-        return emailTemplateAPI.generateEmail(emailTemplate, params);
+    public EmailInfo generateEmail(EmailTemplate emailTemplate, Map<String, Object> params) throws TemplateNotFoundException {
+        return emailTemplatesAPI.generateEmail(emailTemplate, params);
     }
 
     @Override
-    public EmailInfo generateEmail(EmailTemplate emailTemplate, List<ReportWithParams> params) throws TemplatesAreNotFoundException {
-        return emailTemplateAPI.generateEmail(emailTemplate, params);
+    public EmailInfo generateEmail(EmailTemplate emailTemplate, List<ReportWithParams> params) throws TemplateNotFoundException {
+        return emailTemplatesAPI.generateEmail(emailTemplate, params);
     }
 
 }

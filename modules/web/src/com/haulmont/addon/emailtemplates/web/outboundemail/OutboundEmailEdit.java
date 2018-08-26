@@ -2,7 +2,7 @@ package com.haulmont.addon.emailtemplates.web.outboundemail;
 
 import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
 import com.haulmont.addon.emailtemplates.entity.OutboundEmail;
-import com.haulmont.addon.emailtemplates.exceptions.TemplatesAreNotFoundException;
+import com.haulmont.addon.emailtemplates.exceptions.TemplateNotFoundException;
 import com.haulmont.addon.emailtemplates.service.OutboundTemplateService;
 import com.haulmont.addon.emailtemplates.web.frames.TemplateParametersFrame;
 import com.haulmont.bali.util.ParamsMap;
@@ -123,7 +123,7 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
             emailInfo.setFrom(fromField.getRawValue());
 
             openWindow("outboundEmailScreen", WindowManager.OpenType.DIALOG, ParamsMap.of("email", emailInfo));
-        } catch (TemplatesAreNotFoundException e) {
+        } catch (TemplateNotFoundException e) {
             log.warn(e.getMessage());
         }
     }
@@ -141,7 +141,7 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
             openWindow("outboundEmailScreen", WindowManager.OpenType.DIALOG, ParamsMap.of(
                     "email", emailInfo,
                     "send", Boolean.TRUE));
-        } catch (TemplatesAreNotFoundException e) {
+        } catch (TemplateNotFoundException e) {
             log.warn(e.getMessage());
         }
     }
