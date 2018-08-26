@@ -3,6 +3,7 @@ package com.haulmont.addon.emailtemplates.web.frames;
 import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.cuba.core.entity.Entity;
+import com.haulmont.cuba.gui.WindowParam;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.DataSupplier;
@@ -12,16 +13,18 @@ import com.haulmont.reports.entity.Report;
 import com.haulmont.reports.entity.ReportInputParameter;
 import com.haulmont.reports.gui.report.run.ParameterClassResolver;
 import com.haulmont.reports.gui.report.run.ParameterFieldCreator;
-import com.haulmont.reports.gui.report.validators.ReportParamFieldValidator;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 
 import javax.inject.Inject;
 import java.util.*;
 
-public class MultiReportParametersFrame extends AbstractFrame {
+public class TemplateParametersFrame extends AbstractFrame {
     public static final String TEMPLATE = "template";
+    public static final String IS_DEFAULT_PARAM_VALUES = "isDefault";
 
+    @WindowParam(name = IS_DEFAULT_PARAM_VALUES, required = true)
+    protected Boolean isDefaultValues;
     @Inject
     protected GridLayout parametersGrid;
     @Inject
@@ -31,9 +34,8 @@ public class MultiReportParametersFrame extends AbstractFrame {
     @Inject
     private ComponentsFactory componentsFactory;
 
-    protected EmailTemplate emailTemplate;
-
-    protected Set<Report> reports = new HashSet<>();
+    protected Report body;
+    protected List<Report> attachments = new ArrayList<>();
 
     protected Map<Report, Map<String, Field>> parameterComponents = new HashMap<>();
 
@@ -44,40 +46,45 @@ public class MultiReportParametersFrame extends AbstractFrame {
     @Override
     public void init(Map<String, Object> params) {
         super.init(params);
-        emailTemplate = (EmailTemplate) params.get(TEMPLATE);
 
+        EmailTemplate emailTemplate = (EmailTemplate) params.get(TEMPLATE);
         if (emailTemplate != null) {
-            reports.add(emailTemplate.getEmailBody());
-            if (emailTemplate.getAttachments() != null) {
-                reports.addAll(emailTemplate.getAttachments());
+            body = emailTemplate.getEmailBody();
+            if (CollectionUtils.isNotEmpty(emailTemplate.getAttachments())) {
+                attachments.addAll(emailTemplate.getAttachments());
             }
         }
 
-        if (CollectionUtils.isEmpty(reports)) {
+        if (body == null && CollectionUtils.isEmpty(attachments)) {
             return;
         }
         createComponents();
     }
 
-    public void setTemplateReport(EmailTemplate emailTemplate) {
-        if (this.emailTemplate != null) {
-            reports.remove(this.emailTemplate.getEmailBody());
-        }
-        this.emailTemplate = emailTemplate;
-        if (emailTemplate == null) {
-            return;
-        }
-        reports.add(emailTemplate.getEmailBody());
+    public void addAttachmentReports(List<Report> newReports) {
+        attachments.addAll(newReports);
+    }
+
+    public void removeAttachmentReports(List<Report> oldReports) {
+        attachments.removeAll(oldReports);
+    }
+
+    public void updateBodyReport(Report report) {
+        body = report;
     }
 
     public void createComponents() {
         parameterComponents.clear();
         parametersGrid.removeAll();
 
-        parametersGrid.setRows(getRowCountForParameters());
+        List<Report> reports = new ArrayList<>();
+        reports.add(body);
+        reports.addAll(attachments);
+
+        parametersGrid.setRows(getRowCountForParameters(reports));
 
         int currentGridRow = 0;
-        for (Report report: reports) {
+        for (Report report : reports) {
             if (!report.getIsTmp()) {
                 report = dataSupplier.reload(report, ReportService.MAIN_VIEW_NAME);
             }
@@ -99,9 +106,9 @@ public class MultiReportParametersFrame extends AbstractFrame {
         }
     }
 
-    protected int getRowCountForParameters() {
+    protected int getRowCountForParameters(List<Report> reports) {
         int rowsCount = 0;
-        for (Report report: reports) {
+        for (Report report : reports) {
             if (!report.getIsTmp()) {
                 report = dataSupplier.reload(report, ReportService.MAIN_VIEW_NAME);
             }
@@ -123,7 +130,7 @@ public class MultiReportParametersFrame extends AbstractFrame {
         List<ReportWithParams> reportDataList = new ArrayList<>();
         for (Report report : parameterComponents.keySet()) {
             ReportWithParams reportData = new ReportWithParams(report);
-            for (String paramName: parameterComponents.get(report).keySet()) {
+            for (String paramName : parameterComponents.get(report).keySet()) {
                 Field parameterField = parameterComponents.get(report).get(paramName);
                 Object value = parameterField.getValue();
                 reportData.put(paramName, value);
@@ -143,6 +150,9 @@ public class MultiReportParametersFrame extends AbstractFrame {
 
     protected Field createComponent(ReportInputParameter parameter, int currentGridRow) {
         Field field = parameterFieldCreator.createField(parameter);
+        if (BooleanUtils.isTrue(isDefaultValues)) {
+            field.setRequired(false);
+        }
         field.setWidth("400px");
 
         Object value = null;
@@ -164,10 +174,6 @@ public class MultiReportParametersFrame extends AbstractFrame {
                     datasource.includeItem((Entity) selected);
                 }
             }
-        }
-
-        if (BooleanUtils.isTrue(parameter.getValidationOn())) {
-            field.addValidator(new ReportParamFieldValidator(parameter));
         }
 
         Label label = parameterFieldCreator.createLabel(parameter, field);

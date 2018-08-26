@@ -67,7 +67,7 @@ public class EmailTemplateAPIImpl implements EmailTemplateAPI {
     }
 
     protected List<EmailAttachment> createEmailAttachments(List<ReportWithParams> reportsWithParams) {
-        List<EmailAttachment> attachmentsList = null;
+        List<EmailAttachment> attachmentsList = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(reportsWithParams)) {
             attachmentsList =
                     reportsWithParams.stream().map(reportsWithParam -> createEmailAttachmentByReportAndParams(

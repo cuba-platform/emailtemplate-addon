@@ -1,11 +1,10 @@
 package com.haulmont.addon.emailtemplates.web.outboundemail;
 
 import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
-import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.OutboundEmail;
 import com.haulmont.addon.emailtemplates.exceptions.TemplatesAreNotFoundException;
 import com.haulmont.addon.emailtemplates.service.OutboundTemplateService;
-import com.haulmont.addon.emailtemplates.web.frames.MultiReportParametersFrame;
+import com.haulmont.addon.emailtemplates.web.frames.TemplateParametersFrame;
 import com.haulmont.bali.util.ParamsMap;
 import com.haulmont.cuba.client.ClientConfig;
 import com.haulmont.cuba.core.global.EmailInfo;
@@ -31,8 +30,6 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
 
     @WindowParam(name = IS_TEST, required = true)
     protected Boolean isTest;
-    @WindowParam(name = "ITEM", required = true)
-    protected OutboundEmail outboundEmail;
     @Named("fieldGroup.emailTemplate")
     private PickerField emailTemplateField;
     @Named("fieldGroup.from")
@@ -57,12 +54,13 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
     @Inject
     private Logger log;
 
-    protected EmailTemplate emailTemplate;
-    protected MultiReportParametersFrame parametersFrame;
+    protected TemplateParametersFrame parametersFrame;
+    protected VBoxLayout frameContainer;
 
     @Override
     public void init(Map<String, Object> params) {
         super.init(params);
+        emailTemplateField.setEnabled(false);
 
         if (BooleanUtils.isTrue(isTest)) {
             addressesField.setVisible(false);
@@ -70,18 +68,15 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
             sendButton.setVisible(false);
         }
 
-        emailTemplate = outboundEmail.getEmailTemplate();
+        frameContainer = componentsFactory.createComponent(VBoxLayout.class);
+        propertiesScrollBox.add(frameContainer);
+    }
 
-        VBoxLayout vBoxLayout = componentsFactory.createComponent(VBoxLayout.class);
-        propertiesScrollBox.add(vBoxLayout);
-        parametersFrame = (MultiReportParametersFrame) openFrame(vBoxLayout,
-                "multiReportParametersFrame", ParamsMap.of(MultiReportParametersFrame.TEMPLATE, emailTemplate));
-
-        emailTemplateField.addValueChangeListener(e -> {
-            EmailTemplate template = (EmailTemplate) e.getValue();
-            parametersFrame.setTemplateReport(template);
-            parametersFrame.createComponents();
-        });
+    @Override
+    protected void postInit() {
+        super.postInit();
+        parametersFrame = (TemplateParametersFrame) openFrame(frameContainer,"templateParametersFrame",
+                ParamsMap.of(TemplateParametersFrame.TEMPLATE, getItem().getEmailTemplate()));
     }
 
     @Override
@@ -123,7 +118,7 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
         }
         List<ReportWithParams> reportsWithParams = parametersFrame.collectParameters();
         try {
-            EmailInfo emailInfo = outboundTemplateService.generateEmail(emailTemplate, reportsWithParams);
+            EmailInfo emailInfo = outboundTemplateService.generateEmail(getItem().getEmailTemplate(), reportsWithParams);
             emailInfo.setAddresses(addressesField.getRawValue());
             emailInfo.setFrom(fromField.getRawValue());
 
@@ -139,7 +134,7 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
         }
         List<ReportWithParams> reportsWithParams = parametersFrame.collectParameters();
         try {
-            EmailInfo emailInfo = outboundTemplateService.generateEmail(emailTemplate, reportsWithParams);
+            EmailInfo emailInfo = outboundTemplateService.generateEmail(getItem().getEmailTemplate(), reportsWithParams);
             emailInfo.setAddresses(addressesField.getRawValue());
             emailInfo.setFrom(fromField.getRawValue());
 

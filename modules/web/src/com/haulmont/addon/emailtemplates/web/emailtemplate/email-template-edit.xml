@@ -66,6 +66,8 @@
                 </buttonsPanel>
             </table>
         </groupBox>
+        <scrollBox id="propertiesScrollBox"
+                   caption="msg://Default parameters"/>
         <frame id="windowActions"
                screen="editWindowActions"/>
     </layout>

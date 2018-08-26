@@ -8,10 +8,10 @@
             template="com/haulmont/addon/emailtemplates/web/outboundemail/outbound-email-edit.xml"/>
     <screen id="outboundEmailScreen"
             template="com/haulmont/addon/emailtemplates/web/outboundemail/outboundEmailScreen.xml"/>
-    <screen id="multiReportParametersFrame"
-            template="com/haulmont/addon/emailtemplates/web/frames/multiReportParametersFrame.xml"/>
     <screen id="emailtemplates$EmailTemplate.browse"
             template="com/haulmont/addon/emailtemplates/web/emailtemplate/email-template-browse.xml"/>
     <screen id="emailtemplates$EmailTemplate.edit"
             template="com/haulmont/addon/emailtemplates/web/emailtemplate/email-template-edit.xml"/>
+    <screen id="templateParametersFrame"
+            template="com/haulmont/addon/emailtemplates/web/frames/templateParametersFrame.xml"/>
 </screen-config>
