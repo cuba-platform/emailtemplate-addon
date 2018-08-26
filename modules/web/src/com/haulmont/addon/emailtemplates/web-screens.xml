@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <screen-config xmlns="http://schemas.haulmont.com/cuba/screens.xsd">
-    <screen id="yet$TemplateGroup.browse"
+    <screen id="emailtemplates$TemplateGroup.browse"
             template="com/haulmont/addon/emailtemplates/web/templategroup/template-group-browse.xml"/>
-    <screen id="yet$TemplateGroup.edit"
+    <screen id="emailtemplates$TemplateGroup.edit"
             template="com/haulmont/addon/emailtemplates/web/templategroup/template-group-edit.xml"/>
-    <screen id="yet$OutboundEmail.edit"
+    <screen id="emailtemplates$OutboundEmail.edit"
             template="com/haulmont/addon/emailtemplates/web/outboundemail/outbound-email-edit.xml"/>
     <screen id="outboundEmailScreen"
             template="com/haulmont/addon/emailtemplates/web/outboundemail/outboundEmailScreen.xml"/>

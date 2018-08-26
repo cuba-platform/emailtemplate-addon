@@ -74,7 +74,7 @@ public class EmailTemplateEdit extends AbstractEditor<EmailTemplate> {
             Map<String, Object> params = reportWithParams.getParams();
             for (ReportInputParameter inputParameter: report.getInputParameters()) {
                 Object value = params.get(inputParameter.getAlias());
-                String defaultValue = reportService.convertToString(inputParameter.getParameterClass(), value);
+                String defaultValue = reportService.convertToString(inputParameter.getClass(), value);
                 inputParameter.setDefaultValue(defaultValue);
             }
             String xml = reportService.convertToString(report);

@@ -9,8 +9,8 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 @NamePattern("%s|name")
-@Table(name = "YET_TEMPLATE_GROUP")
-@Entity(name = "yet$TemplateGroup")
+@Table(name = "EMAILTEMPLATES_TEMPLATE_GROUP")
+@Entity(name = "emailtemplates$TemplateGroup")
 public class TemplateGroup extends StandardEntity {
     private static final long serialVersionUID = -8663738904983023904L;
 

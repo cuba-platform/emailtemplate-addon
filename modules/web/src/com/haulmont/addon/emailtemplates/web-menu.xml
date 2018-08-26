@@ -2,7 +2,7 @@
 <menu-config xmlns="http://schemas.haulmont.com/cuba/menu.xsd">
     <menu id="application-emailtemplates"
           insertBefore="administration">
-        <item screen="yet$TemplateGroup.browse"/>
+        <item screen="emailtemplates$TemplateGroup.browse"/>
         <item screen="emailtemplates$EmailTemplate.browse"/>
     </menu>
 </menu-config>

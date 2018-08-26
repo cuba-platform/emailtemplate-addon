@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface OutboundTemplateService {
-    String NAME = "yet_OutboundTemplateService";
+    String NAME = "emailtemplates_OutboundTemplateService";
 
 
     EmailInfo generateEmail(EmailTemplate emailTemplate, Map<String, Object> params) throws TemplateNotFoundException;

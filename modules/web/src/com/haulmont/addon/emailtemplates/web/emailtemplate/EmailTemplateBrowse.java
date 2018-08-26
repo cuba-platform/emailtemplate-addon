@@ -51,7 +51,7 @@ public class EmailTemplateBrowse extends AbstractLookup {
         EmailTemplate template = emailTemplatesTable.getSingleSelected();
         OutboundEmail outboundEmail = metadata.create(OutboundEmail.class);
         outboundEmail.setEmailTemplate(dataManager.reload(template, "emailTemplate-view"));
-        openEditor("yet$OutboundEmail.edit", outboundEmail, WindowManager.OpenType.DIALOG, ParamsMap.of(OutboundEmailEdit.IS_TEST, isTest));
+        openEditor("emailtemplates$OutboundEmail.edit", outboundEmail, WindowManager.OpenType.DIALOG, ParamsMap.of(OutboundEmailEdit.IS_TEST, isTest));
     }
 
 }

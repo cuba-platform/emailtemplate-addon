@@ -17,8 +17,8 @@ create table EMAILTEMPLATES_EMAIL_TEMPLATE (
     primary key (ID)
 )^
 -- end EMAILTEMPLATES_EMAIL_TEMPLATE
--- begin YET_TEMPLATE_GROUP
-create table YET_TEMPLATE_GROUP (
+-- begin EMAILTEMPLATES_TEMPLATE_GROUP
+create table EMAILTEMPLATES_TEMPLATE_GROUP (
     ID varchar(36) not null,
     VERSION integer not null,
     CREATE_TS timestamp,
@@ -32,7 +32,7 @@ create table YET_TEMPLATE_GROUP (
     --
     primary key (ID)
 )^
--- end YET_TEMPLATE_GROUP
+-- end EMAILTEMPLATES_TEMPLATE_GROUP
 -- begin EMAILTEMPLATES_LAYOUT_EMAIL_TEMPLATE_REPORT_LINK
 create table EMAILTEMPLATES_LAYOUT_EMAIL_TEMPLATE_REPORT_LINK (
     LAYOUT_EMAIL_TEMPLATE_ID varchar(36) not null,

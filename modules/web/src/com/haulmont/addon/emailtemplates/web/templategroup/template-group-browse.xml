@@ -10,7 +10,7 @@
                          class="com.haulmont.addon.emailtemplates.entity.TemplateGroup"
                          view="_local">
             <query>
-                <![CDATA[select e from yet$TemplateGroup e]]>
+                <![CDATA[select e from emailtemplates$TemplateGroup e]]>
             </query>
         </groupDatasource>
     </dsContext>

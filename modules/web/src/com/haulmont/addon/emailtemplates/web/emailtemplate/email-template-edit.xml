@@ -16,7 +16,7 @@
                               class="com.haulmont.addon.emailtemplates.entity.TemplateGroup"
                               view="_minimal">
             <query>
-                <![CDATA[select e from yet$TemplateGroup e]]>
+                <![CDATA[select e from emailtemplates$TemplateGroup e]]>
             </query>
         </collectionDatasource>
         <collectionDatasource id="emailBodiesDs"

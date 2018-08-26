@@ -10,7 +10,7 @@ import com.haulmont.cuba.core.entity.annotation.LookupType;
 import javax.validation.constraints.NotNull;
 
 @NamePattern(" %s %s|from,addresses,emailTemplate,contentTemplate")
-@MetaClass(name = "yet$OutboundEmail")
+@MetaClass(name = "emailtemplates$OutboundEmail")
 public class OutboundEmail extends BaseUuidEntity {
     private static final long serialVersionUID = 6494336757048633734L;
 

@@ -10,7 +10,7 @@ import java.util.Map;
 
 public interface EmailTemplatesAPI {
 
-    String NAME = "yet_EmailTemplatesAPI";
+    String NAME = "emailtemplates_EmailTemplatesAPI";
 
     EmailInfo generateEmail(EmailTemplate emailTemplate, Map<String, Object> params) throws TemplateNotFoundException;
 

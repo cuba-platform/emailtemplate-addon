@@ -12,7 +12,7 @@
                   ref="cuba_ServerSelector"/>
         <property name="remoteServices">
             <map>
-                <entry key="yet_OutboundTemplateService"
+                <entry key="emailtemplates_OutboundTemplateService"
                        value="com.haulmont.addon.emailtemplates.service.OutboundTemplateService"/>
             </map>
         </property>
