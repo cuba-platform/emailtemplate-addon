@@ -55,10 +55,10 @@ public class EmailTemplates implements EmailTemplatesAPI {
     @Override
     public EmailInfo generateEmail(EmailTemplate emailTemplate, Map<String, Object> params) throws TemplateNotFoundException {
         if (emailTemplate == null) {
-            throw new TemplateNotFoundException(messages.getMessage(getClass(), "nullTemplate"));
+            throw new TemplateNotFoundException(messages.getMessage(EmailTemplates.class, "nullTemplate"));
         }
         if (bodyAndAttachmentsIsEmpty(emailTemplate)) {
-            throw new TemplateNotFoundException(messages.getMessage(getClass(), "voidTemplate"));
+            throw new TemplateNotFoundException(messages.getMessage(EmailTemplates.class, "voidTemplate"));
         }
 
         List<ReportWithParams> paramList = new ArrayList<>();
