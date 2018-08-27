@@ -11,6 +11,7 @@ import com.haulmont.reports.entity.Report;
 import com.haulmont.reports.entity.ReportInputParameter;
 import com.haulmont.yarg.reporting.ReportOutputDocument;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -97,12 +98,14 @@ public class EmailTemplates implements EmailTemplatesAPI {
     }
 
     protected ReportWithParams createParamsMapForReport(Report report, Map<String, Object> params) {
-        Map<String, Object> paramsMap = new HashMap<>();
-        for (ReportInputParameter parameter : report.getInputParameters()) {
-            paramsMap.put(parameter.getAlias(), params.get(parameter.getAlias()));
-        }
         ReportWithParams reportWithParams = new ReportWithParams(report);
-        reportWithParams.setParams(paramsMap);
+        if (MapUtils.isNotEmpty(params)) {
+            Map<String, Object> paramsMap = new HashMap<>();
+            for (ReportInputParameter parameter : report.getInputParameters()) {
+                paramsMap.put(parameter.getAlias(), params.get(parameter.getAlias()));
+            }
+            reportWithParams.setParams(paramsMap);
+        }
         return reportWithParams;
     }
 
