@@ -27,8 +27,7 @@ public class EmailTemplate extends StandardEntity {
 
 
     @Lookup(type = LookupType.DROPDOWN)
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "EMAIL_BODY_ID")
     protected Report emailBody;
 
@@ -41,6 +40,18 @@ public class EmailTemplate extends StandardEntity {
     @NotNull
     @Column(name = "CODE", nullable = false)
     protected String code;
+
+
+    @Column(name = "CAPTION")
+    protected String caption;
+
+    public void setCaption(String caption) {
+        this.caption = caption;
+    }
+
+    public String getCaption() {
+        return caption;
+    }
 
 
     public void setAttachments(List<Report> attachments) {

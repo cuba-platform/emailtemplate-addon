@@ -1,5 +1,6 @@
 package com.haulmont.addon.emailtemplates.web.frames;
 
+import com.haulmont.addon.emailtemplates.dto.ReportWithParamField;
 import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.cuba.core.entity.Entity;
@@ -37,7 +38,7 @@ public class TemplateParametersFrame extends AbstractFrame {
     protected Report body;
     protected List<Report> attachments = new ArrayList<>();
 
-    protected Map<Report, Map<String, Field>> parameterComponents = new HashMap<>();
+    protected List<ReportWithParamField> parameterComponents = new ArrayList<>();
 
     protected ParameterFieldCreator parameterFieldCreator = new ParameterFieldCreator(this);
 
@@ -85,7 +86,7 @@ public class TemplateParametersFrame extends AbstractFrame {
 
         int currentGridRow = 0;
         for (Report report : reports) {
-            if (!report.getIsTmp()) {
+            if (report != null && !report.getIsTmp()) {
                 report = dataSupplier.reload(report, ReportService.MAIN_VIEW_NAME);
             }
 
@@ -100,7 +101,7 @@ public class TemplateParametersFrame extends AbstractFrame {
                             currentGridRow++;
                         }
                     }
-                    parameterComponents.put(report, componentsMap);
+                    parameterComponents.add(new ReportWithParamField(report, componentsMap));
                 }
             }
         }
@@ -109,7 +110,7 @@ public class TemplateParametersFrame extends AbstractFrame {
     protected int getRowCountForParameters(List<Report> reports) {
         int rowsCount = 0;
         for (Report report : reports) {
-            if (!report.getIsTmp()) {
+            if (report != null && !report.getIsTmp()) {
                 report = dataSupplier.reload(report, ReportService.MAIN_VIEW_NAME);
             }
             if (report != null) {
@@ -128,14 +129,13 @@ public class TemplateParametersFrame extends AbstractFrame {
 
     public List<ReportWithParams> collectParameters() {
         List<ReportWithParams> reportDataList = new ArrayList<>();
-        for (Report report : parameterComponents.keySet()) {
-            ReportWithParams reportData = new ReportWithParams(report);
-            for (String paramName : parameterComponents.get(report).keySet()) {
-                Field parameterField = parameterComponents.get(report).get(paramName);
+        for (ReportWithParamField fieldValue : parameterComponents) {
+            ReportWithParams reportData = new ReportWithParams(fieldValue.getReport());
+            for (String paramName : fieldValue.getFields().keySet()) {
+                Field parameterField = fieldValue.getFields().get(paramName);
                 Object value = parameterField.getValue();
                 reportData.put(paramName, value);
             }
-
             reportDataList.add(reportData);
         }
         return reportDataList;

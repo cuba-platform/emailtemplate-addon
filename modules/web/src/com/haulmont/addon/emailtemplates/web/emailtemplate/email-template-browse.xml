@@ -37,10 +37,11 @@
                         caption="msg://Name"/>
                 <column id="group"
                         caption="msg://Group"/>
-                <column id="emailBody"
-                        caption="msg://Email body"/>
                 <column id="code"
                         caption="msg://Code"/>
+                <column id="caption"/>
+                <column id="emailBody"
+                        caption="msg://Email body"/>
             </columns>
             <rows datasource="emailTemplatesDs"/>
             <rowsCount/>

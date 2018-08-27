@@ -37,9 +37,10 @@
                 <field property="name"/>
                 <field optionsDatasource="groupsDs"
                        property="group"/>
+                <field property="code"/>
+                <field property="caption"/>
                 <field optionsDatasource="emailBodiesDs"
                        property="emailBody"/>
-                <field property="code"/>
             </column>
         </fieldGroup>
         <groupBox id="attachmentsBox"
