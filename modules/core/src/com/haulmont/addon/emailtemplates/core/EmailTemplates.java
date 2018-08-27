@@ -112,9 +112,11 @@ public class EmailTemplates implements EmailTemplatesAPI {
     protected boolean bodyAndAttachmentsIsEmpty(EmailTemplate emailTemplate) {
         Report body = emailTemplate.getEmailBody();
         List<Report> attachments = emailTemplate.getAttachments();
-        Report notNullReport = attachments.stream().filter(Objects::nonNull).findFirst()
-                .orElse(null);
-
+        Report notNullReport = null;
+        if (attachments != null) {
+            notNullReport = attachments.stream().filter(Objects::nonNull).findFirst()
+                    .orElse(null);
+        }
         return body == null && notNullReport == null;
     }
 }
