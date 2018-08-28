@@ -38,7 +38,8 @@
                 <field optionsDatasource="groupsDs"
                        property="group"/>
                 <field property="code"/>
-                <field property="caption"/>
+                <field contextHelpText="msg://help"
+                       property="caption"/>
                 <field optionsDatasource="emailBodiesDs"
                        property="emailBody"/>
             </column>
