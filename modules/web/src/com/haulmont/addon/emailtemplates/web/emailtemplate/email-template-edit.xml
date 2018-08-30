@@ -31,19 +31,27 @@
                 width="800"/>
     <layout expand="windowActions"
             spacing="true">
-        <fieldGroup id="fieldGroup"
-                    datasource="emailTemplateDs">
-            <column width="250px">
-                <field property="name"/>
-                <field optionsDatasource="groupsDs"
-                       property="group"/>
-                <field property="code"/>
-                <field contextHelpText="msg://help"
-                       property="caption"/>
-                <field optionsDatasource="emailBodiesDs"
-                       property="emailBody"/>
-            </column>
-        </fieldGroup>
+        <hbox spacing="true">
+            <fieldGroup id="fieldGroup"
+                        datasource="emailTemplateDs">
+                <column width="250px">
+                    <field property="name"/>
+                    <field optionsDatasource="groupsDs"
+                           property="group"/>
+                    <field property="code"/>
+                    <field contextHelpText="msg://help"
+                           property="caption"/>
+                    <field optionsDatasource="emailBodiesDs"
+                           property="emailBody"/>
+                </column>
+            </fieldGroup>
+            <split height="100%"
+                   orientation="horizontal"
+                   width="20px"/>
+            <scrollBox id="propertiesScrollBox"
+                       caption="msg://Default parameters"
+                       height="100%"/>
+        </hbox>
         <groupBox id="attachmentsBox"
                   caption="msg://com.haulmont.addon.emailtemplates.entity/EmailTemplate.attachments">
             <table id="attachmentsTable"
@@ -68,8 +76,6 @@
                 </buttonsPanel>
             </table>
         </groupBox>
-        <scrollBox id="propertiesScrollBox"
-                   caption="msg://Default parameters"/>
         <frame id="windowActions"
                screen="editWindowActions"/>
     </layout>
