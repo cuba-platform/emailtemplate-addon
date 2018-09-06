@@ -2,7 +2,6 @@ package com.haulmont.addon.emailtemplates.web.frames;
 
 import com.haulmont.addon.emailtemplates.dto.ReportWithParamField;
 import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
-import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.cuba.core.entity.Entity;
 import com.haulmont.cuba.gui.WindowParam;
 import com.haulmont.cuba.gui.components.*;
@@ -14,15 +13,18 @@ import com.haulmont.reports.entity.Report;
 import com.haulmont.reports.entity.ReportInputParameter;
 import com.haulmont.reports.gui.report.run.ParameterClassResolver;
 import com.haulmont.reports.gui.report.run.ParameterFieldCreator;
+import com.haulmont.reports.gui.report.validators.ReportParamFieldValidator;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.BooleanUtils;
 
 import javax.inject.Inject;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class TemplateParametersFrame extends AbstractFrame {
-    public static final String TEMPLATE = "template";
     public static final String IS_DEFAULT_PARAM_VALUES = "isDefault";
+    public static final String PARAMETERS = "parameters";
 
     @WindowParam(name = IS_DEFAULT_PARAM_VALUES, required = true)
     protected Boolean isDefaultValues;
@@ -35,8 +37,7 @@ public class TemplateParametersFrame extends AbstractFrame {
     @Inject
     private ComponentsFactory componentsFactory;
 
-    protected Report body;
-    protected List<Report> attachments = new ArrayList<>();
+    protected List<ReportWithParams> parameters;
 
     protected List<ReportWithParamField> parameterComponents = new ArrayList<>();
 
@@ -48,44 +49,32 @@ public class TemplateParametersFrame extends AbstractFrame {
     public void init(Map<String, Object> params) {
         super.init(params);
 
-        EmailTemplate emailTemplate = (EmailTemplate) params.get(TEMPLATE);
-        if (emailTemplate != null) {
-            body = emailTemplate.getEmailBody();
-            if (CollectionUtils.isNotEmpty(emailTemplate.getAttachments())) {
-                attachments.addAll(emailTemplate.getAttachments());
-            }
-        }
-
-        if (body == null && CollectionUtils.isEmpty(attachments)) {
+        setParameters((List<ReportWithParams>) params.get(PARAMETERS));
+        if (CollectionUtils.isEmpty(parameters)) {
             return;
         }
         createComponents();
     }
 
-    public void addAttachmentReports(List<Report> newReports) {
-        attachments.addAll(newReports);
-    }
-
-    public void removeAttachmentReports(List<Report> oldReports) {
-        attachments.removeAll(oldReports);
-    }
-
-    public void updateBodyReport(Report report) {
-        body = report;
+    public void setParameters(List<ReportWithParams> parameters) {
+        if (parameters != null) {
+            this.parameters = parameters;
+        } else {
+            this.parameters = Collections.emptyList();
+        }
     }
 
     public void createComponents() {
         parameterComponents.clear();
         parametersGrid.removeAll();
 
-        List<Report> reports = new ArrayList<>();
-        reports.add(body);
-        reports.addAll(attachments);
+        List<Report> reports = parameters.stream().map(ReportWithParams::getReport).collect(Collectors.toList());
 
         parametersGrid.setRows(getRowCountForParameters(reports));
 
         int currentGridRow = 0;
-        for (Report report : reports) {
+        for (ReportWithParams reportData : parameters) {
+            Report report = reportData.getReport();
             if (report != null && !report.getIsTmp()) {
                 report = dataSupplier.reload(report, ReportService.MAIN_VIEW_NAME);
             }
@@ -97,7 +86,7 @@ public class TemplateParametersFrame extends AbstractFrame {
                     Map<String, Field> componentsMap = new HashMap<>();
                     for (ReportInputParameter parameter : report.getInputParameters()) {
                         if (BooleanUtils.isNotTrue(parameter.getHidden())) {
-                            componentsMap.put(parameter.getAlias(), createComponent(parameter, currentGridRow));
+                            componentsMap.put(parameter.getAlias(), createComponent(parameter, reportData.getParams(), currentGridRow));
                             currentGridRow++;
                         }
                     }
@@ -148,7 +137,7 @@ public class TemplateParametersFrame extends AbstractFrame {
         parametersGrid.add(label, 0, currentGridRow, 1, currentGridRow);
     }
 
-    protected Field createComponent(ReportInputParameter parameter, int currentGridRow) {
+    protected Field createComponent(ReportInputParameter parameter, Map<String, Object> values, int currentGridRow) {
         Field field = parameterFieldCreator.createField(parameter);
         if (BooleanUtils.isTrue(isDefaultValues)) {
             field.setRequired(false);
@@ -156,8 +145,11 @@ public class TemplateParametersFrame extends AbstractFrame {
         field.setWidth("400px");
 
         Object value = null;
+        if (MapUtils.isNotEmpty(values)) {
+            value = values.get(parameter.getAlias());
+        }
 
-        if (parameter.getDefaultValue() != null) {
+        if (value == null && parameter.getDefaultValue() != null) {
             Class parameterClass = parameterClassResolver.resolveClass(parameter);
             if (parameterClass != null) {
                 value = reportService.convertFromString(parameterClass, parameter.getDefaultValue());
@@ -174,6 +166,10 @@ public class TemplateParametersFrame extends AbstractFrame {
                     datasource.includeItem((Entity) selected);
                 }
             }
+        }
+
+        if (BooleanUtils.isTrue(parameter.getValidationOn())) {
+            field.addValidator(new ReportParamFieldValidator(parameter));
         }
 
         Label label = parameterFieldCreator.createLabel(parameter, field);

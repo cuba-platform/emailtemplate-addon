@@ -11,6 +11,11 @@
                     view="emailTemplate-view">
             <collectionDatasource id="attachmentsDs"
                                   property="attachments"/>
+            <collectionDatasource id="parametersDs"
+                                  property="parameters">
+                <collectionDatasource id="parameterValuesDs"
+                                      property="parameterValues"/>
+            </collectionDatasource>
         </datasource>
         <collectionDatasource id="groupsDs"
                               class="com.haulmont.addon.emailtemplates.entity.TemplateGroup"

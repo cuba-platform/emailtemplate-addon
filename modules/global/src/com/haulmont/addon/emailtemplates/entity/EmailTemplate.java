@@ -9,6 +9,9 @@ import com.haulmont.reports.entity.Report;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import com.haulmont.chile.core.annotations.Composition;
+import com.haulmont.cuba.core.entity.annotation.OnDelete;
+import com.haulmont.cuba.core.global.DeletePolicy;
 
 @NamePattern("%s %s %s %s|name,code,group,emailBody")
 @Table(name = "EMAILTEMPLATES_EMAIL_TEMPLATE")
@@ -26,6 +29,19 @@ public class EmailTemplate extends StandardEntity {
     protected TemplateGroup group;
 
 
+    @NotNull
+    @Column(name = "CODE", nullable = false)
+    protected String code;
+
+
+    @Column(name = "CAPTION")
+    protected String caption;
+
+
+
+
+
+
     @Lookup(type = LookupType.DROPDOWN)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "EMAIL_BODY_ID")
@@ -37,13 +53,21 @@ public class EmailTemplate extends StandardEntity {
     @ManyToMany
     protected List<Report> attachments;
 
-    @NotNull
-    @Column(name = "CODE", nullable = false)
-    protected String code;
 
 
-    @Column(name = "CAPTION")
-    protected String caption;
+    @Composition
+    @OnDelete(DeletePolicy.CASCADE)
+    @OneToMany(mappedBy = "emailTemplate")
+    protected List<TemplateParameter> parameters;
+
+    public void setParameters(List<TemplateParameter> parameters) {
+        this.parameters = parameters;
+    }
+
+    public List<TemplateParameter> getParameters() {
+        return parameters;
+    }
+
 
     public void setCaption(String caption) {
         this.caption = caption;

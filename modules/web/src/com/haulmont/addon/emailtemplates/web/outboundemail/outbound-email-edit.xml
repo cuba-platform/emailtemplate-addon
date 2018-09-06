@@ -8,6 +8,13 @@
     <dsContext>
         <datasource id="outboundEmailDs"
                     class="com.haulmont.addon.emailtemplates.entity.OutboundEmail"/>
+        <collectionDatasource id="templateParametersDs"
+                              class="com.haulmont.addon.emailtemplates.entity.TemplateParameter"
+                              view="templateParameter-view">
+            <query>
+                <![CDATA[select e from emailtemplates$TemplateParameter e]]>
+            </query>
+        </collectionDatasource>
     </dsContext>
     <dialogMode height="AUTO"
                 width="AUTO"/>

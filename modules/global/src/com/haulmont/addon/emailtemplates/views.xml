@@ -5,6 +5,43 @@
           name="emailTemplate-view">
         <property name="attachments"
                   view="report.view">
+            <property name="inputParameters"
+                      view="_minimal">
+                <property name="alias"/>
+                <property name="entityMetaClass"/>
+                <property name="parameterClassName"/>
+                <property name="enumerationClass"/>
+            </property>
+            <property name="xml"/>
         </property>
+        <property name="parameters"
+                  view="templateParameter-view">
+        </property>
+        <property name="emailBody"
+                  view="_minimal">
+            <property name="inputParameters"
+                      view="_minimal">
+                <property name="alias"/>
+                <property name="parameterClassName"/>
+                <property name="enumerationClass"/>
+            </property>
+        </property>
+    </view>
+    <view class="com.haulmont.addon.emailtemplates.entity.TemplateParameter"
+          extends="_local"
+          name="templateParameter-view">
+        <property name="report"
+                  view="report.view">
+            <property name="inputParameters"
+                      view="_minimal">
+                <property name="entityMetaClass"/>
+                <property name="parameterClassName"/>
+                <property name="alias"/>
+                <property name="enumerationClass"/>
+            </property>
+            <property name="xml"/>
+        </property>
+        <property name="parameterValues"
+                  view="_minimal"/>
     </view>
 </views>
