@@ -85,6 +85,7 @@ public class EmailTemplateEdit extends AbstractEditor<EmailTemplate> {
                     params.addAll(attachmentParams);
                 }
             }
+            fillDefaultValues(params);
             parametersFrame.setParameters(params);
             parametersFrame.createComponents();
         });
@@ -98,6 +99,7 @@ public class EmailTemplateEdit extends AbstractEditor<EmailTemplate> {
                 List<ReportWithParams> attachmentParams = emailTemplate.getAttachments().stream().map(ReportWithParams::new).collect(Collectors.toList());
                 params.addAll(attachmentParams);
             }
+            fillDefaultValues(params);
             parametersFrame.setParameters(params);
             parametersFrame.createComponents();
         });
