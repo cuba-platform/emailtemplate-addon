@@ -12,7 +12,6 @@
                 <property name="parameterClassName"/>
                 <property name="enumerationClass"/>
             </property>
-            <property name="xml"/>
         </property>
         <property name="parameters"
                   view="templateParameter-view">
