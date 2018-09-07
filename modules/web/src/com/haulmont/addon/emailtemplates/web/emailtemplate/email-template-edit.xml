@@ -60,6 +60,7 @@
         <groupBox id="attachmentsBox"
                   caption="msg://com.haulmont.addon.emailtemplates.entity/EmailTemplate.attachments">
             <table id="attachmentsTable"
+                   multiselect="true"
                    width="100%">
                 <actions>
                     <action id="add"/>
