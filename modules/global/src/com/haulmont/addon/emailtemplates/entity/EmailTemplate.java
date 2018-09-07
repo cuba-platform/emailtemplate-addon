@@ -12,6 +12,7 @@ import java.util.List;
 import com.haulmont.chile.core.annotations.Composition;
 import com.haulmont.cuba.core.entity.annotation.OnDelete;
 import com.haulmont.cuba.core.global.DeletePolicy;
+import com.haulmont.cuba.core.entity.annotation.OnDeleteInverse;
 
 @NamePattern("%s %s %s %s|name,code,group,emailBody")
 @Table(name = "EMAILTEMPLATES_EMAIL_TEMPLATE")
@@ -38,15 +39,13 @@ public class EmailTemplate extends StandardEntity {
     protected String caption;
 
 
-
-
-
-
+    @OnDeleteInverse(DeletePolicy.UNLINK)
     @Lookup(type = LookupType.SCREEN, actions = {"lookup"})
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "EMAIL_BODY_ID")
     protected Report emailBody;
 
+    @OnDeleteInverse(DeletePolicy.UNLINK)
     @JoinTable(name = "EMAILTEMPLATES_LAYOUT_EMAIL_TEMPLATE_REPORT_LINK",
         joinColumns = @JoinColumn(name = "LAYOUT_EMAIL_TEMPLATE_ID"),
         inverseJoinColumns = @JoinColumn(name = "REPORT_ID"))
