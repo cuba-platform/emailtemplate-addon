@@ -42,7 +42,7 @@ public class EmailTemplate extends StandardEntity {
 
 
 
-    @Lookup(type = LookupType.DROPDOWN)
+    @Lookup(type = LookupType.SCREEN, actions = {"lookup"})
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "EMAIL_BODY_ID")
     protected Report emailBody;
