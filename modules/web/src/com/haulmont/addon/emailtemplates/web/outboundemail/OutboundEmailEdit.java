@@ -108,7 +108,7 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
 
         fillDefaultValues(parameters);
 
-        parametersFrame = (TemplateParametersFrame) openFrame(frameContainer,"templateParametersFrame",
+        parametersFrame = (TemplateParametersFrame) openFrame(frameContainer, "templateParametersFrame",
                 ParamsMap.of(TemplateParametersFrame.PARAMETERS, parameters));
     }
 
@@ -145,48 +145,43 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
         close("windowClose ");
     }
 
-    public void onTestButtonClick() {
+    public void onTestButtonClick() throws TemplateNotFoundException {
         if (!validateAll()) {
             return;
         }
         List<ReportWithParams> reportsWithParams = parametersFrame.collectParameters();
-        try {
-            EmailInfo emailInfo = outboundTemplateService.generateEmail(getItem().getEmailTemplate(), reportsWithParams);
-            emailInfo.setAddresses(addressesField.getRawValue());
-            emailInfo.setFrom(fromField.getRawValue());
 
-            openWindow("outboundEmailScreen", WindowManager.OpenType.DIALOG, ParamsMap.of("email", emailInfo));
-        } catch (TemplateNotFoundException e) {
-            log.warn(e.getMessage());
-        }
+        EmailInfo emailInfo = outboundTemplateService.generateEmail(getItem().getEmailTemplate(), reportsWithParams);
+        emailInfo.setAddresses(addressesField.getRawValue());
+        emailInfo.setFrom(fromField.getRawValue());
+
+        openWindow("outboundEmailScreen", WindowManager.OpenType.DIALOG, ParamsMap.of("email", emailInfo));
+
     }
 
-    public void onSendButtonClick() {
+    public void onSendButtonClick() throws TemplateNotFoundException {
         if (!validateAll()) {
             return;
         }
         List<ReportWithParams> reportsWithParams = parametersFrame.collectParameters();
-        try {
-            EmailInfo emailInfo = outboundTemplateService.generateEmail(getItem().getEmailTemplate(), reportsWithParams);
-            emailInfo.setAddresses(addressesField.getRawValue());
-            emailInfo.setFrom(fromField.getRawValue());
 
-            openWindow("outboundEmailScreen", WindowManager.OpenType.DIALOG, ParamsMap.of(
-                    "email", emailInfo,
-                    "send", Boolean.TRUE));
-        } catch (TemplateNotFoundException e) {
-            log.warn(e.getMessage());
-        }
+        EmailInfo emailInfo = outboundTemplateService.generateEmail(getItem().getEmailTemplate(), reportsWithParams);
+        emailInfo.setAddresses(addressesField.getRawValue());
+        emailInfo.setFrom(fromField.getRawValue());
+
+        openWindow("outboundEmailScreen", WindowManager.OpenType.DIALOG, ParamsMap.of(
+                "email", emailInfo,
+                "send", Boolean.TRUE));
     }
 
     protected void fillDefaultValues(List<ReportWithParams> parameters) {
         templateParametersDs.refresh();
         List<TemplateParameter> defaultParams = new ArrayList<>(templateParametersDs.getItems());
-        for (ReportWithParams paramsData: parameters) {
+        for (ReportWithParams paramsData : parameters) {
             TemplateParameter templateParameter = defaultParams.stream().filter(e -> e.getReport().equals(paramsData.getReport())).findFirst().orElse(null);
             defaultParams.remove(templateParameter);
             if (templateParameter != null) {
-                for (ParameterValue paramValue: templateParameter.getParameterValues()) {
+                for (ParameterValue paramValue : templateParameter.getParameterValues()) {
                     String alias = paramValue.getAlias();
                     String stringValue = paramValue.getDefaultValue();
                     Report report = templateParameter.getReport();
