@@ -3,16 +3,14 @@ package com.haulmont.addon.emailtemplates.web.outboundemail;
 import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.OutboundEmail;
-import com.haulmont.addon.emailtemplates.entity.ParameterValue;
 import com.haulmont.addon.emailtemplates.entity.TemplateParameter;
 import com.haulmont.addon.emailtemplates.exceptions.TemplateNotFoundException;
 import com.haulmont.addon.emailtemplates.service.OutboundTemplateService;
+import com.haulmont.addon.emailtemplates.web.editors.ParametersEditor;
 import com.haulmont.addon.emailtemplates.web.frames.TemplateParametersFrame;
 import com.haulmont.bali.util.ParamsMap;
-import com.haulmont.chile.core.model.MetaClass;
 import com.haulmont.cuba.client.ClientConfig;
 import com.haulmont.cuba.core.global.EmailInfo;
-import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.WindowParam;
 import com.haulmont.cuba.gui.components.*;
@@ -20,14 +18,10 @@ import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.impl.AbstractDatasource;
 import com.haulmont.cuba.gui.xml.layout.ComponentsFactory;
-import com.haulmont.reports.app.service.ReportService;
-import com.haulmont.reports.entity.Report;
-import com.haulmont.reports.entity.ReportInputParameter;
 import com.haulmont.reports.exception.ReportParametersValidationException;
 import com.haulmont.reports.gui.ReportParameterValidator;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
-import org.slf4j.Logger;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -37,7 +31,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
+public class OutboundEmailEdit extends ParametersEditor<OutboundEmail> {
 
     public static final String IS_TEST = "isTest";
 
@@ -66,12 +60,7 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
     protected OutboundTemplateService outboundTemplateService;
     @Inject
     protected ComponentsFactory componentsFactory;
-    @Inject
-    private Metadata metadata;
-    @Inject
-    private ReportService reportService;
-    @Inject
-    private Logger log;
+
 
     protected TemplateParametersFrame parametersFrame;
     protected VBoxLayout frameContainer;
@@ -106,7 +95,8 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
             parameters.addAll(attachmentParams);
         }
 
-        fillDefaultValues(parameters);
+        templateParametersDs.refresh();
+        fillParamsByDefaultValues(parameters, templateParametersDs.getItems());
 
         parametersFrame = (TemplateParametersFrame) openFrame(frameContainer, "templateParametersFrame",
                 ParamsMap.of(TemplateParametersFrame.PARAMETERS, parameters));
@@ -173,34 +163,4 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
                 "email", emailInfo,
                 "send", Boolean.TRUE));
     }
-
-    protected void fillDefaultValues(List<ReportWithParams> parameters) {
-        templateParametersDs.refresh();
-        List<TemplateParameter> defaultParams = new ArrayList<>(templateParametersDs.getItems());
-        for (ReportWithParams paramsData : parameters) {
-            TemplateParameter templateParameter = defaultParams.stream().filter(e -> e.getReport().equals(paramsData.getReport())).findFirst().orElse(null);
-            defaultParams.remove(templateParameter);
-            if (templateParameter != null) {
-                for (ParameterValue paramValue : templateParameter.getParameterValues()) {
-                    String alias = paramValue.getAlias();
-                    String stringValue = paramValue.getDefaultValue();
-                    Report report = templateParameter.getReport();
-                    Report reportFromXml = reportService.convertToReport(report.getXml());
-                    ReportInputParameter inputParameter = reportFromXml.getInputParameters().stream()
-                            .filter(e -> e.getAlias().equals(alias))
-                            .findFirst()
-                            .orElse(null);
-                    if (inputParameter != null) {
-                        MetaClass metaClass = metadata.getClass(inputParameter.getEntityMetaClass());
-                        if (metaClass != null) {
-                            Class javaClass = metaClass.getJavaClass();
-                            Object value = reportService.convertFromString(javaClass, stringValue);
-                            paramsData.put(alias, value);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
 }

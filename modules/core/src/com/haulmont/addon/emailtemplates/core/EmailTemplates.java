@@ -2,6 +2,8 @@ package com.haulmont.addon.emailtemplates.core;
 
 import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
+import com.haulmont.addon.emailtemplates.entity.ParameterValue;
+import com.haulmont.addon.emailtemplates.exceptions.ReportParameterTypeChangedException;
 import com.haulmont.addon.emailtemplates.exceptions.TemplateNotFoundException;
 import com.haulmont.cuba.core.global.EmailAttachment;
 import com.haulmont.cuba.core.global.EmailInfo;
@@ -68,6 +70,13 @@ public class EmailTemplates implements EmailTemplatesAPI {
             paramList.add(createParamsMapForReport(report, params));
         }
         return generateEmail(emailTemplate, paramList);
+    }
+
+    @Override
+    public void checkParameterTypeChanged(ReportInputParameter inputParameter, ParameterValue parameterValue) throws ReportParameterTypeChangedException {
+        if (! Objects.equals(inputParameter.getType(), parameterValue.getParameterType())) {
+            throw new ReportParameterTypeChangedException();
+        }
     }
 
     protected EmailInfo generateEmailInfoWithoutAttachments(ReportWithParams reportWithParams) {

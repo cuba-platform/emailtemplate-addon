@@ -4,14 +4,16 @@ import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.ParameterValue;
 import com.haulmont.addon.emailtemplates.entity.TemplateParameter;
+import com.haulmont.addon.emailtemplates.web.editors.ParametersEditor;
 import com.haulmont.addon.emailtemplates.web.frames.TemplateParametersFrame;
 import com.haulmont.bali.util.ParamsMap;
-import com.haulmont.chile.core.model.MetaClass;
 import com.haulmont.cuba.core.global.Metadata;
-import com.haulmont.cuba.gui.components.*;
+import com.haulmont.cuba.gui.components.LookupPickerField;
+import com.haulmont.cuba.gui.components.ScrollBoxLayout;
+import com.haulmont.cuba.gui.components.TextField;
+import com.haulmont.cuba.gui.components.VBoxLayout;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.xml.layout.ComponentsFactory;
-import com.haulmont.reports.app.service.ReportService;
 import com.haulmont.reports.entity.Report;
 import com.haulmont.reports.entity.ReportInputParameter;
 import org.apache.commons.collections4.CollectionUtils;
@@ -21,7 +23,7 @@ import javax.inject.Named;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class EmailTemplateEdit extends AbstractEditor<EmailTemplate> {
+public class EmailTemplateEdit extends ParametersEditor<EmailTemplate> {
 
     @Named("fieldGroup.caption")
     private TextField captionField;
@@ -39,8 +41,6 @@ public class EmailTemplateEdit extends AbstractEditor<EmailTemplate> {
 
     @Inject
     protected ComponentsFactory componentsFactory;
-    @Inject
-    protected ReportService reportService;
     @Inject
     private Metadata metadata;
 
@@ -69,9 +69,9 @@ public class EmailTemplateEdit extends AbstractEditor<EmailTemplate> {
             parameters.addAll(attachmentParams);
         }
 
-        fillDefaultValues(parameters);
+        fillParamsByDefaultValues(parameters, defaultParameters);
 
-        parametersFrame = (TemplateParametersFrame) openFrame(frameContainer,"templateParametersFrame",
+        parametersFrame = (TemplateParametersFrame) openFrame(frameContainer, "templateParametersFrame",
                 ParamsMap.of(TemplateParametersFrame.PARAMETERS, parameters, TemplateParametersFrame.IS_DEFAULT_PARAM_VALUES, true));
 
         emailBodyField.addValueChangeListener(e -> {
@@ -85,7 +85,7 @@ public class EmailTemplateEdit extends AbstractEditor<EmailTemplate> {
                     params.addAll(attachmentParams);
                 }
             }
-            fillDefaultValues(params);
+            fillParamsByDefaultValues(params, defaultParameters);
             parametersFrame.setParameters(params);
             parametersFrame.createComponents();
         });
@@ -99,7 +99,7 @@ public class EmailTemplateEdit extends AbstractEditor<EmailTemplate> {
                 List<ReportWithParams> attachmentParams = emailTemplate.getAttachments().stream().map(ReportWithParams::new).collect(Collectors.toList());
                 params.addAll(attachmentParams);
             }
-            fillDefaultValues(params);
+            fillParamsByDefaultValues(params, defaultParameters);
             parametersFrame.setParameters(params);
             parametersFrame.createComponents();
         });
@@ -107,19 +107,19 @@ public class EmailTemplateEdit extends AbstractEditor<EmailTemplate> {
 
     @Override
     protected boolean preCommit() {
-        for (TemplateParameter templateParameter: new ArrayList<>(defaultParameters)) {
+        for (TemplateParameter templateParameter : new ArrayList<>(defaultParameters)) {
             parametersDs.removeItem(templateParameter);
         }
         List<TemplateParameter> templateParameters = new ArrayList<>();
 
-        for (ReportWithParams reportWithParams: parametersFrame.collectParameters()) {
+        for (ReportWithParams reportWithParams : parametersFrame.collectParameters()) {
             Report report = reportWithParams.getReport();
             TemplateParameter templateParameter = metadata.create(TemplateParameter.class);
             parametersDs.addItem(templateParameter);
             templateParameter.setEmailTemplate(getItem());
             templateParameter.setReport(report);
             Map<String, Object> params = reportWithParams.getParams();
-            for (String alias: params.keySet()) {
+            for (String alias : params.keySet()) {
                 parametersDs.setItem(templateParameter);
                 ReportInputParameter inputParameter = report.getInputParameters().stream()
                         .filter(e -> e.getAlias().equals(alias))
@@ -131,12 +131,9 @@ public class EmailTemplateEdit extends AbstractEditor<EmailTemplate> {
                     parameterValue.setTemplateParameter(templateParameter);
                     parameterValue.setAlias(alias);
                     parameterValue.setParameterType(inputParameter.getType());
-                    MetaClass metaClass = metadata.getClass(inputParameter.getEntityMetaClass());
-                    if (metaClass != null) {
-                        Class javaClass = metaClass.getJavaClass();
-                        String value = reportService.convertToString(javaClass, params.get(alias));
-                        parameterValue.setDefaultValue(value);
-                    }
+                    Class parameterClass = classResolver.resolveClass(inputParameter);
+                    String value = reportService.convertToString(parameterClass, params.get(alias));
+                    parameterValue.setDefaultValue(value);
                 }
             }
             templateParameters.add(templateParameter);
@@ -144,36 +141,4 @@ public class EmailTemplateEdit extends AbstractEditor<EmailTemplate> {
         getItem().setParameters(templateParameters);
         return super.preCommit();
     }
-
-    protected void fillDefaultValues(List<ReportWithParams> parameters) {
-        List<TemplateParameter> defaultParams = new ArrayList<>(defaultParameters);
-
-        for (ReportWithParams paramsData: parameters) {
-            TemplateParameter templateParameter = defaultParams.stream().filter(e -> e.getReport().equals(paramsData.getReport())).findFirst().orElse(null);
-            defaultParams.remove(templateParameter);
-            if (templateParameter != null) {
-                for (ParameterValue paramValue: templateParameter.getParameterValues()) {
-                    String alias = paramValue.getAlias();
-                    String stringValue = paramValue.getDefaultValue();
-
-                    Report report = templateParameter.getReport();
-                    Report reportFromXml = reportService.convertToReport(report.getXml());
-                    ReportInputParameter inputParameter = reportFromXml.getInputParameters().stream()
-                            .filter(e -> e.getAlias().equals(alias))
-                            .findFirst()
-                            .orElse(null);
-                    if (inputParameter != null) {
-                        MetaClass metaClass = metadata.getClass(inputParameter.getEntityMetaClass());
-                        if (metaClass != null) {
-                            Class javaClass = metaClass.getJavaClass();
-                            Object value = reportService.convertFromString(javaClass, stringValue);
-                            paramsData.put(alias, value);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-
 }
