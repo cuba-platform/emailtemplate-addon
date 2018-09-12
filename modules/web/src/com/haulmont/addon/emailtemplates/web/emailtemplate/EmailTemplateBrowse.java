@@ -9,7 +9,6 @@ import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.AbstractLookup;
 import com.haulmont.cuba.gui.components.Action;
-import com.haulmont.cuba.gui.components.Component;
 import com.haulmont.cuba.gui.components.GroupTable;
 import com.haulmont.cuba.gui.components.actions.ItemTrackingAction;
 
@@ -51,7 +50,8 @@ public class EmailTemplateBrowse extends AbstractLookup {
         EmailTemplate template = emailTemplatesTable.getSingleSelected();
         OutboundEmail outboundEmail = metadata.create(OutboundEmail.class);
         outboundEmail.setEmailTemplate(dataManager.reload(template, "emailTemplate-view"));
-        openEditor("emailtemplates$OutboundEmail.edit", outboundEmail, WindowManager.OpenType.DIALOG, ParamsMap.of(OutboundEmailEdit.IS_TEST, isTest));
+        openEditor("emailtemplates$OutboundEmail.edit", outboundEmail,
+                WindowManager.OpenType.DIALOG, ParamsMap.of(OutboundEmailEdit.IS_TEST, isTest));
     }
 
 }

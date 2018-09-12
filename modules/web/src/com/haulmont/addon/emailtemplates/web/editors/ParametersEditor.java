@@ -31,7 +31,10 @@ public class ParametersEditor<T extends Entity> extends AbstractEditor<T> {
         List<TemplateParameter> defaultParams = new ArrayList<>(defaultParameters);
 
         for (ReportWithParams paramsData: parameters) {
-            TemplateParameter templateParameter = defaultParams.stream().filter(e -> e.getReport().equals(paramsData.getReport())).findFirst().orElse(null);
+            TemplateParameter templateParameter = defaultParams.stream()
+                    .filter(e -> e.getReport().equals(paramsData.getReport()))
+                    .findFirst()
+                    .orElse(null);
             defaultParams.remove(templateParameter);
             if (templateParameter != null) {
                 Report report = templateParameter.getReport();

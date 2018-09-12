@@ -39,11 +39,17 @@ public class EmailTemplates implements EmailTemplatesAPI {
         List<ReportWithParams> parameters = new ArrayList<>(params);
 
         Report bodyReport = emailTemplate.getEmailBody();
-        ReportWithParams bodyReportWithParams = parameters.stream().filter(e -> e.getReport().equals(bodyReport)).findFirst().orElse(new ReportWithParams(bodyReport));
+        ReportWithParams bodyReportWithParams = parameters.stream()
+                .filter(e -> e.getReport().equals(bodyReport))
+                .findFirst()
+                .orElse(new ReportWithParams(bodyReport));
         parameters.remove(bodyReportWithParams);
         List<ReportWithParams> attachmentsWithParams = new ArrayList<>();
         for (Report report : emailTemplate.getAttachments()) {
-            ReportWithParams reportWithParams = parameters.stream().filter(e -> e.getReport().equals(report)).findFirst().orElse(new ReportWithParams(report));
+            ReportWithParams reportWithParams = parameters.stream()
+                    .filter(e -> e.getReport().equals(report))
+                    .findFirst()
+                    .orElse(new ReportWithParams(report));
             parameters.remove(bodyReportWithParams);
             attachmentsWithParams.add(reportWithParams);
         }
@@ -73,7 +79,8 @@ public class EmailTemplates implements EmailTemplatesAPI {
     }
 
     @Override
-    public void checkParameterTypeChanged(ReportInputParameter inputParameter, ParameterValue parameterValue) throws ReportParameterTypeChangedException {
+    public void checkParameterTypeChanged(ReportInputParameter inputParameter, ParameterValue parameterValue)
+            throws ReportParameterTypeChangedException {
         if (! Objects.equals(inputParameter.getType(), parameterValue.getParameterType())) {
             throw new ReportParameterTypeChangedException();
         }

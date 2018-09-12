@@ -32,7 +32,8 @@ public class OutboundTemplateServiceBean implements OutboundTemplateService {
     }
 
     @Override
-    public void checkParameterTypeChanged(ReportInputParameter inputParameter, ParameterValue parameterValue) throws ReportParameterTypeChangedException {
+    public void checkParameterTypeChanged(ReportInputParameter inputParameter, ParameterValue parameterValue)
+            throws ReportParameterTypeChangedException {
         emailTemplatesAPI.checkParameterTypeChanged(inputParameter, parameterValue);
     }
 

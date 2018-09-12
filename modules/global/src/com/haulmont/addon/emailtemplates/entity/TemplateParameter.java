@@ -1,21 +1,15 @@
 package com.haulmont.addon.emailtemplates.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Column;
-import javax.validation.constraints.NotNull;
-import com.haulmont.cuba.core.entity.StandardEntity;
-import com.haulmont.chile.core.annotations.NamePattern;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import com.haulmont.reports.entity.ParameterType;
-import com.haulmont.reports.entity.Report;
 import com.haulmont.chile.core.annotations.Composition;
+import com.haulmont.chile.core.annotations.NamePattern;
+import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.cuba.core.entity.annotation.OnDelete;
 import com.haulmont.cuba.core.global.DeletePolicy;
+import com.haulmont.reports.entity.Report;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.List;
-import javax.persistence.OneToMany;
 
 @NamePattern(" |report,parameterValues")
 @Table(name = "EMAILTEMPLATES_TEMPLATE_PARAMETER")

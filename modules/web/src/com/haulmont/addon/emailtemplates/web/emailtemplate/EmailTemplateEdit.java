@@ -81,7 +81,9 @@ public class EmailTemplateEdit extends ParametersEditor<EmailTemplate> {
                 captionField.setValue(report.getName());
                 params.add(new ReportWithParams(report));
                 if (CollectionUtils.isNotEmpty(emailTemplate.getAttachments())) {
-                    List<ReportWithParams> attachmentParams = emailTemplate.getAttachments().stream().map(ReportWithParams::new).collect(Collectors.toList());
+                    List<ReportWithParams> attachmentParams = emailTemplate.getAttachments().stream()
+                            .map(ReportWithParams::new)
+                            .collect(Collectors.toList());
                     params.addAll(attachmentParams);
                 }
             }
@@ -96,7 +98,9 @@ public class EmailTemplateEdit extends ParametersEditor<EmailTemplate> {
                 params.add(new ReportWithParams(emailTemplate.getEmailBody()));
             }
             if (CollectionUtils.isNotEmpty(emailTemplate.getAttachments())) {
-                List<ReportWithParams> attachmentParams = emailTemplate.getAttachments().stream().map(ReportWithParams::new).collect(Collectors.toList());
+                List<ReportWithParams> attachmentParams = emailTemplate.getAttachments().stream()
+                        .map(ReportWithParams::new)
+                        .collect(Collectors.toList());
                 params.addAll(attachmentParams);
             }
             fillParamsByDefaultValues(params, defaultParameters);
