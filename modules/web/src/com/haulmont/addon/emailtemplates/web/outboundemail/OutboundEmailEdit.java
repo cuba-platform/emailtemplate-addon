@@ -91,7 +91,9 @@ public class OutboundEmailEdit extends ParametersEditor<OutboundEmail> {
             parameters.add(new ReportWithParams(emailTemplate.getEmailBody()));
         }
         if (CollectionUtils.isNotEmpty(emailTemplate.getAttachments())) {
-            List<ReportWithParams> attachmentParams = emailTemplate.getAttachments().stream().map(ReportWithParams::new).collect(Collectors.toList());
+            List<ReportWithParams> attachmentParams = emailTemplate.getAttachments().stream()
+                    .map(ReportWithParams::new)
+                    .collect(Collectors.toList());
             parameters.addAll(attachmentParams);
         }
 

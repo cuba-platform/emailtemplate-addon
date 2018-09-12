@@ -65,7 +65,9 @@ public class EmailTemplateEdit extends ParametersEditor<EmailTemplate> {
             parameters.add(new ReportWithParams(emailTemplate.getEmailBody()));
         }
         if (CollectionUtils.isNotEmpty(emailTemplate.getAttachments())) {
-            List<ReportWithParams> attachmentParams = emailTemplate.getAttachments().stream().map(ReportWithParams::new).collect(Collectors.toList());
+            List<ReportWithParams> attachmentParams = emailTemplate.getAttachments().stream()
+                    .map(ReportWithParams::new)
+                    .collect(Collectors.toList());
             parameters.addAll(attachmentParams);
         }
 

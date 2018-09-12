@@ -101,7 +101,9 @@ public class EmailTemplates implements EmailTemplatesAPI {
         List<EmailAttachment> attachmentsList = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(reportsWithParams)) {
             attachmentsList =
-                    reportsWithParams.stream().map(reportsWithParam -> createEmailAttachmentByReportAndParams(
+                    reportsWithParams.stream()
+                            .map(reportsWithParam ->
+                                    createEmailAttachmentByReportAndParams(
                             reportsWithParam.getReport(), reportsWithParam.getParams())).collect(Collectors.toList());
 
         }
@@ -130,7 +132,9 @@ public class EmailTemplates implements EmailTemplatesAPI {
         List<Report> attachments = emailTemplate.getAttachments();
         Report notNullReport = null;
         if (attachments != null) {
-            notNullReport = attachments.stream().filter(Objects::nonNull).findFirst()
+            notNullReport = attachments.stream()
+                    .filter(Objects::nonNull)
+                    .findFirst()
                     .orElse(null);
         }
         return body == null && notNullReport == null;

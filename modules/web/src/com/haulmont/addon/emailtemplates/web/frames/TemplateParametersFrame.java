@@ -68,7 +68,9 @@ public class TemplateParametersFrame extends AbstractFrame {
         parameterComponents.clear();
         parametersGrid.removeAll();
 
-        List<Report> reports = parameters.stream().map(ReportWithParams::getReport).collect(Collectors.toList());
+        List<Report> reports = parameters.stream()
+                .map(ReportWithParams::getReport)
+                .collect(Collectors.toList());
 
         parametersGrid.setRows(getRowCountForParameters(reports));
 
