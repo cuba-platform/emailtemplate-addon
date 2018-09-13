@@ -82,6 +82,7 @@ class EmailTemplatesAPITest extends Specification {
         inputParameter             | parameterValue
         new ReportInputParameter() | new ParameterValue()
         parameter                  | new ParameterValue()
+        parameter                  | value
     }
 
 }
