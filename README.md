@@ -22,19 +22,19 @@ If email template does not contain any reports user will see exception message.
 
 Before sending is displayed preview screen.
 
-##Email templates API
+## Email templates API
 
 Developer can use the next methods from EmailTemplatesAPI:
 1. To create EmailInfo from template that may contain the same reports with different parameter values
-```java
+```
     EmailInfo generateEmail(EmailTemplate emailTemplate, List<ReportWithParams> params)
 ```
 2. To create EmailInfo by parameters map for all included reports
-```java
+```
     EmailInfo generateEmail(EmailTemplate emailTemplate, Map<String, Object> params)
 ```
 3. To check that the report input parameter did not change own parameter type
-```java
+```
     void checkParameterTypeChanged(ReportInputParameter inputParameter, ParameterValue parameterValue)
 ```
 The EmailTemplate class contains caption, body and attachments for email where body is a report 
