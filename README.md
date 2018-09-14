@@ -25,7 +25,7 @@ Before sending is displayed preview screen.
 ##Email templates API
 
 Developer can use the next methods from EmailTemplatesAPI:
-1. To create EmailInfo from template that may contain the same reports different parameter values
+1. To create EmailInfo from template that may contain the same reports with different parameter values
 ```java
     EmailInfo generateEmail(EmailTemplate emailTemplate, List<ReportWithParams> params)
 ```
@@ -33,7 +33,17 @@ Developer can use the next methods from EmailTemplatesAPI:
 ```java
     EmailInfo generateEmail(EmailTemplate emailTemplate, Map<String, Object> params)
 ```
-2. To check that the report input parameter did not change own parameter type
+3. To check that the report input parameter did not change own parameter type
 ```java
     void checkParameterTypeChanged(ReportInputParameter inputParameter, ParameterValue parameterValue)
 ```
+The EmailTemplate class contains caption, body and attachments for email where body is a report 
+and attachments is a collection of reports.
+
+The ReportWithParams class is a wrapper for report a map of parameters for that report.
+
+The ParameterValue class is the storage for string representation of default value of parameter with alias and type.
+
+The ReportInputParameter is a class of reporting component.
+
+The EmailInfo is a one of the classes of cuba email service.
