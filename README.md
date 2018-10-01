@@ -37,6 +37,7 @@ Developer can use the next methods from EmailTemplatesAPI:
 ```
     void checkParameterTypeChanged(ReportInputParameter inputParameter, ParameterValue parameterValue)
 ```
+
 The EmailTemplate class contains caption, body and attachments for email where body is a report 
 and attachments is a collection of reports.
 
