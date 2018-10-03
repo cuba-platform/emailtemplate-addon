@@ -3,16 +3,19 @@
         caption="msg://caption"
         class="com.haulmont.addon.emailtemplates.web.outboundemail.OutboundEmailScreen"
         messagesPack="com.haulmont.addon.emailtemplates.web.outboundemail">
-    <dialogMode height="AUTO"
-                width="AUTO"/>
-    <layout>
-        <label id="bodyLabel"/>
-        <split caption="msg://Attachments"
-               height="10px"
+    <dialogMode height="640"
+                width="800"/>
+    <layout expand="split">
+        <split id="split" pos="70"
                orientation="vertical"
-               width="200px"/>
-        <scrollBox id="attachmentsBox"
-                   height="100px"/>
+               width="100%">
+            <groupBox height="100%" caption="msg://email">
+                <label id="bodyLabel"/>
+            </groupBox>
+            <groupBox height="100%" caption="msg://Attachments">
+                <vbox id="attachmentsBox"/>
+            </groupBox>
+        </split>
         <buttonsPanel>
             <button id="sendButton"
                     caption="Send"

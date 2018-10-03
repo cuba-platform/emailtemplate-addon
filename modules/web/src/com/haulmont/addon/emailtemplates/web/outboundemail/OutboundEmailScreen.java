@@ -24,7 +24,7 @@ public class OutboundEmailScreen extends AbstractWindow {
     @Inject
     private Label bodyLabel;
     @Inject
-    private ScrollBoxLayout attachmentsBox;
+    private Component.OrderedContainer attachmentsBox;
     @Inject
     protected Button sendButton;
     @Inject
