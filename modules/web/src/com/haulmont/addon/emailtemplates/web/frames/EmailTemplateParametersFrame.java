@@ -22,7 +22,7 @@ import javax.inject.Inject;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class TemplateParametersFrame extends AbstractFrame {
+public class EmailTemplateParametersFrame extends AbstractFrame {
     public static final String IS_DEFAULT_PARAM_VALUES = "isDefault";
     public static final String PARAMETERS = "parameters";
 

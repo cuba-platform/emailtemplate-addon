@@ -7,7 +7,7 @@ import com.haulmont.addon.emailtemplates.entity.TemplateParameter;
 import com.haulmont.addon.emailtemplates.exceptions.TemplateNotFoundException;
 import com.haulmont.addon.emailtemplates.service.OutboundTemplateService;
 import com.haulmont.addon.emailtemplates.web.editors.ParametersEditor;
-import com.haulmont.addon.emailtemplates.web.frames.TemplateParametersFrame;
+import com.haulmont.addon.emailtemplates.web.frames.EmailTemplateParametersFrame;
 import com.haulmont.bali.util.ParamsMap;
 import com.haulmont.cuba.client.ClientConfig;
 import com.haulmont.cuba.core.global.EmailInfo;
@@ -62,7 +62,7 @@ public class OutboundEmailEdit extends ParametersEditor<OutboundEmail> {
     protected ComponentsFactory componentsFactory;
 
 
-    protected TemplateParametersFrame parametersFrame;
+    protected EmailTemplateParametersFrame parametersFrame;
     protected VBoxLayout frameContainer;
 
     @Override
@@ -100,8 +100,8 @@ public class OutboundEmailEdit extends ParametersEditor<OutboundEmail> {
         templateParametersDs.refresh();
         fillParamsByDefaultValues(parameters, templateParametersDs.getItems());
 
-        parametersFrame = (TemplateParametersFrame) openFrame(frameContainer, "templateParametersFrame",
-                ParamsMap.of(TemplateParametersFrame.PARAMETERS, parameters));
+        parametersFrame = (EmailTemplateParametersFrame) openFrame(frameContainer, "emailTemplateParametersFrame",
+                ParamsMap.of(EmailTemplateParametersFrame.PARAMETERS, parameters));
     }
 
     @Override
@@ -147,7 +147,7 @@ public class OutboundEmailEdit extends ParametersEditor<OutboundEmail> {
         emailInfo.setAddresses(addressesField.getRawValue());
         emailInfo.setFrom(fromField.getRawValue());
 
-        openWindow("outboundEmailScreen", WindowManager.OpenType.DIALOG, ParamsMap.of("email", emailInfo));
+        openWindow("emailTemplatePreview", WindowManager.OpenType.DIALOG, ParamsMap.of("email", emailInfo));
 
     }
 
@@ -161,7 +161,7 @@ public class OutboundEmailEdit extends ParametersEditor<OutboundEmail> {
         emailInfo.setAddresses(addressesField.getRawValue());
         emailInfo.setFrom(fromField.getRawValue());
 
-        openWindow("outboundEmailScreen", WindowManager.OpenType.DIALOG, ParamsMap.of(
+        openWindow("emailTemplatePreview", WindowManager.OpenType.DIALOG, ParamsMap.of(
                 "email", emailInfo,
                 "send", Boolean.TRUE));
     }

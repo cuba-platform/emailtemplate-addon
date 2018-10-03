@@ -23,16 +23,16 @@
         <fieldGroup id="fieldGroup"
                     datasource="outboundEmailDs">
             <column width="250px">
-                <field caption="msg://From"
+                <field caption="msg://from"
                        property="from"/>
-                <field caption="msg://Addresses"
+                <field caption="msg://addresses"
                        property="addresses"/>
-                <field caption="msg://Email template"
+                <field caption="msg://emailTemplate"
                        property="emailTemplate"/>
             </column>
         </fieldGroup>
         <scrollBox id="propertiesScrollBox"
-                   caption="msg://Parameters:"
+                   caption="msg://parameters:"
                    spacing="true"/>
         <buttonsPanel id="buttonsPanel">
             <button id="sendButton"

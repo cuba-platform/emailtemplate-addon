@@ -6,12 +6,12 @@
             template="com/haulmont/addon/emailtemplates/web/templategroup/template-group-edit.xml"/>
     <screen id="emailtemplates$OutboundEmail.edit"
             template="com/haulmont/addon/emailtemplates/web/outboundemail/outbound-email-edit.xml"/>
-    <screen id="outboundEmailScreen"
-            template="com/haulmont/addon/emailtemplates/web/outboundemail/outboundEmailScreen.xml"/>
     <screen id="emailtemplates$EmailTemplate.browse"
             template="com/haulmont/addon/emailtemplates/web/emailtemplate/email-template-browse.xml"/>
     <screen id="emailtemplates$EmailTemplate.edit"
             template="com/haulmont/addon/emailtemplates/web/emailtemplate/email-template-edit.xml"/>
-    <screen id="templateParametersFrame"
-            template="com/haulmont/addon/emailtemplates/web/frames/templateParametersFrame.xml"/>
+    <screen id="emailTemplatePreview"
+            template="com/haulmont/addon/emailtemplates/web/outboundemail/email-template-preview.xml"/>
+    <screen id="emailTemplateParametersFrame"
+            template="com/haulmont/addon/emailtemplates/web/frames/email-template-parameters-frame.xml"/>
 </screen-config>

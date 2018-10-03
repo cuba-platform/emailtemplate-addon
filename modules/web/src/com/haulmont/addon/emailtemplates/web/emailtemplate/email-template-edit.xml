@@ -54,7 +54,7 @@
                    orientation="horizontal"
                    width="20px"/>
             <scrollBox id="propertiesScrollBox"
-                       caption="msg://Default parameters"
+                       caption="msg://defaultParameters"
                        height="100%"/>
         </hbox>
         <groupBox id="attachmentsBox"

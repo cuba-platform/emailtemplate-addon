@@ -5,7 +5,7 @@ import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.ParameterValue;
 import com.haulmont.addon.emailtemplates.entity.TemplateParameter;
 import com.haulmont.addon.emailtemplates.web.editors.ParametersEditor;
-import com.haulmont.addon.emailtemplates.web.frames.TemplateParametersFrame;
+import com.haulmont.addon.emailtemplates.web.frames.EmailTemplateParametersFrame;
 import com.haulmont.bali.util.ParamsMap;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.components.LookupPickerField;
@@ -45,7 +45,7 @@ public class EmailTemplateEdit extends ParametersEditor<EmailTemplate> {
     private Metadata metadata;
 
 
-    protected TemplateParametersFrame parametersFrame;
+    protected EmailTemplateParametersFrame parametersFrame;
     protected Collection<TemplateParameter> defaultParameters;
     protected VBoxLayout frameContainer;
 
@@ -73,8 +73,8 @@ public class EmailTemplateEdit extends ParametersEditor<EmailTemplate> {
 
         fillParamsByDefaultValues(parameters, defaultParameters);
 
-        parametersFrame = (TemplateParametersFrame) openFrame(frameContainer, "templateParametersFrame",
-                ParamsMap.of(TemplateParametersFrame.PARAMETERS, parameters, TemplateParametersFrame.IS_DEFAULT_PARAM_VALUES, true));
+        parametersFrame = (EmailTemplateParametersFrame) openFrame(frameContainer, "emailTemplateParametersFrame",
+                ParamsMap.of(EmailTemplateParametersFrame.PARAMETERS, parameters, EmailTemplateParametersFrame.IS_DEFAULT_PARAM_VALUES, true));
 
         emailBodyField.addValueChangeListener(e -> {
             Report report = (Report) e.getValue();

@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
         caption="msg://caption"
-        class="com.haulmont.addon.emailtemplates.web.outboundemail.OutboundEmailScreen"
+        class="com.haulmont.addon.emailtemplates.web.outboundemail.EmailTemplatePreview"
         messagesPack="com.haulmont.addon.emailtemplates.web.outboundemail">
     <dialogMode height="640"
                 width="800"/>
     <layout expand="split">
-        <split id="split" pos="70"
+        <split id="split"
                orientation="vertical"
+               pos="70"
                width="100%">
-            <groupBox height="100%" caption="msg://email">
+            <groupBox caption="msg://email"
+                      height="100%">
                 <label id="bodyLabel"/>
             </groupBox>
-            <groupBox height="100%" caption="msg://Attachments">
+            <groupBox caption="msg://attachments"
+                      height="100%">
                 <vbox id="attachmentsBox"/>
             </groupBox>
         </split>
@@ -21,10 +24,10 @@
                     caption="Send"
                     icon="SEND"
                     invoke="onSendButtonClick"/>
-            <button id="cancelButton"
-                    caption="Cancel"
-                    icon="CANCEL"
-                    invoke="onCancelButtonClick"/>
+            <button id="closeButton"
+                    caption="Close"
+                    icon="CLOSE"
+                    invoke="onCloseButtonClick"/>
         </buttonsPanel>
     </layout>
 </window>

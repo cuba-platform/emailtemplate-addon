@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 import javax.inject.Inject;
 import java.util.Map;
 
-public class OutboundEmailScreen extends AbstractWindow {
+public class EmailTemplatePreview extends AbstractWindow {
 
     public static final String PARAM_SEND = "send";
 
@@ -55,10 +55,6 @@ public class OutboundEmailScreen extends AbstractWindow {
         }
     }
 
-    public void onCancelButtonClick() {
-        close("windowClose ");
-    }
-
     public void onSendButtonClick() {
         try {
             emailService.sendEmail(emailInfo);
@@ -70,8 +66,12 @@ public class OutboundEmailScreen extends AbstractWindow {
             showNotification(builder.toString());
             log.warn(e.toString());
         } finally {
-            close("windowClose");
+            close(Window.CLOSE_ACTION_ID);
         }
+    }
+
+    public void onCloseButtonClick() {
+        close(Window.CLOSE_ACTION_ID);
     }
 
     protected void generateLinkButtonsByAttachments(EmailAttachment[] attachments) {
@@ -90,5 +90,4 @@ public class OutboundEmailScreen extends AbstractWindow {
             attachmentsBox.add(linkButton);
         }
     }
-
 }

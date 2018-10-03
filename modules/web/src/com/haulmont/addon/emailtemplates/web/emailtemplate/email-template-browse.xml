@@ -34,14 +34,14 @@
             </actions>
             <columns>
                 <column id="name"
-                        caption="msg://Name"/>
+                        caption="msg://name"/>
                 <column id="group"
-                        caption="msg://Group"/>
+                        caption="msg://group"/>
                 <column id="code"
-                        caption="msg://Code"/>
+                        caption="msg://code"/>
                 <column id="caption"/>
                 <column id="emailBody"
-                        caption="msg://Email body"/>
+                        caption="msg://emailBody"/>
             </columns>
             <rows datasource="emailTemplatesDs"/>
             <rowsCount/>
@@ -55,10 +55,10 @@
                         action="emailTemplatesTable.remove"/>
                 <button id="testButton"
                         action="emailTemplatesTable.testAction"
-                        caption="msg://Test"/>
+                        caption="msg://test"/>
                 <button id="sendButton"
                         action="emailTemplatesTable.sendAction"
-                        caption="msg://Send"/>
+                        caption="msg://send"/>
             </buttonsPanel>
         </groupTable>
     </layout>
