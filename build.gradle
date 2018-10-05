@@ -1,6 +1,6 @@
 
 buildscript {
-    ext.cubaVersion = '6.9.5'
+    ext.cubaVersion = '6.10.0'
     repositories {
         
         maven {
@@ -100,7 +100,9 @@ configure([globalModule, coreModule, webModule]) {
 }
 
 configure(globalModule) {
-    task enhance(type: CubaEnhancing)
+    entitiesEnhancing {
+        main { enabled = true }
+    }
 
     jar {
         manifest {
@@ -144,6 +146,7 @@ configure(coreModule) {
     }
 
     task createDb(dependsOn: assembleDbScripts, description: 'Creates local database', type: CubaDbCreation) {
+        dbName = 'emailtemplates'
         dbms = 'hsql'
         host = 'localhost'
         dbName = dbNameParam
@@ -152,6 +155,7 @@ configure(coreModule) {
     }
 
     task updateDb(dependsOn: assembleDbScripts, description: 'Updates local database', type: CubaDbUpdate) {
+        dbName = 'emailtemplates'
         dbms = 'hsql'
         host = 'localhost'
         dbName = dbNameParam

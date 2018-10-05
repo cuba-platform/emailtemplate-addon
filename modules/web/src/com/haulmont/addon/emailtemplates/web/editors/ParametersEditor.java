@@ -7,6 +7,7 @@ import com.haulmont.addon.emailtemplates.exceptions.ReportParameterTypeChangedEx
 import com.haulmont.addon.emailtemplates.service.OutboundTemplateService;
 import com.haulmont.addon.emailtemplates.web.emailtemplate.EmailTemplateEdit;
 import com.haulmont.cuba.core.entity.Entity;
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.gui.components.AbstractEditor;
 import com.haulmont.reports.app.service.ReportService;
 import com.haulmont.reports.entity.Report;
@@ -24,8 +25,8 @@ public class ParametersEditor<T extends Entity> extends AbstractEditor<T> {
     private OutboundTemplateService outboundTemplateService;
     @Inject
     protected ReportService reportService;
-
-    protected ParameterClassResolver classResolver = new ParameterClassResolver();
+    @Inject
+    protected ParameterClassResolver classResolver;
 
     protected void fillParamsByDefaultValues(List<ReportWithParams> parameters, final Collection<TemplateParameter> defaultParameters) {
         List<TemplateParameter> defaultParams = new ArrayList<>(defaultParameters);
