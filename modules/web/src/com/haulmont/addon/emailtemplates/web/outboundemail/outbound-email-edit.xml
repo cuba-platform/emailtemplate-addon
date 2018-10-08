@@ -32,17 +32,20 @@
             </column>
         </fieldGroup>
         <scrollBox id="propertiesScrollBox"
-                   caption="msg://parameters:"
+                   caption="msg://parameters"
                    spacing="true"/>
         <buttonsPanel id="buttonsPanel">
             <button id="sendButton"
+                    icon="ENVELOPE"
                     caption="Send"
                     invoke="onSendButtonClick"/>
             <button id="testButton"
                     caption="Test"
+                    icon="CHECK"
                     invoke="onTestButtonClick"/>
             <button id="cancelButton"
                     caption="Cancel"
+                    icon="CANCEL"
                     invoke="onCancelButtonClick"/>
         </buttonsPanel>
     </layout>
