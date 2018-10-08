@@ -54,9 +54,11 @@
                 <button id="removeBtn"
                         action="emailTemplatesTable.remove"/>
                 <button id="testButton"
+                        icon="CHECK"
                         action="emailTemplatesTable.testAction"
                         caption="msg://test"/>
                 <button id="sendButton"
+                        icon="ENVELOPE"
                         action="emailTemplatesTable.sendAction"
                         caption="msg://send"/>
             </buttonsPanel>

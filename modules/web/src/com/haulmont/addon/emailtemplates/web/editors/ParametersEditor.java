@@ -7,7 +7,6 @@ import com.haulmont.addon.emailtemplates.exceptions.ReportParameterTypeChangedEx
 import com.haulmont.addon.emailtemplates.service.OutboundTemplateService;
 import com.haulmont.addon.emailtemplates.web.emailtemplate.EmailTemplateEdit;
 import com.haulmont.cuba.core.entity.Entity;
-import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.gui.components.AbstractEditor;
 import com.haulmont.reports.app.service.ReportService;
 import com.haulmont.reports.entity.Report;
