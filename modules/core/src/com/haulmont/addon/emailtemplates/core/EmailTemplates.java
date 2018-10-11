@@ -1,5 +1,6 @@
 package com.haulmont.addon.emailtemplates.core;
 
+import com.haulmont.addon.emailtemplates.dto.EmailTemplateBuilder;
 import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.ParameterValue;
@@ -84,6 +85,16 @@ public class EmailTemplates implements EmailTemplatesAPI {
         if (! Objects.equals(inputParameter.getType(), parameterValue.getParameterType())) {
             throw new ReportParameterTypeChangedException();
         }
+    }
+
+    @Override
+    public EmailTemplateBuilder buildFromTemplate(EmailTemplate emailTemplate) {
+        return null;
+    }
+
+    @Override
+    public EmailTemplateBuilder buildFromTemplate(String code) {
+        return null;
     }
 
     protected EmailInfo generateEmailInfoWithoutAttachments(ReportWithParams reportWithParams) {
