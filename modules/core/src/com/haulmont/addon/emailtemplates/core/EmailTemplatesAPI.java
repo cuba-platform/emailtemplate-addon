@@ -1,5 +1,6 @@
 package com.haulmont.addon.emailtemplates.core;
 
+import com.haulmont.addon.emailtemplates.dto.EmailTemplateBuilder;
 import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.ParameterValue;
@@ -47,4 +48,8 @@ public interface EmailTemplatesAPI {
      * @throws ReportParameterTypeChangedException If parameter type of inputParameter does not equal to type saved in parameterValue.
      */
     void checkParameterTypeChanged(ReportInputParameter inputParameter, ParameterValue parameterValue) throws ReportParameterTypeChangedException;
+
+    EmailTemplateBuilder buildFromTemplate(EmailTemplate emailTemplate);
+
+    EmailTemplateBuilder buildFromTemplate(String code);
 }
