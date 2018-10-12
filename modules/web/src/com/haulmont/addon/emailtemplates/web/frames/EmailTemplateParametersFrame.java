@@ -9,6 +9,7 @@ import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.DataSupplier;
 import com.haulmont.cuba.gui.xml.layout.ComponentsFactory;
 import com.haulmont.reports.app.service.ReportService;
+import com.haulmont.reports.entity.ParameterType;
 import com.haulmont.reports.entity.Report;
 import com.haulmont.reports.entity.ReportInputParameter;
 import com.haulmont.reports.gui.report.run.ParameterClassResolver;
@@ -143,6 +144,10 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
         Field field = parameterFieldCreator.createField(parameter);
         if (BooleanUtils.isTrue(isDefaultValues)) {
             field.setRequired(false);
+            if (ParameterType.ENTITY_LIST.equals(parameter.getType())) {
+                field.setVisible(false);
+                return field;
+            }
         }
         field.setWidth("400px");
 

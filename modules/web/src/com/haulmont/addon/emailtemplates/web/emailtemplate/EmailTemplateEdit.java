@@ -14,6 +14,7 @@ import com.haulmont.cuba.gui.components.TextField;
 import com.haulmont.cuba.gui.components.VBoxLayout;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.xml.layout.ComponentsFactory;
+import com.haulmont.reports.entity.ParameterType;
 import com.haulmont.reports.entity.Report;
 import com.haulmont.reports.entity.ReportInputParameter;
 import org.apache.commons.collections4.CollectionUtils;
@@ -138,8 +139,10 @@ public class EmailTemplateEdit extends ParametersEditor<EmailTemplate> {
                     parameterValue.setAlias(alias);
                     parameterValue.setParameterType(inputParameter.getType());
                     Class parameterClass = classResolver.resolveClass(inputParameter);
-                    String value = reportService.convertToString(parameterClass, params.get(alias));
-                    parameterValue.setDefaultValue(value);
+                    if (!ParameterType.ENTITY_LIST.equals(inputParameter.getType())) {
+                        String value = reportService.convertToString(parameterClass, params.get(alias));
+                        parameterValue.setDefaultValue(value);
+                    }
                 }
             }
             templateParameters.add(templateParameter);
