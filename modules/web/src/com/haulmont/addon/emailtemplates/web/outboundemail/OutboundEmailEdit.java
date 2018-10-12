@@ -33,10 +33,6 @@ import java.util.stream.Collectors;
 
 public class OutboundEmailEdit extends ParametersEditor<OutboundEmail> {
 
-    public static final String IS_TEST = "isTest";
-
-    @WindowParam(name = IS_TEST, required = true)
-    protected Boolean isTest;
     @Named("fieldGroup.emailTemplate")
     private PickerField emailTemplateField;
     @Named("fieldGroup.from")
@@ -69,12 +65,6 @@ public class OutboundEmailEdit extends ParametersEditor<OutboundEmail> {
     public void init(Map<String, Object> params) {
         super.init(params);
         emailTemplateField.setEnabled(false);
-
-        if (BooleanUtils.isTrue(isTest)) {
-            addressesField.setVisible(false);
-            fromField.setVisible(false);
-            sendButton.setVisible(false);
-        }
 
         frameContainer = componentsFactory.createComponent(VBoxLayout.class);
         propertiesScrollBox.add(frameContainer);
