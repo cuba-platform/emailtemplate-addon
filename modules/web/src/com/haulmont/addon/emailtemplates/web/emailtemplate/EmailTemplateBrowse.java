@@ -33,20 +33,14 @@ public class EmailTemplateBrowse extends AbstractLookup {
         emailTemplatesTable.addAction(sendAction);
     }
 
-    protected void onTestTemplateClick() {
-        viewEmailTemplate(true);
-    }
-
     protected void onSendEmailClick() {
-        viewEmailTemplate(false);
-    }
-
-
-    protected void viewEmailTemplate(Boolean isTest) {
         EmailTemplate template = emailTemplatesTable.getSingleSelected();
         OutboundEmail outboundEmail = metadata.create(OutboundEmail.class);
         outboundEmail.setEmailTemplate(dataManager.reload(template, "emailTemplate-view"));
         openEditor("emailtemplates$OutboundEmail.edit", outboundEmail, WindowManager.OpenType.DIALOG);
     }
 
+    public void onGroupsButtonClick() {
+        openWindow("emailtemplates$TemplateGroup.browse", WindowManager.OpenType.NEW_WINDOW);
+    }
 }
