@@ -36,11 +36,11 @@
                    spacing="true"/>
         <buttonsPanel id="buttonsPanel">
             <button id="sendButton"
-                    icon="ENVELOPE"
                     caption="Send"
+                    icon="ENVELOPE"
                     invoke="onSendButtonClick"/>
             <button id="testButton"
-                    caption="Test"
+                    caption="Preview"
                     icon="CHECK"
                     invoke="onTestButtonClick"/>
             <button id="cancelButton"
