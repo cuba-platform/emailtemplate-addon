@@ -2,8 +2,6 @@ package com.haulmont.addon.emailtemplates.web.emailtemplate;
 
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.OutboundEmail;
-import com.haulmont.addon.emailtemplates.web.outboundemail.OutboundEmailEdit;
-import com.haulmont.bali.util.ParamsMap;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.WindowManager;
@@ -33,20 +31,11 @@ public class EmailTemplateBrowse extends AbstractLookup {
         emailTemplatesTable.addAction(sendAction);
     }
 
-    protected void onTestTemplateClick() {
-        viewEmailTemplate(true);
-    }
 
     protected void onSendEmailClick() {
-        viewEmailTemplate(false);
-    }
-
-
-    protected void viewEmailTemplate(Boolean isTest) {
         EmailTemplate template = emailTemplatesTable.getSingleSelected();
         OutboundEmail outboundEmail = metadata.create(OutboundEmail.class);
         outboundEmail.setEmailTemplate(dataManager.reload(template, "emailTemplate-view"));
         openEditor("emailtemplates$OutboundEmail.edit", outboundEmail, WindowManager.OpenType.DIALOG);
     }
-
 }

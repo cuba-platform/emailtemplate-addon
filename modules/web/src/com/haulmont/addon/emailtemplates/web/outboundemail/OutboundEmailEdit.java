@@ -12,8 +12,10 @@ import com.haulmont.bali.util.ParamsMap;
 import com.haulmont.cuba.client.ClientConfig;
 import com.haulmont.cuba.core.global.EmailInfo;
 import com.haulmont.cuba.gui.WindowManager;
-import com.haulmont.cuba.gui.WindowParam;
-import com.haulmont.cuba.gui.components.*;
+import com.haulmont.cuba.gui.components.PickerField;
+import com.haulmont.cuba.gui.components.ScrollBoxLayout;
+import com.haulmont.cuba.gui.components.TextField;
+import com.haulmont.cuba.gui.components.VBoxLayout;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.impl.AbstractDatasource;
@@ -39,8 +41,6 @@ public class OutboundEmailEdit extends ParametersEditor<OutboundEmail> {
     private TextField fromField;
     @Named("fieldGroup.addresses")
     private TextField addressesField;
-    @Inject
-    private Button sendButton;
 
     @Inject
     protected Datasource<OutboundEmail> outboundEmailDs;
