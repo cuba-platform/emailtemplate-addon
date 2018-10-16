@@ -9,7 +9,7 @@ import com.haulmont.addon.emailtemplates.exceptions.TemplateNotFoundException;
 import com.haulmont.cuba.core.global.EmailInfo;
 import com.haulmont.reports.entity.ReportInputParameter;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -25,8 +25,9 @@ public interface EmailTemplatesAPI {
 
     /**
      * That method creates {@link EmailInfo} by parameters map for all included reports.
+     *
      * @param emailTemplate {@link EmailTemplate} entity containing body and attachments reports
-     * @param params map containing parameters for all included reports
+     * @param params        map containing parameters for all included reports
      * @return {@link EmailInfo} from cuba emailer
      * @throws TemplateNotFoundException If emailTemplate do not contain reports or null
      */
@@ -34,15 +35,17 @@ public interface EmailTemplatesAPI {
 
     /**
      * That method creates {@link EmailInfo} from template that may contain the same reports with different parameter values.
+     *
      * @param emailTemplate {@link EmailTemplate} entity containing body and attachments reports
-     * @param params {@link ReportWithParams} wrapper containing report and its parameters
+     * @param params        {@link ReportWithParams} wrapper containing report and its parameters
      * @return {@link EmailInfo} from cuba emailer
      * @throws TemplateNotFoundException If emailTemplate does not contain reports or null
      */
-    EmailInfo generateEmail(EmailTemplate emailTemplate, List<ReportWithParams> params) throws TemplateNotFoundException;
+    EmailInfo generateEmail(EmailTemplate emailTemplate, Collection<ReportWithParams> params) throws TemplateNotFoundException;
 
     /**
      * That method checks that the report input parameter did not change own parameter type
+     *
      * @param inputParameter {@link ReportInputParameter} from cuba reporting
      * @param parameterValue entity {@link ParameterValue} to save report parameter default value
      * @throws ReportParameterTypeChangedException If parameter type of inputParameter does not equal to type saved in parameterValue.

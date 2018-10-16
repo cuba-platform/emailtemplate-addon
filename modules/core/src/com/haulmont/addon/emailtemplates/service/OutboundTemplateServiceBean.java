@@ -11,7 +11,7 @@ import com.haulmont.reports.entity.ReportInputParameter;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 
 @Service(OutboundTemplateService.NAME)
@@ -27,7 +27,7 @@ public class OutboundTemplateServiceBean implements OutboundTemplateService {
     }
 
     @Override
-    public EmailInfo generateEmail(EmailTemplate emailTemplate, List<ReportWithParams> params) throws TemplateNotFoundException {
+    public EmailInfo generateEmail(EmailTemplate emailTemplate, Collection<ReportWithParams> params) throws TemplateNotFoundException {
         return emailTemplatesAPI.generateEmail(emailTemplate, params);
     }
 
