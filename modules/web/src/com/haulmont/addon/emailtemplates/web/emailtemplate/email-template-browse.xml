@@ -38,7 +38,7 @@
                         caption="msg://group"/>
                 <column id="code"
                         caption="msg://code"/>
-                <column id="caption"/>
+                <column id="subject"/>
                 <column id="emailBody"
                         caption="msg://emailBody"/>
             </columns>

@@ -35,9 +35,8 @@ public class EmailTemplate extends StandardEntity {
     protected String code;
 
 
-    @Column(name = "CAPTION")
-    protected String caption;
-
+    @Column(name = "SUBJECT")
+    protected String subject;
 
     @OnDeleteInverse(DeletePolicy.UNLINK)
     @Lookup(type = LookupType.SCREEN, actions = {"lookup"})
@@ -59,21 +58,21 @@ public class EmailTemplate extends StandardEntity {
     @OneToMany(mappedBy = "emailTemplate")
     protected List<TemplateParameter> parameters;
 
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+
     public void setParameters(List<TemplateParameter> parameters) {
         this.parameters = parameters;
     }
 
     public List<TemplateParameter> getParameters() {
         return parameters;
-    }
-
-
-    public void setCaption(String caption) {
-        this.caption = caption;
-    }
-
-    public String getCaption() {
-        return caption;
     }
 
 

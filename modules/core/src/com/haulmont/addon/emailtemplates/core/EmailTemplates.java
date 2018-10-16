@@ -56,7 +56,7 @@ public class EmailTemplates implements EmailTemplatesAPI {
         }
         EmailInfo emailInfo = generateEmailInfoWithoutAttachments(bodyReportWithParams);
         EmailAttachment[] emailAttachments = createEmailAttachments(attachmentsWithParams).toArray(new EmailAttachment[attachmentsWithParams.size()]);
-        emailInfo.setCaption(emailTemplate.getCaption());
+        emailInfo.setCaption(emailTemplate.getSubject());
         emailInfo.setAttachments(emailAttachments);
         return emailInfo;
     }

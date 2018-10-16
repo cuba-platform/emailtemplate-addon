@@ -26,8 +26,8 @@ import java.util.stream.Collectors;
 
 public class EmailTemplateEdit extends ParametersEditor<EmailTemplate> {
 
-    @Named("fieldGroup.caption")
-    private TextField captionField;
+    @Named("fieldGroup.subject")
+    private TextField subjectField;
     @Named("fieldGroup.emailBody")
     private LookupPickerField emailBodyField;
     @Inject
@@ -81,7 +81,7 @@ public class EmailTemplateEdit extends ParametersEditor<EmailTemplate> {
             Report report = (Report) e.getValue();
             List<ReportWithParams> params = new ArrayList<>();
             if (report != null) {
-                captionField.setValue(report.getName());
+                subjectField.setValue(report.getName());
                 params.add(new ReportWithParams(report));
                 if (CollectionUtils.isNotEmpty(emailTemplate.getAttachments())) {
                     List<ReportWithParams> attachmentParams = emailTemplate.getAttachments().stream()

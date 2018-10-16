@@ -45,7 +45,7 @@
                            property="group"/>
                     <field property="code"/>
                     <field contextHelpText="msg://help"
-                           property="caption"/>
+                           property="subject"/>
                     <field optionsDatasource="emailBodiesDs"
                            property="emailBody"/>
                 </column>

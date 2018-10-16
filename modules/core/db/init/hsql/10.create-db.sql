@@ -12,7 +12,7 @@ create table EMAILTEMPLATES_EMAIL_TEMPLATE (
     NAME varchar(255) not null,
     GROUP_ID varchar(36),
     CODE varchar(255) not null,
-    CAPTION varchar(255),
+    SUBJECT varchar(255),
     EMAIL_BODY_ID varchar(36),
     --
     primary key (ID)
