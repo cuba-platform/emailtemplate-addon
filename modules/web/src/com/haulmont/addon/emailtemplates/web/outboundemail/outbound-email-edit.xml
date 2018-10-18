@@ -39,7 +39,7 @@
                     caption="Send"
                     icon="ENVELOPE"
                     invoke="onSendButtonClick"/>
-            <button id="testButton"
+            <button id="previewButton"
                     caption="Preview"
                     icon="CHECK"
                     invoke="onTestButtonClick"/>

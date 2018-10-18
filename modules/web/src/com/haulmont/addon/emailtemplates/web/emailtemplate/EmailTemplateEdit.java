@@ -17,12 +17,10 @@ import com.haulmont.cuba.gui.xml.layout.ComponentsFactory;
 import com.haulmont.reports.entity.ParameterType;
 import com.haulmont.reports.entity.Report;
 import com.haulmont.reports.entity.ReportInputParameter;
-import org.apache.commons.collections4.CollectionUtils;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class EmailTemplateEdit extends ParametersEditor<EmailTemplate> {
 
@@ -45,7 +43,6 @@ public class EmailTemplateEdit extends ParametersEditor<EmailTemplate> {
     @Inject
     private Metadata metadata;
 
-
     protected EmailTemplateParametersFrame parametersFrame;
     protected Collection<TemplateParameter> defaultParameters;
     protected VBoxLayout frameContainer;
@@ -61,52 +58,25 @@ public class EmailTemplateEdit extends ParametersEditor<EmailTemplate> {
         EmailTemplate emailTemplate = getItem();
         defaultParameters = parametersDs.getItems();
 
-        List<ReportWithParams> parameters = new ArrayList<>();
-        if (emailTemplate.getEmailBody() != null) {
-            parameters.add(new ReportWithParams(emailTemplate.getEmailBody()));
-        }
-        if (CollectionUtils.isNotEmpty(emailTemplate.getAttachments())) {
-            List<ReportWithParams> attachmentParams = emailTemplate.getAttachments().stream()
-                    .map(ReportWithParams::new)
-                    .collect(Collectors.toList());
-            parameters.addAll(attachmentParams);
-        }
-
-        fillParamsByDefaultValues(parameters, defaultParameters);
+        List<ReportWithParams> parameters = getParamsOrEmptyByDefaultValues(emailTemplate, defaultParameters);
 
         parametersFrame = (EmailTemplateParametersFrame) openFrame(frameContainer, "emailTemplateParametersFrame",
                 ParamsMap.of(EmailTemplateParametersFrame.PARAMETERS, parameters, EmailTemplateParametersFrame.IS_DEFAULT_PARAM_VALUES, true));
 
         emailBodyField.addValueChangeListener(e -> {
             Report report = (Report) e.getValue();
-            List<ReportWithParams> params = new ArrayList<>();
             if (report != null) {
                 subjectField.setValue(report.getName());
-                params.add(new ReportWithParams(report));
-                if (CollectionUtils.isNotEmpty(emailTemplate.getAttachments())) {
-                    List<ReportWithParams> attachmentParams = emailTemplate.getAttachments().stream()
-                            .map(ReportWithParams::new)
-                            .collect(Collectors.toList());
-                    params.addAll(attachmentParams);
-                }
             }
-            fillParamsByDefaultValues(params, defaultParameters);
+            List<ReportWithParams> params = getParamsOrEmptyByDefaultValues(emailTemplate, defaultParameters);
             parametersFrame.setParameters(params);
             parametersFrame.createComponents();
         });
 
         attachmentsDs.addCollectionChangeListener(e -> {
-            List<ReportWithParams> params = new ArrayList<>();
-            if (emailTemplate.getEmailBody() != null) {
-                params.add(new ReportWithParams(emailTemplate.getEmailBody()));
-            }
-            if (CollectionUtils.isNotEmpty(emailTemplate.getAttachments())) {
-                List<ReportWithParams> attachmentParams = emailTemplate.getAttachments().stream()
-                        .map(ReportWithParams::new)
-                        .collect(Collectors.toList());
-                params.addAll(attachmentParams);
-            }
-            fillParamsByDefaultValues(params, defaultParameters);
+            List<ReportWithParams> params = getParamsOrEmptyByDefaultValues(emailTemplate, defaultParameters);
+            parametersFrame.setParameters(params);
+            parametersFrame.createComponents();
             parametersFrame.setParameters(params);
             parametersFrame.createComponents();
         });

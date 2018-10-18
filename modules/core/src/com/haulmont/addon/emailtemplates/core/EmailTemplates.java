@@ -1,14 +1,13 @@
 package com.haulmont.addon.emailtemplates.core;
 
+import com.haulmont.addon.emailtemplates.bean.TemplateParametersExtractor;
 import com.haulmont.addon.emailtemplates.dto.EmailTemplateBuilder;
 import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.ParameterValue;
 import com.haulmont.addon.emailtemplates.exceptions.ReportParameterTypeChangedException;
 import com.haulmont.addon.emailtemplates.exceptions.TemplateNotFoundException;
-import com.haulmont.cuba.core.global.EmailAttachment;
-import com.haulmont.cuba.core.global.EmailInfo;
-import com.haulmont.cuba.core.global.Messages;
+import com.haulmont.cuba.core.global.*;
 import com.haulmont.reports.ReportingApi;
 import com.haulmont.reports.entity.Report;
 import com.haulmont.reports.entity.ReportInputParameter;
@@ -25,9 +24,14 @@ import java.util.stream.Collectors;
 public class EmailTemplates implements EmailTemplatesAPI {
 
     @Inject
+    private DataManager dataManager;
+    @Inject
     protected ReportingApi reportingApi;
     @Inject
     private Messages messages;
+
+    @Inject
+    private TemplateParametersExtractor templateParametersExtractor;
 
     @Override
     public EmailInfo generateEmail(EmailTemplate emailTemplate, Collection<ReportWithParams> params) throws TemplateNotFoundException {
@@ -62,6 +66,20 @@ public class EmailTemplates implements EmailTemplatesAPI {
     }
 
     @Override
+    public EmailInfo generateEmail(String emailTemplateCode) throws TemplateNotFoundException, ReportParameterTypeChangedException {
+        LoadContext<EmailTemplate> loadContext = LoadContext.create(EmailTemplate.class)
+                .setQuery(LoadContext.createQuery("select e from emailtemplates$EmailTemplate e where e.code = :code")
+                    .setParameter("code", emailTemplateCode))
+                .setView("emailTemplate-view");
+        EmailTemplate emailTemplate = dataManager.load(loadContext);
+
+        if (emailTemplate == null) {
+            throw new TemplateNotFoundException(messages.getMessage(EmailTemplates.class, "notFoundTemplate"));
+        }
+        return generateEmail(emailTemplate, templateParametersExtractor.getParamsFromTemplateDefaultValues(emailTemplate));
+    }
+
+    @Override
     public EmailInfo generateEmail(EmailTemplate emailTemplate, Map<String, Object> params) throws TemplateNotFoundException {
         if (emailTemplate == null) {
             throw new TemplateNotFoundException(messages.getMessage(EmailTemplates.class, "nullTemplate"));
@@ -82,8 +100,10 @@ public class EmailTemplates implements EmailTemplatesAPI {
     @Override
     public void checkParameterTypeChanged(ReportInputParameter inputParameter, ParameterValue parameterValue)
             throws ReportParameterTypeChangedException {
-        if (! Objects.equals(inputParameter.getType(), parameterValue.getParameterType())) {
-            throw new ReportParameterTypeChangedException();
+        if (!Objects.equals(inputParameter.getType(), parameterValue.getParameterType())) {
+            throw new ReportParameterTypeChangedException(
+                    messages.formatMessage(EmailTemplates.class, "parameterTypeChanged",
+                            inputParameter.getReport().getName(), inputParameter.getAlias()));
         }
     }
 

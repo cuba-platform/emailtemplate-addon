@@ -4,6 +4,7 @@ import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.OutboundEmail;
 import com.haulmont.addon.emailtemplates.entity.TemplateParameter;
+import com.haulmont.addon.emailtemplates.exceptions.ReportParameterTypeChangedException;
 import com.haulmont.addon.emailtemplates.exceptions.TemplateNotFoundException;
 import com.haulmont.addon.emailtemplates.service.OutboundTemplateService;
 import com.haulmont.addon.emailtemplates.web.editors.ParametersEditor;
@@ -19,16 +20,13 @@ import com.haulmont.cuba.gui.data.impl.AbstractDatasource;
 import com.haulmont.cuba.gui.xml.layout.ComponentsFactory;
 import com.haulmont.reports.exception.ReportParametersValidationException;
 import com.haulmont.reports.gui.ReportParameterValidator;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class OutboundEmailEdit extends ParametersEditor<OutboundEmail> {
 
@@ -38,6 +36,11 @@ public class OutboundEmailEdit extends ParametersEditor<OutboundEmail> {
     private TextField fromField;
     @Named("fieldGroup.addresses")
     private TextField addressesField;
+
+    @Inject
+    private Button sendButton;
+    @Inject
+    private Button previewButton;
 
     @Inject
     protected Datasource<OutboundEmail> outboundEmailDs;
@@ -70,25 +73,19 @@ public class OutboundEmailEdit extends ParametersEditor<OutboundEmail> {
     @Override
     protected void postInit() {
         super.postInit();
-
         EmailTemplate emailTemplate = getItem().getEmailTemplate();
 
-        List<ReportWithParams> parameters = new ArrayList<>();
-        if (emailTemplate.getEmailBody() != null) {
-            parameters.add(new ReportWithParams(emailTemplate.getEmailBody()));
-        }
-        if (CollectionUtils.isNotEmpty(emailTemplate.getAttachments())) {
-            List<ReportWithParams> attachmentParams = emailTemplate.getAttachments().stream()
-                    .map(ReportWithParams::new)
-                    .collect(Collectors.toList());
-            parameters.addAll(attachmentParams);
-        }
-
         templateParametersDs.refresh();
-        fillParamsByDefaultValues(parameters, templateParametersDs.getItems());
+        try {
+            List<ReportWithParams> parameters = getValidParamsByDefaultValues(emailTemplate, templateParametersDs.getItems());
 
-        parametersFrame = (EmailTemplateParametersFrame) openFrame(frameContainer, "emailTemplateParametersFrame",
-                ParamsMap.of(EmailTemplateParametersFrame.PARAMETERS, parameters));
+            parametersFrame = (EmailTemplateParametersFrame) openFrame(frameContainer, "emailTemplateParametersFrame",
+                    ParamsMap.of(EmailTemplateParametersFrame.PARAMETERS, parameters));
+        } catch (ReportParameterTypeChangedException e) {
+            sendButton.setEnabled(false);
+            previewButton.setEnabled(false);
+            showNotification(e.getMessage());
+        }
     }
 
     @Override
@@ -121,7 +118,7 @@ public class OutboundEmailEdit extends ParametersEditor<OutboundEmail> {
     }
 
     public void onCancelButtonClick() {
-        close("windowClose ");
+        close(Window.CLOSE_ACTION_ID);
     }
 
     public void onTestButtonClick() throws TemplateNotFoundException {

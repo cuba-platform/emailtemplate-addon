@@ -31,7 +31,7 @@ public class EmailTemplate extends StandardEntity {
 
 
     @NotNull
-    @Column(name = "CODE", nullable = false)
+    @Column(name = "CODE", nullable = false, unique = true)
     protected String code;
 
 

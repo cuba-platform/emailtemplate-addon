@@ -44,6 +44,15 @@ public interface EmailTemplatesAPI {
     EmailInfo generateEmail(EmailTemplate emailTemplate, Collection<ReportWithParams> params) throws TemplateNotFoundException;
 
     /**
+     * That method creates {@link EmailInfo} from template with unique string code that expect contains default parameters.
+     *
+     * @param emailTemplateCode unique string code of email template
+     * @return {@link EmailInfo} from cuba emailer
+     * @throws TemplateNotFoundException If emailTemplate does not contain reports or null
+     */
+    EmailInfo generateEmail(String emailTemplateCode) throws TemplateNotFoundException, ReportParameterTypeChangedException;
+
+    /**
      * That method checks that the report input parameter did not change own parameter type
      *
      * @param inputParameter {@link ReportInputParameter} from cuba reporting

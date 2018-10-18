@@ -2,8 +2,6 @@ package com.haulmont.addon.emailtemplates.web.emailtemplate;
 
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.OutboundEmail;
-import com.haulmont.addon.emailtemplates.web.outboundemail.OutboundEmailEdit;
-import com.haulmont.bali.util.ParamsMap;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.WindowManager;
