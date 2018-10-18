@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+        caption="msg://editorCaption"
+        class="com.haulmont.addon.emailtemplates.web.emailtemplate.EmailTemplateJsonEdit"
+        datasource="emailTemplateDs"
+        messagesPack="com.haulmont.addon.emailtemplates.web.emailtemplate"
+        xmlns:et="http://schemas.haulmont.com/emailtemplates/0.1/ui-component.xsd">
+    <dsContext>
+        <datasource id="emailTemplateDs"
+                    class="com.haulmont.addon.emailtemplates.entity.JsonEmailTemplate"
+                    view="emailTemplate-view">
+            <collectionDatasource id="attachmentsDs"
+                                  property="attachments"/>
+            <collectionDatasource id="parametersDs"
+                                  property="parameters">
+                <collectionDatasource id="parameterValuesDs"
+                                      property="parameterValues"/>
+            </collectionDatasource>
+        </datasource>
+        <collectionDatasource id="groupsDs"
+                              class="com.haulmont.addon.emailtemplates.entity.TemplateGroup"
+                              view="_minimal">
+            <query>
+                <![CDATA[select e from emailtemplates$TemplateGroup e]]>
+            </query>
+        </collectionDatasource>
+        <collectionDatasource id="emailBodiesDs"
+                              class="com.haulmont.reports.entity.Report"
+                              view="_minimal">
+            <query>
+                <![CDATA[select e from report$Report e]]>
+            </query>
+        </collectionDatasource>
+    </dsContext>
+    <dialogMode height="600"
+                width="800"/>
+    <layout expand="tabsheet"
+            width="100%">
+        <tabSheet id="tabsheet">
+            <tab id="main"
+                 caption="msg://main">
+                <split id="split"
+                       dockable="true"
+                       height="100%"
+                       orientation="horizontal"
+                       pos="30%"
+                       width="100%">
+                    <scrollBox id="propertiesScroll"
+                               height="100%">
+                        <vbox margin="false,true,false,false"
+                              spacing="true">
+                            <hbox id="dropZone" spacing="true" stylename="c-edit-window-actions" margin="true" width="100%" expand="space">
+                                <upload id="fileUpload" dropZone="dropZone" uploadButtonIcon="DOWNLOAD" uploadButtonCaption=""/>
+                                <button id="exportJson" invoke="exportJson" icon="UPLOAD"/>
+                                <button id="exportHtml" invoke="exportHtml" icon="CODE"/>
+                                <label id="space"/>
+                            </hbox>
+                            <groupBox caption="msg://info"
+                                      collapsable="true">
+                                <fieldGroup id="infoGroup"
+                                            captionAlignment="TOP"
+                                            datasource="emailTemplateDs"
+                                            width="100%">
+                                    <column width="100%">
+                                        <field property="name"/>
+                                        <field property="code"/>
+                                        <field optionsDatasource="groupsDs"
+                                               property="group"/>
+                                    </column>
+                                </fieldGroup>
+                            </groupBox>
+                            <groupBox caption="msg://defaultValues"
+                                      collapsable="true"
+                                      collapsed="true">
+                                <fieldGroup id="defaultGroup"
+                                            captionAlignment="TOP"
+                                            datasource="emailTemplateDs"
+                                            width="100%">
+                                    <column width="100%">
+                                        <field property="subject"/>
+                                        <field property="from"/>
+                                        <field property="to"
+                                               rows="3"/>
+                                        <field property="cc"
+                                               rows="3"/>
+                                        <field property="bcc"
+                                               rows="3"/>
+                                    </column>
+                                </fieldGroup>
+                            </groupBox>
+                            <groupBox id="defaultParams"
+                                      caption="msg://defaultParameters"
+                                      collapsable="true"
+                                      collapsed="true"
+                                      spacing="true"/>
+                        </vbox>
+                    </scrollBox>
+                    <et:unlayerTemplateEditor id="template"
+                                              height="100%"/>
+                </split>
+            </tab>
+            <tab id="attachments"
+                 caption="msg://attachments"/>
+        </tabSheet>
+        <frame id="windowActions"
+               screen="editWindowActions"/>
+    </layout>
+</window>

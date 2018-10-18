@@ -8,7 +8,7 @@
     <dsContext>
         <groupDatasource id="emailTemplatesDs"
                          class="com.haulmont.addon.emailtemplates.entity.EmailTemplate"
-                         view="_base">
+                         view="emailTemplate-view">
             <query>
                 <![CDATA[select e from emailtemplates$EmailTemplate e]]>
             </query>
@@ -26,28 +26,22 @@
         <groupTable id="emailTemplatesTable"
                     width="100%">
             <actions>
-                <action id="create"/>
                 <action id="edit"/>
                 <action id="remove"/>
                 <action id="sendAction"/>
             </actions>
             <columns>
-                <column id="name"
-                        caption="msg://name"/>
-                <column id="group"
-                        caption="msg://group"/>
-                <column id="code"
-                        caption="msg://code"/>
+                <column id="name"/>
+                <column id="group"/>
+                <column id="code"/>
                 <column id="subject"/>
-                <column id="emailBody"
-                        caption="msg://emailBody"/>
+                <column id="type"/>
             </columns>
             <rows datasource="emailTemplatesDs"/>
             <rowsCount/>
             <buttonsPanel id="buttonsPanel"
                           alwaysVisible="true">
-                <button id="createBtn"
-                        action="emailTemplatesTable.create"/>
+                <popupButton id="createBtn" caption="msg://create"/>
                 <button id="editBtn"
                         action="emailTemplatesTable.edit"/>
                 <button id="groupsButton"

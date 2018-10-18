@@ -39,7 +39,7 @@ public class EmailTemplates implements EmailTemplatesAPI {
         }
         List<ReportWithParams> parameters = new ArrayList<>(params);
 
-        Report bodyReport = emailTemplate.getEmailBody();
+        Report bodyReport = emailTemplate.getEmailBodyReport();
         ReportWithParams bodyReportWithParams = parameters.stream()
                 .filter(e -> e.getReport().equals(bodyReport))
                 .findFirst()
@@ -71,7 +71,7 @@ public class EmailTemplates implements EmailTemplatesAPI {
         }
 
         List<ReportWithParams> paramList = new ArrayList<>();
-        Report bodyReport = emailTemplate.getEmailBody();
+        Report bodyReport = emailTemplate.getEmailBodyReport();
         paramList.add(createParamsMapForReport(bodyReport, params));
         for (Report report : emailTemplate.getAttachments()) {
             paramList.add(createParamsMapForReport(report, params));
@@ -139,7 +139,7 @@ public class EmailTemplates implements EmailTemplatesAPI {
     }
 
     protected boolean bodyAndAttachmentsIsEmpty(EmailTemplate emailTemplate) {
-        Report body = emailTemplate.getEmailBody();
+        Report body = emailTemplate.getEmailBodyReport();
         List<Report> attachments = emailTemplate.getAttachments();
         Report notNullReport = null;
         if (attachments != null) {

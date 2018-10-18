@@ -7,5 +7,7 @@
         <class>com.haulmont.addon.emailtemplates.entity.TemplateGroup</class>
         <class>com.haulmont.addon.emailtemplates.entity.TemplateParameter</class>
         <class>com.haulmont.addon.emailtemplates.entity.ParameterValue</class>
+        <class>com.haulmont.addon.emailtemplates.entity.ReportEmailTemplate</class>
+        <class>com.haulmont.addon.emailtemplates.entity.JsonEmailTemplate</class>
     </persistence-unit>
 </persistence>

@@ -1,8 +1,8 @@
 package com.haulmont.addon.emailtemplates.web.emailtemplate;
 
 import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
-import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.ParameterValue;
+import com.haulmont.addon.emailtemplates.entity.ReportEmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.TemplateParameter;
 import com.haulmont.addon.emailtemplates.web.editors.ParametersEditor;
 import com.haulmont.addon.emailtemplates.web.frames.EmailTemplateParametersFrame;
@@ -24,7 +24,7 @@ import javax.inject.Named;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class EmailTemplateEdit extends ParametersEditor<EmailTemplate> {
+public class EmailTemplateEdit extends ParametersEditor<ReportEmailTemplate> {
 
     @Named("fieldGroup.subject")
     private TextField subjectField;
@@ -58,7 +58,7 @@ public class EmailTemplateEdit extends ParametersEditor<EmailTemplate> {
 
     @Override
     protected void postInit() {
-        EmailTemplate emailTemplate = getItem();
+        ReportEmailTemplate emailTemplate = getItem();
         defaultParameters = parametersDs.getItems();
 
         List<ReportWithParams> parameters = new ArrayList<>();
