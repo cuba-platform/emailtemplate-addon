@@ -51,7 +51,7 @@
                 <button id="editBtn"
                         action="emailTemplatesTable.edit"/>
                 <button id="groupsButton"
-                        caption="Groups"
+                        caption="msg://groups"
                         invoke="onGroupsButtonClick"/>
                 <button id="removeBtn"
                         action="emailTemplatesTable.remove"/>

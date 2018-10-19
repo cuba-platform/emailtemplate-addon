@@ -21,11 +21,11 @@
         </split>
         <buttonsPanel>
             <button id="sendButton"
-                    caption="Send"
+                    caption="msg://send"
                     icon="SEND"
                     invoke="onSendButtonClick"/>
             <button id="closeButton"
-                    caption="Close"
+                    caption="msg://close"
                     icon="CLOSE"
                     invoke="onCloseButtonClick"/>
         </buttonsPanel>
