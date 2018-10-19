@@ -44,6 +44,8 @@
                     <field optionsDatasource="groupsDs"
                            property="group"/>
                     <field property="code"/>
+                    <field property="sender"/>
+                    <field property="addresses"/>
                     <field contextHelpText="msg://help"
                            property="subject"/>
                     <field optionsDatasource="emailBodiesDs"

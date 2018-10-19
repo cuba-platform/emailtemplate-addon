@@ -35,6 +35,12 @@ public class EmailTemplate extends StandardEntity {
     protected String code;
 
 
+    @Column(name = "SENDER")
+    protected String sender;
+
+    @Column(name = "ADDRESSES")
+    protected String addresses;
+
     @Column(name = "SUBJECT")
     protected String subject;
 
@@ -57,6 +63,23 @@ public class EmailTemplate extends StandardEntity {
     @OnDelete(DeletePolicy.CASCADE)
     @OneToMany(mappedBy = "emailTemplate")
     protected List<TemplateParameter> parameters;
+
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
+
+    public String getSender() {
+        return sender;
+    }
+
+    public void setAddresses(String addresses) {
+        this.addresses = addresses;
+    }
+
+    public String getAddresses() {
+        return addresses;
+    }
+
 
     public void setSubject(String subject) {
         this.subject = subject;
