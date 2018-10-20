@@ -103,8 +103,8 @@ public class TemplateParametersExtractor {
 
     protected List<ReportWithParams> createParamsCollectionByTemplate(EmailTemplate emailTemplate) {
         List<ReportWithParams> parameters = new ArrayList<>();
-        if (emailTemplate.getEmailBody() != null) {
-            parameters.add(new ReportWithParams(emailTemplate.getEmailBody()));
+        if (emailTemplate.getEmailBodyReport() != null) {
+            parameters.add(new ReportWithParams(emailTemplate.getEmailBodyReport()));
         }
         if (CollectionUtils.isNotEmpty(emailTemplate.getAttachments())) {
             List<ReportWithParams> attachmentParams = emailTemplate.getAttachments().stream()

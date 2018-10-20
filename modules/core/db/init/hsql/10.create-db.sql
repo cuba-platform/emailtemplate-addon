@@ -8,14 +8,25 @@ create table EMAILTEMPLATES_EMAIL_TEMPLATE (
     UPDATED_BY varchar(50),
     DELETE_TS timestamp,
     DELETED_BY varchar(50),
+    DTYPE varchar(100),
     --
     NAME varchar(255) not null,
     GROUP_ID varchar(36),
+    DTYPE varchar(50) not null,
     CODE varchar(255) not null,
-    SENDER varchar(255),
-    ADDRESSES varchar(255),
+    FROM_ varchar(255),
+    TO_ longvarchar,
+    CC longvarchar,
+    BCC longvarchar,
     SUBJECT varchar(255),
-    EMAIL_BODY_ID varchar(36),
+    --
+    -- from emailtemplates$ReportEmailTemplate
+    USE_REPORT_SUBJECT boolean,
+    TEMPLATE_REPORT_ID varchar(36),
+    --
+    -- from emailtemplates$JsonEmailTemplate
+    JSON_TEMPLATE longvarchar,
+    HTML longvarchar,
     --
     primary key (ID)
 )^

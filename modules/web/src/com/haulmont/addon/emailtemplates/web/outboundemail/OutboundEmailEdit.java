@@ -74,8 +74,9 @@ public class OutboundEmailEdit extends ParametersEditor<OutboundEmail> {
     protected void postInit() {
         super.postInit();
         EmailTemplate emailTemplate = getItem().getEmailTemplate();
-        fromField.setValue(emailTemplate.getSender());
-        addressesField.setValue(emailTemplate.getAddresses());
+
+        fromField.setValue(emailTemplate.getFrom());
+        addressesField.setValue(emailTemplate.getTo());
 
         templateParametersDs.refresh();
         try {

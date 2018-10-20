@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
         caption="msg://editorCaption"
-        class="com.haulmont.addon.emailtemplates.web.emailtemplate.EmailTemplateEdit"
+        class="com.haulmont.addon.emailtemplates.web.emailtemplate.ReportEmailTemplateEdit"
         datasource="emailTemplateDs"
         focusComponent="fieldGroup"
         messagesPack="com.haulmont.addon.emailtemplates.web.emailtemplate">
     <dsContext>
         <datasource id="emailTemplateDs"
-                    class="com.haulmont.addon.emailtemplates.entity.EmailTemplate"
+                    class="com.haulmont.addon.emailtemplates.entity.ReportEmailTemplate"
                     view="emailTemplate-view">
             <collectionDatasource id="attachmentsDs"
                                   property="attachments"/>

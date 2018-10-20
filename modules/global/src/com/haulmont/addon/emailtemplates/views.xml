@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <views xmlns="http://schemas.haulmont.com/cuba/view.xsd">
     <view class="com.haulmont.addon.emailtemplates.entity.EmailTemplate"
-          extends="_base"
+          extends="_local"
           name="emailTemplate-view">
         <property name="attachments"
                   view="report.view">
@@ -16,6 +16,26 @@
         <property name="parameters"
                   view="templateParameter-view">
         </property>
+        <property name="group" view="_minimal"/>
+    </view>
+
+    <view class="com.haulmont.addon.emailtemplates.entity.ReportEmailTemplate"
+          extends="_local"
+          name="emailTemplate-view">
+        <property name="attachments"
+                  view="report.view">
+            <property name="inputParameters"
+                      view="_minimal">
+                <property name="alias"/>
+                <property name="entityMetaClass"/>
+                <property name="parameterClassName"/>
+                <property name="enumerationClass"/>
+            </property>
+        </property>
+        <property name="parameters"
+                  view="templateParameter-view">
+        </property>
+        <property name="group" view="_minimal"/>
         <property name="emailBody"
                   view="_minimal">
             <property name="inputParameters"
@@ -26,6 +46,26 @@
             </property>
         </property>
     </view>
+
+    <view class="com.haulmont.addon.emailtemplates.entity.JsonEmailTemplate"
+          extends="_local"
+          name="emailTemplate-view">
+        <property name="attachments"
+                  view="report.view">
+            <property name="inputParameters"
+                      view="_minimal">
+                <property name="alias"/>
+                <property name="entityMetaClass"/>
+                <property name="parameterClassName"/>
+                <property name="enumerationClass"/>
+            </property>
+        </property>
+        <property name="parameters"
+                  view="templateParameter-view">
+        </property>
+        <property name="group" view="_minimal"/>
+    </view>
+
     <view class="com.haulmont.addon.emailtemplates.entity.TemplateParameter"
           extends="_local"
           name="templateParameter-view">
