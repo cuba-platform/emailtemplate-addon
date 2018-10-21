@@ -3,7 +3,6 @@ package com.haulmont.addon.emailtemplates.service;
 import com.haulmont.addon.emailtemplates.bean.TemplateParametersExtractor;
 import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
-import com.haulmont.addon.emailtemplates.entity.TemplateParameter;
 import com.haulmont.addon.emailtemplates.exceptions.ReportParameterTypeChangedException;
 import org.springframework.stereotype.Service;
 
@@ -17,13 +16,8 @@ public class TemplateParametersExtractorServiceBean implements TemplateParameter
     private TemplateParametersExtractor templateParametersExtractor;
 
     @Override
-    public List<ReportWithParams> getParamsFromTemplateDefaultValues(EmailTemplate emailTemplate, List<TemplateParameter> defaultParams)
+    public List<ReportWithParams> getParamsFromTemplateDefaultValues(EmailTemplate emailTemplate)
             throws ReportParameterTypeChangedException {
-        return templateParametersExtractor.getParamsFromTemplateDefaultValues(emailTemplate, defaultParams);
-    }
-
-    @Override
-    public List<ReportWithParams> getParamsFromTemplateDefaultValues(EmailTemplate emailTemplate) throws ReportParameterTypeChangedException {
         return templateParametersExtractor.getParamsFromTemplateDefaultValues(emailTemplate);
     }
 }

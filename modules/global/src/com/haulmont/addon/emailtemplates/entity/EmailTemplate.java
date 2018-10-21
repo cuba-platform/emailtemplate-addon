@@ -67,7 +67,7 @@ public abstract class EmailTemplate extends StandardEntity {
     @Composition
     @OnDelete(DeletePolicy.CASCADE)
     @OneToMany(mappedBy = "emailTemplate")
-    protected List<TemplateParameter> parameters;
+    protected List<TemplateParameters> parameters;
 
     public void setType(TemplateType type) {
         this.type = type == null ? null : type.getId();
@@ -117,11 +117,11 @@ public abstract class EmailTemplate extends StandardEntity {
         return subject;
     }
 
-    public void setParameters(List<TemplateParameter> parameters) {
+    public void setParameters(List<TemplateParameters> parameters) {
         this.parameters = parameters;
     }
 
-    public List<TemplateParameter> getParameters() {
+    public List<TemplateParameters> getParameters() {
         return parameters;
     }
 

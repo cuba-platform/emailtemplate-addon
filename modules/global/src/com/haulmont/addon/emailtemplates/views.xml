@@ -14,7 +14,7 @@
             </property>
         </property>
         <property name="parameters"
-                  view="templateParameter-view">
+                  view="templateParameters-view">
         </property>
         <property name="group" view="_minimal"/>
     </view>
@@ -33,7 +33,7 @@
             </property>
         </property>
         <property name="parameters"
-                  view="templateParameter-view">
+                  view="templateParameters-view">
         </property>
         <property name="group" view="_minimal"/>
         <property name="emailBody"
@@ -61,14 +61,14 @@
             </property>
         </property>
         <property name="parameters"
-                  view="templateParameter-view">
+                  view="templateParameters-view">
         </property>
         <property name="group" view="_minimal"/>
     </view>
 
-    <view class="com.haulmont.addon.emailtemplates.entity.TemplateParameter"
+    <view class="com.haulmont.addon.emailtemplates.entity.TemplateParameters"
           extends="_local"
-          name="templateParameter-view">
+          name="templateParameters-view">
         <property name="report"
                   view="report.view">
             <property name="inputParameters"

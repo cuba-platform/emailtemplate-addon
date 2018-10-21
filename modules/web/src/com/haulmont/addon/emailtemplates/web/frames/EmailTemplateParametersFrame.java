@@ -2,6 +2,9 @@ package com.haulmont.addon.emailtemplates.web.frames;
 
 import com.haulmont.addon.emailtemplates.dto.ReportWithParamField;
 import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
+import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
+import com.haulmont.addon.emailtemplates.exceptions.ReportParameterTypeChangedException;
+import com.haulmont.addon.emailtemplates.service.TemplateParametersExtractorService;
 import com.haulmont.cuba.core.entity.Entity;
 import com.haulmont.cuba.gui.WindowParam;
 import com.haulmont.cuba.gui.components.*;
@@ -25,7 +28,7 @@ import java.util.stream.Collectors;
 
 public class EmailTemplateParametersFrame extends AbstractFrame {
     public static final String IS_DEFAULT_PARAM_VALUES = "isDefault";
-    public static final String PARAMETERS = "parameters";
+    public static final String TEMPLATE = "emailTemplate";
 
     @WindowParam(name = IS_DEFAULT_PARAM_VALUES, required = true)
     protected Boolean isDefaultValues;
@@ -38,7 +41,11 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
     @Inject
     private ComponentsFactory componentsFactory;
 
-    protected List<ReportWithParams> parameters;
+    @Inject
+    private TemplateParametersExtractorService templateParametersExtractorService;
+
+    @WindowParam
+    private EmailTemplate emailTemplate;
 
     protected List<ReportWithParamField> parameterComponents = new ArrayList<>();
 
@@ -50,52 +57,57 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
     public void init(Map<String, Object> params) {
         super.init(params);
 
-        setParameters((List<ReportWithParams>) params.get(PARAMETERS));
-        if (CollectionUtils.isEmpty(parameters)) {
+        try {
+            List<ReportWithParams> parameters = templateParametersExtractorService.getParamsFromTemplateDefaultValues(emailTemplate);
+            if (CollectionUtils.isEmpty(parameters)) {
+                return;
+            }
+        } catch (ReportParameterTypeChangedException e) {
+            showNotification(e.getMessage());
             return;
         }
-        createComponents();
-    }
 
-    public void setParameters(List<ReportWithParams> parameters) {
-        if (parameters != null) {
-            this.parameters = parameters;
-        } else {
-            this.parameters = Collections.emptyList();
-        }
+        createComponents();
     }
 
     public void createComponents() {
         parameterComponents.clear();
         parametersGrid.removeAll();
 
-        List<Report> reports = parameters.stream()
-                .map(ReportWithParams::getReport)
-                .collect(Collectors.toList());
+        try {
+            List<ReportWithParams> parameters = templateParametersExtractorService.getParamsFromTemplateDefaultValues(emailTemplate);
 
-        parametersGrid.setRows(getRowCountForParameters(reports));
+            List<Report> reports = parameters.stream()
+                    .map(ReportWithParams::getReport)
+                    .collect(Collectors.toList());
 
-        int currentGridRow = 0;
-        for (ReportWithParams reportData : parameters) {
-            Report report = reportData.getReport();
-            if (report != null && !report.getIsTmp()) {
-                report = dataSupplier.reload(report, ReportService.MAIN_VIEW_NAME);
-            }
+            parametersGrid.setRows(getRowCountForParameters(reports));
 
-            if (report != null) {
-                if (CollectionUtils.isNotEmpty(report.getInputParameters())) {
-                    createReportNameLabel(report, currentGridRow);
-                    currentGridRow++;
-                    Map<String, Field> componentsMap = new HashMap<>();
-                    for (ReportInputParameter parameter : report.getInputParameters()) {
-                        if (BooleanUtils.isNotTrue(parameter.getHidden())) {
-                            componentsMap.put(parameter.getAlias(), createComponent(parameter, reportData.getParams(), currentGridRow));
-                            currentGridRow++;
+            int currentGridRow = 0;
+            for (ReportWithParams reportData : parameters) {
+                Report report = reportData.getReport();
+                if (report != null && !report.getIsTmp()) {
+                    report = dataSupplier.reload(report, ReportService.MAIN_VIEW_NAME);
+                }
+
+                if (report != null) {
+                    if (CollectionUtils.isNotEmpty(report.getInputParameters())) {
+                        createReportNameLabel(report, currentGridRow);
+                        currentGridRow++;
+                        Map<String, Field> componentsMap = new HashMap<>();
+                        for (ReportInputParameter parameter : report.getInputParameters()) {
+                            if (BooleanUtils.isNotTrue(parameter.getHidden())) {
+                                componentsMap.put(parameter.getAlias(), createComponent(parameter, reportData.getParams(), currentGridRow));
+                                currentGridRow++;
+                            }
                         }
+                        parameterComponents.add(new ReportWithParamField(report, componentsMap));
                     }
-                    parameterComponents.add(new ReportWithParamField(report, componentsMap));
                 }
             }
+
+        } catch (ReportParameterTypeChangedException e) {
+            showNotification(e.getMessage());
         }
     }
 

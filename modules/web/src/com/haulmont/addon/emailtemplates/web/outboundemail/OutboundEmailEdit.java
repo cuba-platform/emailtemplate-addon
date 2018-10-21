@@ -3,18 +3,14 @@ package com.haulmont.addon.emailtemplates.web.outboundemail;
 import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.OutboundEmail;
-import com.haulmont.addon.emailtemplates.entity.TemplateParameter;
-import com.haulmont.addon.emailtemplates.exceptions.ReportParameterTypeChangedException;
 import com.haulmont.addon.emailtemplates.exceptions.TemplateNotFoundException;
 import com.haulmont.addon.emailtemplates.service.OutboundTemplateService;
-import com.haulmont.addon.emailtemplates.web.editors.ParametersEditor;
 import com.haulmont.addon.emailtemplates.web.frames.EmailTemplateParametersFrame;
 import com.haulmont.bali.util.ParamsMap;
 import com.haulmont.cuba.client.ClientConfig;
 import com.haulmont.cuba.core.global.EmailInfo;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.*;
-import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.impl.AbstractDatasource;
 import com.haulmont.cuba.gui.xml.layout.ComponentsFactory;
@@ -26,9 +22,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
-public class OutboundEmailEdit extends ParametersEditor<OutboundEmail> {
+public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
 
     @Named("fieldGroup.emailTemplate")
     private PickerField emailTemplateField;
@@ -38,14 +33,7 @@ public class OutboundEmailEdit extends ParametersEditor<OutboundEmail> {
     private TextField addressesField;
 
     @Inject
-    private Button sendButton;
-    @Inject
-    private Button previewButton;
-
-    @Inject
     protected Datasource<OutboundEmail> outboundEmailDs;
-    @Inject
-    private CollectionDatasource<TemplateParameter, UUID> templateParametersDs;
     @Inject
     protected ScrollBoxLayout propertiesScrollBox;
     @Inject
@@ -78,17 +66,8 @@ public class OutboundEmailEdit extends ParametersEditor<OutboundEmail> {
         fromField.setValue(emailTemplate.getFrom());
         addressesField.setValue(emailTemplate.getTo());
 
-        templateParametersDs.refresh();
-        try {
-            List<ReportWithParams> parameters = getValidParamsByDefaultValues(emailTemplate, templateParametersDs.getItems());
-
-            parametersFrame = (EmailTemplateParametersFrame) openFrame(frameContainer, "emailTemplateParametersFrame",
-                    ParamsMap.of(EmailTemplateParametersFrame.PARAMETERS, parameters));
-        } catch (ReportParameterTypeChangedException e) {
-            sendButton.setEnabled(false);
-            previewButton.setEnabled(false);
-            showNotification(e.getMessage());
-        }
+        parametersFrame = (EmailTemplateParametersFrame) openFrame(frameContainer, "emailtemplates$parametersFrame",
+                ParamsMap.of(EmailTemplateParametersFrame.TEMPLATE, emailTemplate));
     }
 
     @Override

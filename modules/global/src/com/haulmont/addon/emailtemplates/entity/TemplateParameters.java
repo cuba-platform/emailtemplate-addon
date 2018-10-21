@@ -14,7 +14,7 @@ import java.util.List;
 @NamePattern(" |report,parameterValues")
 @Table(name = "EMAILTEMPLATES_TEMPLATE_PARAMETER")
 @Entity(name = "emailtemplates$TemplateParameter")
-public class TemplateParameter extends StandardEntity {
+public class TemplateParameters extends StandardEntity {
     private static final long serialVersionUID = -3260053745502523549L;
 
     @NotNull
@@ -22,15 +22,13 @@ public class TemplateParameter extends StandardEntity {
     @JoinColumn(name = "REPORT_ID")
     protected Report report;
 
-
-
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "EMAIL_TEMPLATE_ID")
     protected EmailTemplate emailTemplate;
 
     @Composition
     @OnDelete(DeletePolicy.CASCADE)
-    @OneToMany(mappedBy = "templateParameter")
+    @OneToMany(mappedBy = "templateParameters")
     protected List<ParameterValue> parameterValues;
 
     public void setParameterValues(List<ParameterValue> parameterValues) {

@@ -10,7 +10,7 @@
             template="com/haulmont/addon/emailtemplates/web/emailtemplate/email-template-browse.xml"/>
     <screen id="emailTemplatePreview"
             template="com/haulmont/addon/emailtemplates/web/outboundemail/email-template-preview.xml"/>
-    <screen id="emailTemplateParametersFrame"
+    <screen id="emailtemplates$parametersFrame"
             template="com/haulmont/addon/emailtemplates/web/frames/email-template-parameters-frame.xml"/>
     <screen id="emailtemplates$JsonEmailTemplate.edit"
             template="com/haulmont/addon/emailtemplates/web/emailtemplate/email-template-json-edit.xml"/>

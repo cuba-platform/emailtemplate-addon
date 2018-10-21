@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.ParameterValue;
-import com.haulmont.addon.emailtemplates.entity.TemplateParameter;
+import com.haulmont.addon.emailtemplates.entity.TemplateParameters;
 import com.haulmont.addon.emailtemplates.exceptions.ReportParameterTypeChangedException;
 import com.haulmont.addon.emailtemplates.service.OutboundTemplateService;
 import com.haulmont.chile.core.model.MetaClass;
@@ -19,10 +19,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -47,26 +44,26 @@ public class TemplateParametersExtractor {
 
     @Inject
     protected OutboundTemplateService outboundTemplateService;
+
     @Inject
     protected ReportService reportService;
 
-    public List<ReportWithParams> getParamsFromTemplateDefaultValues(EmailTemplate emailTemplate, List<TemplateParameter> defaultParams) throws ReportParameterTypeChangedException {
+    public List<ReportWithParams> getParamsFromTemplateDefaultValues(EmailTemplate emailTemplate) throws ReportParameterTypeChangedException {
         List<ReportWithParams> parameters = createParamsCollectionByTemplate(emailTemplate);
         List<String> exceptionMessages = new ArrayList<>();
-
-        for (ReportWithParams paramsData: parameters) {
-            TemplateParameter templateParameter = defaultParams.stream()
+        List<TemplateParameters> templateParameters = emailTemplate.getParameters() != null ? emailTemplate.getParameters() : Collections.emptyList();
+        for (ReportWithParams paramsData : parameters) {
+            TemplateParameters templateParameter = templateParameters.stream()
                     .filter(e -> e.getReport().equals(paramsData.getReport()))
                     .findFirst()
                     .orElse(null);
-            defaultParams.remove(templateParameter);
             if (templateParameter != null) {
                 Report report = templateParameter.getReport();
-                for (ParameterValue paramValue: templateParameter.getParameterValues()) {
+                Report reportFromXml = reportService.convertToReport(report.getXml());
+                for (ParameterValue paramValue : templateParameter.getParameterValues()) {
                     String alias = paramValue.getAlias();
                     String stringValue = paramValue.getDefaultValue();
 
-                    Report reportFromXml = reportService.convertToReport(report.getXml());
                     ReportInputParameter inputParameter = reportFromXml.getInputParameters().stream()
                             .filter(e -> e.getAlias().equals(alias))
                             .findFirst()
@@ -93,12 +90,6 @@ public class TemplateParametersExtractor {
             throw new ReportParameterTypeChangedException(messages.toString());
         }
         return parameters;
-    }
-
-    public List<ReportWithParams> getParamsFromTemplateDefaultValues(EmailTemplate emailTemplate)
-            throws ReportParameterTypeChangedException {
-        List<TemplateParameter> defaultParams = new ArrayList<>(emailTemplate.getParameters());
-        return getParamsFromTemplateDefaultValues(emailTemplate, defaultParams);
     }
 
     protected List<ReportWithParams> createParamsCollectionByTemplate(EmailTemplate emailTemplate) {

@@ -1,15 +1,11 @@
 package com.haulmont.addon.emailtemplates.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import com.haulmont.chile.core.annotations.NamePattern;
 import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.reports.entity.ParameterType;
-import javax.persistence.Column;
+
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import com.haulmont.chile.core.annotations.NamePattern;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
 @NamePattern("%s %s %s|parameterType,alias,defaultValue")
 @Table(name = "EMAILTEMPLATES_PARAMETER_VALUE")
@@ -30,14 +26,14 @@ public class ParameterValue extends StandardEntity {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "TEMPLATE_PARAMETER_ID")
-    protected TemplateParameter templateParameter;
+    protected TemplateParameters templateParameters;
 
-    public void setTemplateParameter(TemplateParameter templateParameter) {
-        this.templateParameter = templateParameter;
+    public void setTemplateParameters(TemplateParameters templateParameters) {
+        this.templateParameters = templateParameters;
     }
 
-    public TemplateParameter getTemplateParameter() {
-        return templateParameter;
+    public TemplateParameters getTemplateParameters() {
+        return templateParameters;
     }
 
 
