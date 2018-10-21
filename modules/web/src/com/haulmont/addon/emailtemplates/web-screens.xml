@@ -16,4 +16,6 @@
             template="com/haulmont/addon/emailtemplates/web/emailtemplate/email-template-json-edit.xml"/>
     <screen id="emailtemplates$ReportEmailTemplate.edit"
             template="com/haulmont/addon/emailtemplates/web/emailtemplate/email-template-report-edit.xml"/>
+    <screen id="emailtemplates$htmlSourceCode"
+            template="com/haulmont/addon/emailtemplates/web/screens/html-source-code-window.xml"/>
 </screen-config>

@@ -2,6 +2,8 @@ package com.haulmont.addon.emailtemplates.web.emailtemplate;
 
 import com.haulmont.addon.emailtemplates.entity.JsonEmailTemplate;
 import com.haulmont.addon.emailtemplates.web.gui.components.UnlayerTemplateEditor;
+import com.haulmont.bali.util.ParamsMap;
+import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.AbstractEditor;
 import com.haulmont.cuba.gui.components.FileUploadField;
 import com.haulmont.cuba.gui.export.ByteArrayDataProvider;
@@ -61,15 +63,18 @@ public class JsonEmailTemplateEdit extends AbstractEditor<JsonEmailTemplate> {
     }
 
     public void exportJson() {
-        if (validateAll()) {
-            exportDisplay.show(new ByteArrayDataProvider(template.getJson().toString().getBytes()), getItem().getName() + ".json");
-        }
+        String name = getItem().getName() != null ? getItem().getName() : "template";
+        exportDisplay.show(new ByteArrayDataProvider(template.getJson().toString().getBytes()), name + ".json");
+
     }
 
     public void exportHtml() {
-        if (validateAll()) {
-            exportDisplay.show(new ByteArrayDataProvider(template.getHTML().getBytes()), getItem().getName() + ".html");
-        }
+        openWindow("emailtemplates$htmlSourceCode", WindowManager.OpenType.DIALOG, ParamsMap.of("html", template.getHTML()));
+    }
+
+    public void viewHtml() {
+        String name = getItem().getName() != null ? getItem().getName() : "template";
+        exportDisplay.show(new ByteArrayDataProvider(template.getHTML().getBytes()), name + ".html");
     }
 
 

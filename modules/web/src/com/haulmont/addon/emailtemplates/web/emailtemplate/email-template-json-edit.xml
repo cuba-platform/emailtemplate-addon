@@ -43,7 +43,7 @@
                        dockable="true"
                        height="100%"
                        orientation="horizontal"
-                       pos="30%"
+                       pos="20%"
                        width="100%">
                     <scrollBox id="propertiesScroll"
                                height="100%">
@@ -53,6 +53,7 @@
                                 <upload id="fileUpload" dropZone="dropZone" uploadButtonIcon="DOWNLOAD" uploadButtonCaption=""/>
                                 <button id="exportJson" invoke="exportJson" icon="UPLOAD"/>
                                 <button id="exportHtml" invoke="exportHtml" icon="CODE"/>
+                                <button id="viewHtml" invoke="viewHtml" icon="EYE"/>
                                 <label id="space"/>
                             </hbox>
                             <groupBox caption="msg://info"
@@ -92,7 +93,9 @@
                                       caption="msg://defaultParameters"
                                       collapsable="true"
                                       collapsed="true"
-                                      spacing="true"/>
+                                      spacing="true">
+
+                            </groupBox>
                         </vbox>
                     </scrollBox>
                     <et:unlayerTemplateEditor id="template"
