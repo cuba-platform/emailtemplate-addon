@@ -11,8 +11,6 @@ com_haulmont_addon_emailtemplates_web_toolkit_ui_unlayereditorcomponent_UnlayerE
         });
 
         unlayer.addEventListener('design:updated', function(data) {
-          var type = data.type; // body, row, content
-          var item = data.item;
           unlayer.exportHtml(function(data) {
             connector.valueChanged(data);
           })
