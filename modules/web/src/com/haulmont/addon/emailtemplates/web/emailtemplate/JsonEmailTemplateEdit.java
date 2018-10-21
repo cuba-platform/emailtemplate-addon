@@ -60,10 +60,6 @@ public class JsonEmailTemplateEdit extends AbstractEditor<JsonEmailTemplate> {
         return true;
     }
 
-    public void importJson() {
-
-    }
-
     public void exportJson() {
         if (validateAll()) {
             exportDisplay.show(new ByteArrayDataProvider(template.getJson().toString().getBytes()), getItem().getName() + ".json");

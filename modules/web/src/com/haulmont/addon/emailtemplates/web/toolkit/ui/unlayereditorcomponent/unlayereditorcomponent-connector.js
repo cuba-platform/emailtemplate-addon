@@ -18,11 +18,15 @@ com_haulmont_addon_emailtemplates_web_toolkit_ui_unlayereditorcomponent_UnlayerE
           })
         });
 
-        connector.onStateChange = function() {
-          var state = connector.getState();
-          unlayer.loadDesign(state.json);
+        unlayer.addEventListener('design:loaded', function(data) {
           unlayer.exportHtml(function(data) {
              connector.valueChanged(data);
           })
+        })
+
+        connector.onStateChange = function() {
+          var state = connector.getState();
+          unlayer.loadDesign(state.json);
+
         }
 }

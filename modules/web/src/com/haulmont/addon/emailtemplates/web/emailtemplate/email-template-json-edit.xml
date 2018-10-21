@@ -62,7 +62,7 @@
                                             datasource="emailTemplateDs"
                                             width="100%">
                                     <column width="100%">
-                                        <field property="name"/>
+                                        <field property="name" required="true"/>
                                         <field property="code"/>
                                         <field optionsDatasource="groupsDs"
                                                property="group"/>

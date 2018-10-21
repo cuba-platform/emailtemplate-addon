@@ -14,7 +14,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-@NamePattern("%s %s %s %s|name,code,group,emailBody")
+@NamePattern("%s (%s)|name,code")
 @Table(name = "EMAILTEMPLATES_EMAIL_TEMPLATE")
 @Entity(name = "emailtemplates$EmailTemplate")
 public abstract class EmailTemplate extends StandardEntity {

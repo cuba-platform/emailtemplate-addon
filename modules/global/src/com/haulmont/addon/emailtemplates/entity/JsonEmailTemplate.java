@@ -1,10 +1,14 @@
 package com.haulmont.addon.emailtemplates.entity;
 
-import com.haulmont.reports.entity.Report;
+import com.haulmont.cuba.core.global.AppBeans;
+import com.haulmont.cuba.core.global.Metadata;
+import com.haulmont.reports.app.service.ReportService;
+import com.haulmont.reports.entity.*;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
+import java.util.Collections;
 
 @Entity(name = "emailtemplates$JsonEmailTemplate")
 public class JsonEmailTemplate extends EmailTemplate {
@@ -20,10 +24,6 @@ public class JsonEmailTemplate extends EmailTemplate {
 
     public JsonEmailTemplate() {
         setType(TemplateType.JSON);
-    }
-
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
     }
 
     public String getJsonBody() {
@@ -44,6 +44,30 @@ public class JsonEmailTemplate extends EmailTemplate {
 
     @Override
     public Report getEmailBodyReport() {
-        return null;
+        Metadata metadata = AppBeans.get(Metadata.class);
+        Report report = metadata.create(Report.class);
+
+        ReportTemplate template = metadata.create(ReportTemplate.class);
+        template.setCode(ReportTemplate.DEFAULT_TEMPLATE_CODE);
+        template.setReportOutputType(ReportOutputType.HTML);
+        template.setReport(report);
+        template.setName("template.html");
+        String html = getHtml();
+        if (html != null) {
+            template.setContent(html.getBytes());
+        }
+        report.setTemplates(Collections.singletonList(template));
+        report.setDefaultTemplate(template);
+
+        BandDefinition bandDefinition = metadata.create(BandDefinition.class);
+        bandDefinition.setReport(report);
+        report.setBands(Collections.singleton(bandDefinition));
+
+        report.setName(getName());
+        report.setReportType(ReportType.SIMPLE);
+        report.setIsTmp(true);
+
+        report.setXml(AppBeans.get(ReportService.class).convertToString(report));
+        return report;
     }
 }
