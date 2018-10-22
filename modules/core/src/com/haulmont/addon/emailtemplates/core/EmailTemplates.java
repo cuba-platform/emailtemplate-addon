@@ -7,6 +7,8 @@ import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.ParameterValue;
 import com.haulmont.addon.emailtemplates.exceptions.ReportParameterTypeChangedException;
 import com.haulmont.addon.emailtemplates.exceptions.TemplateNotFoundException;
+import com.haulmont.cuba.core.app.FileStorageAPI;
+import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.core.global.*;
 import com.haulmont.reports.ReportingApi;
 import com.haulmont.reports.entity.Report;
@@ -14,6 +16,8 @@ import com.haulmont.reports.entity.ReportInputParameter;
 import com.haulmont.yarg.reporting.ReportOutputDocument;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -23,12 +27,16 @@ import java.util.stream.Collectors;
 @Component(EmailTemplatesAPI.NAME)
 public class EmailTemplates implements EmailTemplatesAPI {
 
+    private static final Logger LOG = LoggerFactory.getLogger(EmailTemplates.class);
+
     @Inject
     private DataManager dataManager;
     @Inject
     protected ReportingApi reportingApi;
     @Inject
     private Messages messages;
+    @Inject
+    private FileStorageAPI fileStorageAPI;
 
     @Inject
     private TemplateParametersExtractor templateParametersExtractor;
@@ -39,7 +47,7 @@ public class EmailTemplates implements EmailTemplatesAPI {
             throw new TemplateNotFoundException(messages.getMessage(EmailTemplates.class, "nullTemplate"));
         }
         if (bodyAndAttachmentsIsEmpty(emailTemplate)) {
-            throw new TemplateNotFoundException(messages.getMessage(EmailTemplates.class,"voidTemplate"));
+            throw new TemplateNotFoundException(messages.getMessage(EmailTemplates.class, "voidTemplate"));
         }
         List<ReportWithParams> parameters = new ArrayList<>(params);
 
@@ -50,7 +58,7 @@ public class EmailTemplates implements EmailTemplatesAPI {
                 .orElse(new ReportWithParams(bodyReport));
         parameters.remove(bodyReportWithParams);
         List<ReportWithParams> attachmentsWithParams = new ArrayList<>();
-        for (Report report : emailTemplate.getAttachments()) {
+        for (Report report : emailTemplate.getAttachedReports()) {
             ReportWithParams reportWithParams = parameters.stream()
                     .filter(e -> e.getReport().equals(report))
                     .findFirst()
@@ -59,24 +67,49 @@ public class EmailTemplates implements EmailTemplatesAPI {
             attachmentsWithParams.add(reportWithParams);
         }
         EmailInfo emailInfo = generateEmailInfoWithoutAttachments(bodyReportWithParams);
-        EmailAttachment[] emailAttachments = createEmailAttachments(attachmentsWithParams).toArray(new EmailAttachment[attachmentsWithParams.size()]);
+        List<EmailAttachment> templateAttachments = new ArrayList<>();
+        templateAttachments.addAll(createReportAttachments(attachmentsWithParams));
+        templateAttachments.addAll(createFilesAttachments(emailTemplate.getAttachedFiles()));
+        EmailAttachment[] emailAttachments = templateAttachments
+                .toArray(new EmailAttachment[attachmentsWithParams.size()]);
         emailInfo.setCaption(emailTemplate.getSubject());
         emailInfo.setAttachments(emailAttachments);
         return emailInfo;
+    }
+
+    private List<EmailAttachment> createFilesAttachments(List<FileDescriptor> attachedFiles) {
+        List<EmailAttachment> attachmentsList = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(attachedFiles)) {
+            attachmentsList = attachedFiles.stream()
+                    .map(this::createEmailAttachmentByFileDescriptor)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+
+        }
+        return attachmentsList;
+    }
+
+    private EmailAttachment createEmailAttachmentByFileDescriptor(FileDescriptor fd) {
+        try {
+            return new EmailAttachment(fileStorageAPI.loadFile(fd), fd.getName(), fd.getName());
+        } catch (FileStorageException e) {
+            LOG.error("Could not load file from storage", e);
+        }
+        return null;
     }
 
     @Override
     public EmailInfo generateEmail(String emailTemplateCode) throws TemplateNotFoundException, ReportParameterTypeChangedException {
         LoadContext<EmailTemplate> loadContext = LoadContext.create(EmailTemplate.class)
                 .setQuery(LoadContext.createQuery("select e from emailtemplates$EmailTemplate e where e.code = :code")
-                    .setParameter("code", emailTemplateCode))
+                        .setParameter("code", emailTemplateCode))
                 .setView("emailTemplate-view");
         EmailTemplate emailTemplate = dataManager.load(loadContext);
 
         if (emailTemplate == null) {
             throw new TemplateNotFoundException(messages.getMessage(EmailTemplates.class, "notFoundTemplate"));
         }
-        return generateEmail(emailTemplate, templateParametersExtractor.getParamsFromTemplateDefaultValues(emailTemplate));
+        return generateEmail(emailTemplate, templateParametersExtractor.getTemplateDefaultValues(emailTemplate));
     }
 
     @Override
@@ -91,7 +124,7 @@ public class EmailTemplates implements EmailTemplatesAPI {
         List<ReportWithParams> paramList = new ArrayList<>();
         Report bodyReport = emailTemplate.getEmailBodyReport();
         paramList.add(createParamsMapForReport(bodyReport, params));
-        for (Report report : emailTemplate.getAttachments()) {
+        for (Report report : emailTemplate.getAttachedReports()) {
             paramList.add(createParamsMapForReport(report, params));
         }
         return generateEmail(emailTemplate, paramList);
@@ -128,14 +161,14 @@ public class EmailTemplates implements EmailTemplatesAPI {
         return new EmailInfo(null, null, body, EmailInfo.HTML_CONTENT_TYPE);
     }
 
-    protected List<EmailAttachment> createEmailAttachments(List<ReportWithParams> reportsWithParams) {
+    protected List<EmailAttachment> createReportAttachments(List<ReportWithParams> reportsWithParams) {
         List<EmailAttachment> attachmentsList = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(reportsWithParams)) {
-            attachmentsList =
-                    reportsWithParams.stream()
-                            .map(reportsWithParam ->
-                                    createEmailAttachmentByReportAndParams(
-                            reportsWithParam.getReport(), reportsWithParam.getParams())).collect(Collectors.toList());
+            attachmentsList = reportsWithParams.stream()
+                    .map(reportsWithParam ->
+                            createEmailAttachmentByReportAndParams(
+                                    reportsWithParam.getReport(), reportsWithParam.getParams()))
+                    .collect(Collectors.toList());
 
         }
         return attachmentsList;
@@ -160,7 +193,7 @@ public class EmailTemplates implements EmailTemplatesAPI {
 
     protected boolean bodyAndAttachmentsIsEmpty(EmailTemplate emailTemplate) {
         Report body = emailTemplate.getEmailBodyReport();
-        List<Report> attachments = emailTemplate.getAttachments();
+        List<Report> attachments = emailTemplate.getAttachedReports();
         Report notNullReport = null;
         if (attachments != null) {
             notNullReport = attachments.stream()

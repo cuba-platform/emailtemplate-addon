@@ -1,0 +1,5 @@
+create table EMAILTEMPLATES_EMAIL_TEMPLATE_FILE_DESCRIPTOR_LINK (
+    EMAIL_TEMPLATE_ID varchar(36) not null,
+    FILE_DESCRIPTOR_ID varchar(36) not null,
+    primary key (EMAIL_TEMPLATE_ID, FILE_DESCRIPTOR_ID)
+);

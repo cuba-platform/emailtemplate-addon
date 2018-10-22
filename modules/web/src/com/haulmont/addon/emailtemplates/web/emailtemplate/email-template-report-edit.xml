@@ -10,7 +10,7 @@
                     class="com.haulmont.addon.emailtemplates.entity.ReportEmailTemplate"
                     view="emailTemplate-view">
             <collectionDatasource id="attachmentsDs"
-                                  property="attachments"/>
+                                  property="attachedReports"/>
             <collectionDatasource id="parametersDs"
                                   property="parameters">
                 <collectionDatasource id="parameterValuesDs"
@@ -60,7 +60,7 @@
                        height="100%"/>
         </hbox>
         <groupBox id="attachmentsBox"
-                  caption="msg://com.haulmont.addon.emailtemplates.entity/EmailTemplate.attachments">
+                  caption="msg://com.haulmont.addon.emailtemplates.entity/EmailTemplate.attachedReports">
             <table id="attachmentsTable"
                    multiselect="true"
                    width="100%">

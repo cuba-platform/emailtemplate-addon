@@ -68,6 +68,7 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
 
         parametersFrame = (EmailTemplateParametersFrame) openFrame(frameContainer, "emailtemplates$parametersFrame",
                 ParamsMap.of(EmailTemplateParametersFrame.TEMPLATE, emailTemplate));
+        parametersFrame.createComponents();
     }
 
     @Override

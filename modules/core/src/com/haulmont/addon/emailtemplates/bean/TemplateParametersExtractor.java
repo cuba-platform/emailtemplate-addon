@@ -20,7 +20,6 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 @Component(TemplateParametersExtractor.NAME)
@@ -48,36 +47,59 @@ public class TemplateParametersExtractor {
     @Inject
     protected ReportService reportService;
 
-    public List<ReportWithParams> getParamsFromTemplateDefaultValues(EmailTemplate emailTemplate) throws ReportParameterTypeChangedException {
-        List<ReportWithParams> parameters = createParamsCollectionByTemplate(emailTemplate);
+    public List<ReportWithParams> getTemplateDefaultValues(EmailTemplate emailTemplate) throws ReportParameterTypeChangedException {
+        List<Report> reports = createParamsCollectionByTemplate(emailTemplate);
+        List<ReportWithParams> reportWithParams = new ArrayList<>();
         List<String> exceptionMessages = new ArrayList<>();
         List<TemplateParameters> templateParameters = emailTemplate.getParameters() != null ? emailTemplate.getParameters() : Collections.emptyList();
-        for (ReportWithParams paramsData : parameters) {
-            TemplateParameters templateParameter = templateParameters.stream()
-                    .filter(e -> e.getReport().equals(paramsData.getReport()))
-                    .findFirst()
-                    .orElse(null);
-            if (templateParameter != null) {
-                Report report = templateParameter.getReport();
-                Report reportFromXml = reportService.convertToReport(report.getXml());
-                for (ParameterValue paramValue : templateParameter.getParameterValues()) {
-                    String alias = paramValue.getAlias();
-                    String stringValue = paramValue.getDefaultValue();
+        for (Report report : reports) {
+            try {
+                TemplateParameters parameters = templateParameters.stream()
+                        .filter(e -> report.equals(e.getReport()))
+                        .findFirst()
+                        .orElse(null);
+                List<ParameterValue> parameterValues = null;
+                if (parameters != null) {
+                    parameterValues = parameters.getParameterValues();
+                }
+                reportWithParams.add(getReportDefaultValues(report, parameterValues));
+            } catch (ReportParameterTypeChangedException e) {
+                exceptionMessages.add(e.getMessage());
+            }
+        }
+        if (!exceptionMessages.isEmpty()) {
+            StringBuilder messages = new StringBuilder();
+            exceptionMessages.forEach(m -> {
+                messages.append(m);
+                messages.append("\n");
+            });
+            throw new ReportParameterTypeChangedException(messages.toString());
+        }
+        return reportWithParams;
+    }
 
-                    ReportInputParameter inputParameter = reportFromXml.getInputParameters().stream()
-                            .filter(e -> e.getAlias().equals(alias))
-                            .findFirst()
-                            .orElse(null);
-                    if (inputParameter != null) {
-                        try {
-                            outboundTemplateService.checkParameterTypeChanged(inputParameter, paramValue);
-                        } catch (ReportParameterTypeChangedException e) {
-                            exceptionMessages.add(e.getMessage());
-                        }
-                        Class parameterClass = resolveClass(inputParameter);
-                        Object value = reportService.convertFromString(parameterClass, stringValue);
-                        paramsData.put(alias, value);
+    public ReportWithParams getReportDefaultValues(Report report, List<ParameterValue> parameterValues) throws ReportParameterTypeChangedException {
+        ReportWithParams paramsData = new ReportWithParams(report);
+        List<String> exceptionMessages = new ArrayList<>();
+        if (parameterValues != null) {
+            Report reportFromXml = reportService.convertToReport(report.getXml());
+            for (ParameterValue paramValue : parameterValues) {
+                String alias = paramValue.getAlias();
+                String stringValue = paramValue.getDefaultValue();
+
+                ReportInputParameter inputParameter = reportFromXml.getInputParameters().stream()
+                        .filter(e -> e.getAlias().equals(alias))
+                        .findFirst()
+                        .orElse(null);
+                if (inputParameter != null) {
+                    try {
+                        outboundTemplateService.checkParameterTypeChanged(inputParameter, paramValue);
+                    } catch (ReportParameterTypeChangedException e) {
+                        exceptionMessages.add(e.getMessage());
                     }
+                    Class parameterClass = resolveClass(inputParameter);
+                    Object value = reportService.convertFromString(parameterClass, stringValue);
+                    paramsData.put(alias, value);
                 }
             }
         }
@@ -89,19 +111,16 @@ public class TemplateParametersExtractor {
             });
             throw new ReportParameterTypeChangedException(messages.toString());
         }
-        return parameters;
+        return paramsData;
     }
 
-    protected List<ReportWithParams> createParamsCollectionByTemplate(EmailTemplate emailTemplate) {
-        List<ReportWithParams> parameters = new ArrayList<>();
+    protected List<Report> createParamsCollectionByTemplate(EmailTemplate emailTemplate) {
+        List<Report> parameters = new ArrayList<>();
         if (emailTemplate.getEmailBodyReport() != null) {
-            parameters.add(new ReportWithParams(emailTemplate.getEmailBodyReport()));
+            parameters.add(emailTemplate.getEmailBodyReport());
         }
-        if (CollectionUtils.isNotEmpty(emailTemplate.getAttachments())) {
-            List<ReportWithParams> attachmentParams = emailTemplate.getAttachments().stream()
-                    .map(ReportWithParams::new)
-                    .collect(Collectors.toList());
-            parameters.addAll(attachmentParams);
+        if (CollectionUtils.isNotEmpty(emailTemplate.getAttachedReports())) {
+            parameters.addAll(emailTemplate.getAttachedReports());
         }
         return parameters;
     }

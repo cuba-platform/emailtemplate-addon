@@ -63,6 +63,7 @@ public class ReportEmailTemplateEdit extends AbstractEditor<ReportEmailTemplate>
 
         parametersFrame = (EmailTemplateParametersFrame) openFrame(frameContainer, "emailtemplates$parametersFrame",
                 ParamsMap.of(EmailTemplateParametersFrame.TEMPLATE, emailTemplate, EmailTemplateParametersFrame.IS_DEFAULT_PARAM_VALUES, true));
+        parametersFrame.createComponents();
 
         emailBodyField.addValueChangeListener(e -> {
             Report report = (Report) e.getValue();

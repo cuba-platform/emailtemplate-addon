@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+        class="com.haulmont.addon.emailtemplates.web.emailtemplate.AttachmentFrame"
+        messagesPack="com.haulmont.addon.emailtemplates.web.emailtemplate">
+    <dialogMode height="600"
+                width="800"/>
+    <layout spacing="true" expand="attachmentsSplit">
+        <split id="attachmentsSplit" width="100%">
+            <vbox spacing="true" expand="reportAttachmentBox" height="100%"  margin="true">
+                <label value="msg://attachedReports" stylename="h2"/>
+                <hbox id="reportAttachmentBox" spacing="true" expand="reportsTable" width="100%">
+                    <table id="reportsTable"
+                           multiselect="true"
+                           height="100%">
+                        <actions>
+                            <action id="add"/>
+                            <action id="remove"/>
+                        </actions>
+                        <columns>
+                            <column id="name"/>
+                            <column id="code"/>
+                            <column id="group"/>
+                            <column id="reportType"/>
+                            <column id="description"/>
+                        </columns>
+                        <rows datasource="attachedReportsDs"/>
+                        <buttonsPanel>
+                            <button action="reportsTable.add"/>
+                            <button action="reportsTable.remove"/>
+                        </buttonsPanel>
+                    </table>
+                    <vbox spacing="true" width="500px" height="100%" expand="parametersBox">
+                        <buttonsPanel/>
+                        <groupBox id="parametersBox" caption="msg://defaultValues">
+                            <scrollBox height="100%">
+                                <vbox id="defaultValuesBox"/>
+                            </scrollBox>
+                        </groupBox>
+                    </vbox>
+                </hbox>
+            </vbox>
+            <vbox spacing="true" expand="filesTable" height="100%" margin="true">
+                <label value="msg://attachedFiles" stylename="h2"/>
+                <table id="filesTable" width="100%"
+                       multiselect="true">
+                    <actions>
+                        <action id="create" openType="DIALOG"/>
+                        <action id="edit" openType="DIALOG"/>
+                        <action id="remove"/>
+                    </actions>
+                    <columns>
+                        <column id="name"/>
+                    </columns>
+                    <rows datasource="attachedFilesDs"/>
+                    <rowsCount/>
+                    <buttonsPanel alwaysVisible="true">
+                        <button action="filesTable.create"/>
+                        <button action="filesTable.edit"/>
+                        <button action="filesTable.remove"/>
+                        <button action="filesTable.download" icon="icons/download.png"/>
+                    </buttonsPanel>
+                </table>
+            </vbox>
+        </split>
+    </layout>
+</window>

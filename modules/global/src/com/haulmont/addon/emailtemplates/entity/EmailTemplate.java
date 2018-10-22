@@ -2,6 +2,7 @@ package com.haulmont.addon.emailtemplates.entity;
 
 import com.haulmont.chile.core.annotations.Composition;
 import com.haulmont.chile.core.annotations.NamePattern;
+import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.cuba.core.entity.annotation.Lookup;
 import com.haulmont.cuba.core.entity.annotation.LookupType;
@@ -57,17 +58,42 @@ public abstract class EmailTemplate extends StandardEntity {
     @Column(name = "SUBJECT")
     protected String subject;
 
-    @OnDeleteInverse(DeletePolicy.UNLINK)
+
+    @JoinTable(name = "EMAILTEMPLATES_EMAIL_TEMPLATE_FILE_DESCRIPTOR_LINK",
+        joinColumns = @JoinColumn(name = "EMAIL_TEMPLATE_ID"),
+        inverseJoinColumns = @JoinColumn(name = "FILE_DESCRIPTOR_ID"))
+    @ManyToMany
+    protected List<FileDescriptor> attachedFiles;
+
     @JoinTable(name = "EMAILTEMPLATES_LAYOUT_EMAIL_TEMPLATE_REPORT_LINK",
         joinColumns = @JoinColumn(name = "LAYOUT_EMAIL_TEMPLATE_ID"),
         inverseJoinColumns = @JoinColumn(name = "REPORT_ID"))
+    @OnDeleteInverse(DeletePolicy.UNLINK)
     @ManyToMany
-    protected List<Report> attachments;
+    protected List<Report> attachedReports;
 
     @Composition
     @OnDelete(DeletePolicy.CASCADE)
     @OneToMany(mappedBy = "emailTemplate")
     protected List<TemplateParameters> parameters;
+
+    public void setAttachedFiles(List<FileDescriptor> attachedFiles) {
+        this.attachedFiles = attachedFiles;
+    }
+
+    public List<FileDescriptor> getAttachedFiles() {
+        return attachedFiles;
+    }
+
+
+    public void setAttachedReports(List<Report> attachedReports) {
+        this.attachedReports = attachedReports;
+    }
+
+    public List<Report> getAttachedReports() {
+        return attachedReports;
+    }
+
 
     public void setType(TemplateType type) {
         this.type = type == null ? null : type.getId();
@@ -125,13 +151,7 @@ public abstract class EmailTemplate extends StandardEntity {
         return parameters;
     }
 
-    public void setAttachments(List<Report> attachments) {
-        this.attachments = attachments;
-    }
 
-    public List<Report> getAttachments() {
-        return attachments;
-    }
 
     public void setGroup(TemplateGroup group) {
         this.group = group;
