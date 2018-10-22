@@ -5,6 +5,7 @@ import com.haulmont.addon.emailtemplates.web.gui.components.UnlayerTemplateEdito
 import com.haulmont.bali.util.ParamsMap;
 import com.haulmont.chile.core.model.MetaClass;
 import com.haulmont.chile.core.model.MetaPropertyPath;
+import com.haulmont.chile.core.model.MetadataObject;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.global.PersistenceHelper;
@@ -23,14 +24,21 @@ import com.haulmont.cuba.gui.upload.FileUploadingAPI;
 import com.haulmont.reports.app.service.ReportService;
 import com.haulmont.reports.entity.*;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class JsonEmailTemplateEdit extends AbstractEditor<JsonEmailTemplate> {
+
+    private static Pattern SIMPLE_FIELD_PATTERN = Pattern.compile("\\$\\{([a-zA-Z0-9]*)[^}]*}");
+    private static Pattern ENTITY_FIELD_PATTERN = Pattern.compile("\\$\\{([a-zA-Z0-9]*)\\.([a-zA-Z0-9]*)[^}]*}");
 
     @Inject
     private UnlayerTemplateEditor templateEditor;
@@ -96,6 +104,7 @@ public class JsonEmailTemplateEdit extends AbstractEditor<JsonEmailTemplate> {
             String html = templateEditor.getHTML();
             getItem().setHtml(html);
             report.getDefaultTemplate().setContent(html.getBytes());
+            createParameters();
         });
 
         fileUpload.addFileUploadSucceedListener(fileUploadSucceedEvent -> {
@@ -110,6 +119,103 @@ public class JsonEmailTemplateEdit extends AbstractEditor<JsonEmailTemplate> {
                 throw new RuntimeException(e);
             }
         });
+    }
+
+    private void createParameters() {
+        List<ReportInputParameter> newParameters = new ArrayList<>();
+        newParameters.addAll(createEntityParameters());
+        newParameters.addAll(createSimpleParameters());
+        if (!newParameters.isEmpty()) {
+            report.getInputParameters().addAll(newParameters);
+            parametersDs.refresh();
+
+            List<String> newParamNames = newParameters.stream()
+                    .map(ReportInputParameter::getName)
+                    .collect(Collectors.toList());
+            showNotification(formatMessage("newParametersCreated", StringUtils.join(newParamNames, ", ")), NotificationType.TRAY);
+        }
+    }
+
+    private List<ReportInputParameter> createSimpleParameters() {
+        List<ReportInputParameter> newParameters = new ArrayList<>();
+        Matcher m = SIMPLE_FIELD_PATTERN.matcher(getItem().getJsonBody());
+        while (m.find()) {
+            String field = m.group(1);
+            ReportInputParameter parameter = getParameter(field);
+            if (parameter == null) {
+                parameter = initNewParameter(field);
+                parameter.setType(ParameterType.TEXT);
+                newParameters.add(parameter);
+            }
+        }
+        return newParameters;
+    }
+
+    private List<ReportInputParameter> createEntityParameters() {
+        List<ReportInputParameter> newParameters = new ArrayList<>();
+        Map<String, List<String>> entityWithProperties = new HashMap<>();
+        Matcher m = ENTITY_FIELD_PATTERN.matcher(getItem().getJsonBody());
+        while (m.find()) {
+            String entityAlias = m.group(1);
+            String field = m.group(2);
+            if (!entityWithProperties.containsKey(entityAlias)) {
+                entityWithProperties.put(entityAlias, new ArrayList<>());
+            }
+            entityWithProperties.get(entityAlias).add(field);
+        }
+        for (String entityAlias : entityWithProperties.keySet()) {
+            ReportInputParameter parameter = getParameter(entityAlias);
+            if (parameter == null) {
+                parameter = initNewParameter(entityAlias);
+                parameter.setType(ParameterType.ENTITY);
+                newParameters.add(parameter);
+            }
+            if (parameter.getEntityMetaClass() == null) {
+                List<String> fields = entityWithProperties.get(entityAlias);
+                MetaClass metaClass = findMetaclassForFields(fields);
+                if (metaClass != null) {
+                    parameter.setEntityMetaClass(metaClass.getName());
+                }
+            }
+        }
+        return newParameters;
+    }
+
+    private ReportInputParameter initNewParameter(String entityAlias) {
+        ReportInputParameter parameter;
+        parameter = metadata.create(ReportInputParameter.class);
+        parameter.setName(entityAlias);
+        parameter.setAlias(entityAlias);
+        parameter.setReport(report);
+        parameter.setPosition(0);
+        return parameter;
+    }
+
+    private MetaClass findMetaclassForFields(List<String> fields) {
+        for (MetaClass metaClass : metadata.getSession().getClasses()) {
+            List<String> parameters = metaClass.getProperties().stream()
+                    .map(MetadataObject::getName)
+                    .collect(Collectors.toList());
+            if (parameters.containsAll(fields)) {
+                return metaClass;
+            }
+        }
+        return null;
+    }
+
+    private boolean parameterExists(String alias) {
+        return report.getInputParameters().stream()
+                .anyMatch(p -> alias.equals(p.getAlias()));
+    }
+
+    private ReportInputParameter getParameter(String alias) {
+        if (!parameterExists(alias)) {
+            return null;
+        }
+        return report.getInputParameters().stream()
+                .filter(p -> alias.equals(p.getAlias()))
+                .findFirst()
+                .get();
     }
 
     private Report createReport() {
