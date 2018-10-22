@@ -377,7 +377,17 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
             if ("position".equals(e.getProperty())) {
                 ((DatasourceImplementation) parametersDs).modified(e.getItem());
             }
+            refreshTemplateParameters();
         });
+
+        parametersDs.addCollectionChangeListener(e -> {
+            refreshTemplateParameters();
+        });
+    }
+
+    private void refreshTemplateParameters() {
+        templateEditor.setParameters(parametersDs.getItems().stream()
+                .collect(Collectors.toMap(ReportInputParameter::getName, ReportInputParameter::getAlias)));
     }
 
     protected void orderParameters() {

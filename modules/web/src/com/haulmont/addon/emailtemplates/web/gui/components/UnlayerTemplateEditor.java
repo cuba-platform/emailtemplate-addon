@@ -4,7 +4,9 @@ import com.google.gson.JsonObject;
 import com.haulmont.addon.emailtemplates.web.toolkit.ui.unlayereditorcomponent.UnlayerEditorComponent;
 import com.haulmont.cuba.gui.components.Component;
 
-public interface UnlayerTemplateEditor extends Component, Component.BelongToFrame{
+import java.util.Map;
+
+public interface UnlayerTemplateEditor extends Component, Component.BelongToFrame {
     String NAME = "unlayerTemplateEditor";
 
     JsonObject getJson();
@@ -16,4 +18,6 @@ public interface UnlayerTemplateEditor extends Component, Component.BelongToFram
     String getHTML();
 
     void setListener(UnlayerEditorComponent.ValueChangeListener listener);
+
+    void setParameters(Map<String, String> parameters);
 }

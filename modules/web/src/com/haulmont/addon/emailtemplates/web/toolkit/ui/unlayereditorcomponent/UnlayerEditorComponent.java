@@ -4,6 +4,9 @@ import com.vaadin.annotations.JavaScript;
 import com.vaadin.ui.AbstractJavaScriptComponent;
 import elemental.json.JsonObject;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @JavaScript({"//editor.unlayer.com/embed.js",
         "unlayereditorcomponent-connector.js"})
 public class UnlayerEditorComponent extends AbstractJavaScriptComponent {
@@ -53,5 +56,11 @@ public class UnlayerEditorComponent extends AbstractJavaScriptComponent {
 
     public void setListener(ValueChangeListener listener) {
         this.listener = listener;
+    }
+
+    public void setParameters(Map<String, String> parameters) {
+        getState().parameters = parameters.entrySet().stream()
+                .map(e -> new NameValue(e.getKey(), "${" + e.getValue() + "}"))
+                .collect(Collectors.toList());
     }
 }

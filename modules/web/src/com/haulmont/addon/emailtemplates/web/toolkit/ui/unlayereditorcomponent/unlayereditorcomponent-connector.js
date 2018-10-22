@@ -24,7 +24,7 @@ com_haulmont_addon_emailtemplates_web_toolkit_ui_unlayereditorcomponent_UnlayerE
 
         connector.onStateChange = function() {
           var state = connector.getState();
+          unlayer.setMergeTags(state.parameters);
           unlayer.loadDesign(state.json);
-
         }
 }
