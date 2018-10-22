@@ -1,14 +1,12 @@
 package com.haulmont.addon.emailtemplates.entity;
 
 import com.haulmont.cuba.core.global.AppBeans;
-import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.reports.app.service.ReportService;
-import com.haulmont.reports.entity.*;
+import com.haulmont.reports.entity.Report;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
-import java.util.Collections;
 
 @Entity(name = "emailtemplates$JsonEmailTemplate")
 public class JsonEmailTemplate extends EmailTemplate {
@@ -22,6 +20,27 @@ public class JsonEmailTemplate extends EmailTemplate {
     @Column(name = "HTML")
     protected String html;
 
+    @Lob
+    @Column(name = "REPORT_XML")
+    protected String reportXml;
+
+    public void setHtml(String html) {
+        this.html = html;
+    }
+
+    public String getHtml() {
+        return html;
+    }
+
+
+    public void setReportXml(String reportXml) {
+        this.reportXml = reportXml;
+    }
+
+    public String getReportXml() {
+        return reportXml;
+    }
+
     public JsonEmailTemplate() {
         setType(TemplateType.JSON);
     }
@@ -34,40 +53,13 @@ public class JsonEmailTemplate extends EmailTemplate {
         this.jsonBody = jsonBody;
     }
 
-    public String getHtml() {
-        return html;
-    }
-
-    public void setHtml(String html) {
-        this.html = html;
-    }
-
     @Override
     public Report getEmailBodyReport() {
-        Metadata metadata = AppBeans.get(Metadata.class);
-        Report report = metadata.create(Report.class);
-
-        ReportTemplate template = metadata.create(ReportTemplate.class);
-        template.setCode(ReportTemplate.DEFAULT_TEMPLATE_CODE);
-        template.setReportOutputType(ReportOutputType.HTML);
-        template.setReport(report);
-        template.setName("template.html");
+        Report report = AppBeans.get(ReportService.class).convertToReport(getReportXml());
         String html = getHtml();
-        if (html != null) {
-            template.setContent(html.getBytes());
-        }
-        report.setTemplates(Collections.singletonList(template));
-        report.setDefaultTemplate(template);
-
-        BandDefinition bandDefinition = metadata.create(BandDefinition.class);
-        bandDefinition.setReport(report);
-        report.setBands(Collections.singleton(bandDefinition));
-
-        report.setName(getName());
-        report.setReportType(ReportType.SIMPLE);
+        html = html.replaceAll("\\$\\{(.*)\\}","\\$\\{Root.fields.$1\\}");
+        report.getDefaultTemplate().setContent(html.getBytes());
         report.setIsTmp(true);
-
-        report.setXml(AppBeans.get(ReportService.class).convertToString(report));
         return report;
     }
 }

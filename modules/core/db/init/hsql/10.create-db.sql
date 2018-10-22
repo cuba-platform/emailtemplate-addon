@@ -27,6 +27,7 @@ create table EMAILTEMPLATES_EMAIL_TEMPLATE (
     -- from emailtemplates$JsonEmailTemplate
     JSON_TEMPLATE longvarchar,
     HTML longvarchar,
+    REPORT_XML longvarchar,
     --
     primary key (ID)
 )^
