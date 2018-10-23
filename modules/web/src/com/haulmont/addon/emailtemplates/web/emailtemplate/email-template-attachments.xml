@@ -24,6 +24,7 @@
                             <column id="description"/>
                         </columns>
                         <rows datasource="attachedReportsDs"/>
+                        <rowsCount/>
                         <buttonsPanel>
                             <button action="reportsTable.add"/>
                             <button action="reportsTable.remove"/>
