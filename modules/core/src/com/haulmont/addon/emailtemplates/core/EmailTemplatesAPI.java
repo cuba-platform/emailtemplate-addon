@@ -8,6 +8,7 @@ import com.haulmont.addon.emailtemplates.exceptions.ReportParameterTypeChangedEx
 import com.haulmont.addon.emailtemplates.exceptions.TemplateNotFoundException;
 import com.haulmont.cuba.core.global.EmailInfo;
 import com.haulmont.reports.entity.ReportInputParameter;
+import com.haulmont.reports.entity.ParameterType;
 
 import java.util.Collection;
 import java.util.Map;
@@ -24,7 +25,7 @@ public interface EmailTemplatesAPI {
     String NAME = "emailtemplates_EmailTemplatesAPI";
 
     /**
-     * That method creates {@link EmailInfo} by parameters map for all included reports.
+     * That method creates {@link EmailInfo} by template and parameters map for all included reports.
      *
      * @param emailTemplate {@link EmailTemplate} entity containing body and attachments reports
      * @param params        map containing parameters for all included reports
@@ -44,13 +45,34 @@ public interface EmailTemplatesAPI {
     EmailInfo generateEmail(EmailTemplate emailTemplate, Collection<ReportWithParams> params) throws TemplateNotFoundException;
 
     /**
-     * That method creates {@link EmailInfo} from template with unique string code that expect contains default parameters.
+     * That method creates {@link EmailInfo} by template with unique string code that expect contains default parameters.
      *
      * @param emailTemplateCode unique string code of email template
      * @return {@link EmailInfo} from cuba emailer
      * @throws TemplateNotFoundException If emailTemplate does not contain reports or null
+     * @throws ReportParameterTypeChangedException If {@link ParameterType} was changed after emailTemplate saving
      */
     EmailInfo generateEmail(String emailTemplateCode) throws TemplateNotFoundException, ReportParameterTypeChangedException;
+
+    /**
+     * That method creates {@link EmailInfo} by template with unique string code.
+     *
+     * @param emailTemplateCode unique string code of email template
+     * @param params            map containing parameters for all included reports
+     * @return {@link EmailInfo} from cuba emailer
+     * @throws TemplateNotFoundException If emailTemplate does not contain reports or null
+     */
+    EmailInfo generateEmail(String emailTemplateCode, Map<String, Object> params) throws TemplateNotFoundException;
+
+    /**
+     * That method creates {@link EmailInfo} by template with unique string code.
+     *
+     * @param emailTemplateCode unique string code of email template
+     * @param params            {@link ReportWithParams} wrapper containing report and its parameters
+     * @return {@link EmailInfo} from cuba emailer
+     * @throws TemplateNotFoundException If emailTemplate does not contain reports or null
+     */
+    EmailInfo generateEmail(String emailTemplateCode, Collection<ReportWithParams> params) throws TemplateNotFoundException;
 
     /**
      * That method checks that the report input parameter did not change own parameter type

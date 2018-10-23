@@ -37,6 +37,16 @@ public class OutboundTemplateServiceBean implements OutboundTemplateService {
     }
 
     @Override
+    public EmailInfo generateEmail(String emailTemplateCode, Map<String, Object> params) throws TemplateNotFoundException {
+        return emailTemplatesAPI.generateEmail(emailTemplateCode, params);
+    }
+
+    @Override
+    public EmailInfo generateEmail(String emailTemplateCode, Collection<ReportWithParams> params) throws TemplateNotFoundException {
+        return emailTemplatesAPI.generateEmail(emailTemplateCode, params);
+    }
+
+    @Override
     public void checkParameterTypeChanged(ReportInputParameter inputParameter, ParameterValue parameterValue)
             throws ReportParameterTypeChangedException {
         emailTemplatesAPI.checkParameterTypeChanged(inputParameter, parameterValue);

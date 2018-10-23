@@ -22,6 +22,10 @@ public interface OutboundTemplateService {
 
     EmailInfo generateEmail(String emailTemplateCode) throws TemplateNotFoundException, ReportParameterTypeChangedException;
 
+    EmailInfo generateEmail(String emailTemplateCode, Map<String, Object> params) throws TemplateNotFoundException;
+
+    EmailInfo generateEmail(String emailTemplateCode, Collection<ReportWithParams> params) throws TemplateNotFoundException;
+
     void checkParameterTypeChanged(ReportInputParameter inputParameter, ParameterValue parameterValue) throws ReportParameterTypeChangedException;
 
 }

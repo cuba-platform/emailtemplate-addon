@@ -99,20 +99,6 @@ public class EmailTemplates implements EmailTemplatesAPI {
     }
 
     @Override
-    public EmailInfo generateEmail(String emailTemplateCode) throws TemplateNotFoundException, ReportParameterTypeChangedException {
-        LoadContext<EmailTemplate> loadContext = LoadContext.create(EmailTemplate.class)
-                .setQuery(LoadContext.createQuery("select e from emailtemplates$EmailTemplate e where e.code = :code")
-                        .setParameter("code", emailTemplateCode))
-                .setView("emailTemplate-view");
-        EmailTemplate emailTemplate = dataManager.load(loadContext);
-
-        if (emailTemplate == null) {
-            throw new TemplateNotFoundException(messages.getMessage(EmailTemplates.class, "notFoundTemplate"));
-        }
-        return generateEmail(emailTemplate, templateParametersExtractor.getTemplateDefaultValues(emailTemplate));
-    }
-
-    @Override
     public EmailInfo generateEmail(EmailTemplate emailTemplate, Map<String, Object> params) throws TemplateNotFoundException {
         if (emailTemplate == null) {
             throw new TemplateNotFoundException(messages.getMessage(EmailTemplates.class, "nullTemplate"));
@@ -128,6 +114,37 @@ public class EmailTemplates implements EmailTemplatesAPI {
             paramList.add(createParamsMapForReport(report, params));
         }
         return generateEmail(emailTemplate, paramList);
+    }
+
+    @Override
+    public EmailInfo generateEmail(String emailTemplateCode) throws TemplateNotFoundException, ReportParameterTypeChangedException {
+        EmailTemplate emailTemplate = getEmailTemplateByCode(emailTemplateCode);
+        return generateEmail(emailTemplate, templateParametersExtractor.getTemplateDefaultValues(emailTemplate));
+    }
+
+    @Override
+    public EmailInfo generateEmail(String emailTemplateCode, Map<String, Object> params) throws TemplateNotFoundException {
+        EmailTemplate emailTemplate = getEmailTemplateByCode(emailTemplateCode);
+        return generateEmail(emailTemplate, params);
+    }
+
+    @Override
+    public EmailInfo generateEmail(String emailTemplateCode, Collection<ReportWithParams> params) throws TemplateNotFoundException {
+        EmailTemplate emailTemplate = getEmailTemplateByCode(emailTemplateCode);
+        return generateEmail(emailTemplate, params);
+    }
+
+    protected EmailTemplate getEmailTemplateByCode(String emailTemplateCode) throws TemplateNotFoundException {
+        LoadContext<EmailTemplate> loadContext = LoadContext.create(EmailTemplate.class)
+                .setQuery(LoadContext.createQuery("select e from emailtemplates$EmailTemplate e where e.code = :code")
+                        .setParameter("code", emailTemplateCode))
+                .setView("emailTemplate-view");
+        EmailTemplate emailTemplate = dataManager.load(loadContext);
+
+        if (emailTemplate == null) {
+            throw new TemplateNotFoundException(messages.getMessage(EmailTemplates.class, "notFoundTemplate"));
+        }
+        return emailTemplate;
     }
 
     @Override
