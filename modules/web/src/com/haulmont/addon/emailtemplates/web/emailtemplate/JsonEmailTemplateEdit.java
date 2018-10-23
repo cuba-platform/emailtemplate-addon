@@ -212,13 +212,10 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
     }
 
     private ReportInputParameter getParameter(String alias) {
-        if (!parameterExists(alias)) {
-            return null;
-        }
         return report.getInputParameters().stream()
                 .filter(p -> alias.equals(p.getAlias()))
                 .findFirst()
-                .get();
+                .orElse(null);
     }
 
     private Report createReport() {
