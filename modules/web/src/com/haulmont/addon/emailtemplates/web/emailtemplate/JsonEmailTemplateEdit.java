@@ -229,7 +229,7 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
         template.setCode(ReportTemplate.DEFAULT_TEMPLATE_CODE);
         template.setReportOutputType(ReportOutputType.HTML);
         template.setReport(report);
-        template.setName("templateEditor.html");
+        template.setName("template.html");
         String html = templateEditor.getHTML();
         if (html != null) {
             template.setContent(html.getBytes());
@@ -425,7 +425,7 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
     }
 
     public void exportJson() {
-        String name = getItem().getName() != null ? getItem().getName() : "templateEditor";
+        String name = getItem().getName() != null ? getItem().getName() : "template";
         exportDisplay.show(new ByteArrayDataProvider(templateEditor.getJson().toString().getBytes()), name + ".json");
 
     }
@@ -435,9 +435,13 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
     }
 
     public void viewHtml() {
-        String name = getItem().getName() != null ? getItem().getName() : "templateEditor";
+        String name = getItem().getName() != null ? getItem().getName() : "template";
         exportDisplay.show(new ByteArrayDataProvider(templateEditor.getHTML().getBytes()), name + ".html");
     }
 
 
+    public void exportReport() {
+        Report report = getItem().getEmailBodyReport();
+        openEditor(report, WindowManager.OpenType.NEW_TAB);
+    }
 }

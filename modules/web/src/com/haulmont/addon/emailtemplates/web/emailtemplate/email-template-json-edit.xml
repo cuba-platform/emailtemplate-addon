@@ -57,11 +57,12 @@
                               spacing="true">
                             <hbox id="dropZone" spacing="true" stylename="c-edit-window-actions" margin="true"
                                   width="100%" expand="space">
-                                <upload id="fileUpload" dropZone="dropZone" uploadButtonIcon="DOWNLOAD"
+                                <upload id="fileUpload" dropZone="dropZone" uploadButtonIcon="DOWNLOAD" description="msg://importJson"
                                         uploadButtonCaption=""/>
-                                <button id="exportJson" invoke="exportJson" icon="UPLOAD"/>
-                                <button id="exportHtml" invoke="exportHtml" icon="CODE"/>
-                                <button id="viewHtml" invoke="viewHtml" icon="EYE"/>
+                                <button id="exportJson" invoke="exportJson" icon="UPLOAD" description="msg://exportJson"/>
+                                <button id="exportHtml" invoke="exportHtml" icon="CODE"  description="msg://exportHtml"/>
+                                <button id="viewHtml" invoke="viewHtml" icon="EYE"  description="msg://viewHtml"/>
+                                <button id="exportReport" invoke="exportReport" icon="FILE_TEXT"  description="msg://exportReport"/>
                                 <label id="space"/>
                             </hbox>
                             <groupBox caption="msg://info"
