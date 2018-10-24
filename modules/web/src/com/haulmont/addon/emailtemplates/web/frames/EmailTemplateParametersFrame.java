@@ -105,8 +105,7 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
     }
 
     public void createComponents() {
-        parameterComponents.clear();
-        parametersGrid.removeAll();
+        clearComponents();
 
         try {
             List<ReportWithParams> parameters = getTemplateDefaultValues();
@@ -149,6 +148,11 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
         } catch (ReportParameterTypeChangedException e) {
             showNotification(e.getMessage());
         }
+    }
+
+    public void clearComponents() {
+        parameterComponents.clear();
+        parametersGrid.removeAll();
     }
 
     protected int getRowCountForParameters(List<Report> reports) {

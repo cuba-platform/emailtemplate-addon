@@ -58,8 +58,14 @@ public class AttachmentFrame extends AbstractFrame {
                         EmailTemplateParametersFrame.HIDE_REPORT_CAPTION, true));
 
         attachedReportsDs.addItemChangeListener(e -> {
-            parametersFrame.setReport(e.getItem());
-            parametersFrame.createComponents();
+            Report report = e.getItem();
+            if (report != null) {
+                report = getDsContext().getDataSupplier().reload(report, "emailTemplate-view");
+                parametersFrame.setReport(report);
+                parametersFrame.createComponents();
+            } else {
+                parametersFrame.clearComponents();
+            }
         });
 
     }

@@ -3,20 +3,17 @@
         caption="msg://editorCaption"
         class="com.haulmont.addon.emailtemplates.web.emailtemplate.ReportEmailTemplateEdit"
         datasource="emailTemplateDs"
-        focusComponent="fieldGroup"
         messagesPack="com.haulmont.addon.emailtemplates.web.emailtemplate">
     <dsContext>
         <datasource id="emailTemplateDs"
                     class="com.haulmont.addon.emailtemplates.entity.ReportEmailTemplate"
                     view="emailTemplate-view">
-            <collectionDatasource id="attachmentsDs"
+            <collectionDatasource id="attachedReportsDs"
                                   property="attachedReports"/>
-            <collectionDatasource id="parametersDs"
-                                  property="parameters">
-                <collectionDatasource id="parameterValuesDs"
-                                      property="parameterValues"/>
-            </collectionDatasource>
+            <collectionDatasource id="attachedFilesDs"
+                                  property="attachedFiles"/>
         </datasource>
+
         <collectionDatasource id="groupsDs"
                               class="com.haulmont.addon.emailtemplates.entity.TemplateGroup"
                               view="_minimal">
@@ -24,65 +21,97 @@
                 <![CDATA[select e from emailtemplates$TemplateGroup e]]>
             </query>
         </collectionDatasource>
+
         <collectionDatasource id="emailBodiesDs"
                               class="com.haulmont.reports.entity.Report"
                               view="_minimal">
             <query>
-                <![CDATA[select e from report$Report e]]>
+                <![CDATA[select e from report$Report e where e.defaultTemplate.reportOutputType = 30]]>
             </query>
         </collectionDatasource>
     </dsContext>
     <dialogMode height="600"
                 width="800"/>
-    <layout expand="windowActions"
-            spacing="true">
-        <hbox spacing="true">
-            <fieldGroup id="fieldGroup"
-                        datasource="emailTemplateDs">
-                <column width="250px">
-                    <field property="name"/>
-                    <field optionsDatasource="groupsDs"
-                           property="group"/>
-                    <field property="code"/>
-                    <field property="from"/>
-                    <field property="to"/>
-                    <field contextHelpText="msg://help"
-                           property="subject"/>
-                    <field optionsDatasource="emailBodiesDs"
-                           property="emailBody"/>
-                </column>
-            </fieldGroup>
-            <split height="100%"
-                   orientation="horizontal"
-                   width="20px"/>
-            <scrollBox id="propertiesScrollBox"
-                       caption="msg://defaultParameters"
-                       height="100%"/>
-        </hbox>
-        <groupBox id="attachmentsBox"
-                  caption="msg://com.haulmont.addon.emailtemplates.entity/EmailTemplate.attachedReports">
-            <table id="attachmentsTable"
-                   multiselect="true"
-                   width="100%">
-                <actions>
-                    <action id="add"/>
-                    <action id="remove"/>
-                </actions>
-                <columns>
-                    <column id="name"/>
-                    <column id="localeNames"/>
-                    <column id="code"/>
-                    <column id="group"/>
-                    <column id="reportType"/>
-                    <column id="description"/>
-                </columns>
-                <rows datasource="attachmentsDs"/>
-                <buttonsPanel>
-                    <button action="attachmentsTable.add"/>
-                    <button action="attachmentsTable.remove"/>
-                </buttonsPanel>
-            </table>
-        </groupBox>
+    <layout expand="tabsheet"
+            width="100%">
+        <tabSheet id="tabsheet">
+            <tab id="main"
+                 caption="msg://main">
+                <scrollBox id="propertiesScroll"
+                           height="100%">
+                    <hbox width="100%" height="100%" spacing="true">
+                        <vbox margin="false,true,false,false"
+                              spacing="true">
+                            <groupBox caption="msg://info"
+                                      collapsable="true">
+                                <fieldGroup id="infoGroup"
+                                            captionAlignment="TOP"
+                                            datasource="emailTemplateDs"
+                                            width="100%">
+                                    <column width="100%">
+                                        <field property="name" required="true"/>
+                                        <field property="code"/>
+                                        <field optionsDatasource="groupsDs"
+                                               property="group"/>
+                                    </column>
+                                </fieldGroup>
+                            </groupBox>
+                            <groupBox id="reportBox" caption="msg://content" collapsable="true" spacing="true">
+                                <fieldGroup id="reportGroup"
+                                            datasource="emailTemplateDs" width="100%">
+                                    <column width="100%">
+                                        <field optionsDatasource="emailBodiesDs"
+                                               property="emailBody"/>
+                                    </column>
+                                </fieldGroup>
+                                <vbox spacing="true">
+                                    <label value="msg://defaultParameters"/>
+                                    <scrollBox id="propertiesScrollBox"
+                                               height="100%">
+                                        <vbox id="defaultValuesBox"/>
+                                    </scrollBox>
+                                </vbox>
+                            </groupBox>
+
+                        </vbox>
+                        <vbox spacing="true">
+                            <groupBox caption="msg://defaultValues"
+                                      collapsable="true">
+                                <fieldGroup id="useReportSubjectGroup"
+                                            datasource="emailTemplateDs"
+                                            width="100%">
+                                    <column width="100%">
+                                        <field property="useReportSubject"/>
+                                    </column>
+                                </fieldGroup>
+                                <fieldGroup id="defaultGroup"
+                                            captionAlignment="TOP"
+                                            datasource="emailTemplateDs"
+                                            width="100%">
+                                    <column width="100%">
+                                        <field property="subject"/>
+                                        <field property="from"/>
+                                        <field property="to"
+                                               rows="3"/>
+                                        <field property="cc"
+                                               rows="3"/>
+                                        <field property="bcc"
+                                               rows="3"/>
+                                    </column>
+                                </fieldGroup>
+                            </groupBox>
+                        </vbox>
+                    </hbox>
+                </scrollBox>
+
+            </tab>
+            <tab id="attachments" caption="msg://attachments" lazy="true">
+                <frame src="/com/haulmont/addon/emailtemplates/web/emailtemplate/email-template-attachments.xml"
+                       id="attachmentsFrame"
+                       height="100%" width="100%"/>
+
+            </tab>
+        </tabSheet>
         <frame id="windowActions"
                screen="editWindowActions"/>
     </layout>
