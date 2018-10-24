@@ -39,6 +39,10 @@ com_haulmont_addon_emailtemplates_web_toolkit_ui_unlayereditorcomponent_UnlayerE
             done({ progress: 100, url: result})
 
           }
-          reader.readAsDataURL(file);
+          if (file.type.lastIndexOf("image/", 0) === 0){
+            reader.readAsDataURL(file);
+          } else{
+            throw new Error("Is not image")
+          }
         })
 }
