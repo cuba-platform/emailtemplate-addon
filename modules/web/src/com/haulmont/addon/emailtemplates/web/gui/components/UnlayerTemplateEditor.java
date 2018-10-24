@@ -19,5 +19,7 @@ public interface UnlayerTemplateEditor extends Component, Component.BelongToFram
 
     void setListener(UnlayerEditorComponent.ValueChangeListener listener);
 
+    void setFileUploadListener(UnlayerEditorComponent.FileUploadListener listener);
+
     void setParameters(Map<String, String> parameters);
 }

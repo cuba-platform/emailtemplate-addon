@@ -27,4 +27,18 @@ com_haulmont_addon_emailtemplates_web_toolkit_ui_unlayereditorcomponent_UnlayerE
           unlayer.setMergeTags(state.parameters);
           unlayer.loadDesign(state.json);
         }
+
+        unlayer.registerCallback('image', function(file, done) {
+          var file = file.attachments[0]
+
+          var reader = new FileReader();
+          reader.onload = function() {
+
+            var result = reader.result;
+            connector.fileUploaded(file.name, result);
+            done({ progress: 100, url: result})
+
+          }
+          reader.readAsDataURL(file);
+        })
 }

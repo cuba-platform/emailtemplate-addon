@@ -43,7 +43,14 @@ public class WebUnlayerTemplateEditor extends WebAbstractComponent<com.haulmont.
     }
 
     @Override
+    public void setFileUploadListener(UnlayerEditorComponent.FileUploadListener listener) {
+        component.setFileUploadListener(listener);
+    }
+
+    @Override
     public void setParameters(Map<String, String> parameters) {
         component.setParameters(parameters);
     }
+
+
 }
