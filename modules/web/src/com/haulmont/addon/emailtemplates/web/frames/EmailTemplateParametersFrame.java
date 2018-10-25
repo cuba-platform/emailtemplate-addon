@@ -4,7 +4,7 @@ import com.haulmont.addon.emailtemplates.dto.ReportWithParamField;
 import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.ParameterValue;
-import com.haulmont.addon.emailtemplates.entity.TemplateParameters;
+import com.haulmont.addon.emailtemplates.entity.TemplateReport;
 import com.haulmont.addon.emailtemplates.exceptions.ReportParameterTypeChangedException;
 import com.haulmont.addon.emailtemplates.service.TemplateParametersExtractorService;
 import com.haulmont.cuba.core.entity.Entity;
@@ -60,7 +60,7 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
     private EmailTemplate emailTemplate;
 
     @WindowParam
-    private Report report;
+    private TemplateReport templateReport;
 
     protected List<ReportWithParamField> parameterComponents = new ArrayList<>();
 
@@ -84,24 +84,16 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
     }
 
     private List<ReportWithParams> getTemplateDefaultValues() throws ReportParameterTypeChangedException {
-        if (report != null) {
-            TemplateParameters parameters = emailTemplate.getParameters().stream()
-                    .filter(e -> report.equals(e.getReport()))
-                    .findFirst()
-                    .orElse(null);
-            if (parameters != null) {
-                List<ParameterValue> values = parameters.getParameterValues();
-                return Collections.singletonList(templateParametersExtractorService.getReportDefaultValues(report, values));
-            } else {
-                return Collections.singletonList(templateParametersExtractorService.getReportDefaultValues(report, null));
-            }
+        if (templateReport != null) {
+            List<ParameterValue> values = templateReport.getParameterValues();
+            return Collections.singletonList(templateParametersExtractorService.getReportDefaultValues(templateReport.getReport(), values));
         } else {
             return templateParametersExtractorService.getTemplateDefaultValues(emailTemplate);
         }
     }
 
-    public void setReport(Report report) {
-        this.report = report;
+    public void setTemplateReport(TemplateReport templateReport) {
+        this.templateReport = templateReport;
     }
 
     public void createComponents() {
@@ -257,22 +249,10 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
     private void updateDefaultValue(ReportInputParameter parameter, Object fieldValue) {
         String alias = parameter.getAlias();
         Report report = parameter.getReport();
-        TemplateParameters templateParameters = emailTemplate.getParameters().stream()
-                .filter(t -> (t.getReport() == null && emailTemplate.getEmailBodyReport().equals(report))
-                        || t.getReport().equals(report))
-                .findFirst()
-                .orElse(null);
-        if (fieldValue == null && templateParameters == null) {
+        if (fieldValue == null && templateReport == null) {
             return;
         }
-        if (templateParameters == null) {
-            templateParameters = metadata.create(TemplateParameters.class);
-            templateParameters.setEmailTemplate(emailTemplate);
-            templateParameters.setParameterValues(new ArrayList<>());
-            templateParameters.setReport(report);
-            emailTemplate.getParameters().add(templateParameters);
-        }
-        ParameterValue parameterValue = templateParameters.getParameterValues().stream()
+        ParameterValue parameterValue = templateReport.getParameterValues().stream()
                 .filter(pv -> pv.getAlias().equals(alias))
                 .findFirst()
                 .orElse(null);
@@ -280,8 +260,8 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
             parameterValue = metadata.create(ParameterValue.class);
             parameterValue.setAlias(alias);
             parameterValue.setParameterType(parameter.getType());
-            parameterValue.setTemplateParameters(templateParameters);
-            templateParameters.getParameterValues().add(parameterValue);
+            parameterValue.setTemplateParameters(templateReport);
+            templateReport.getParameterValues().add(parameterValue);
         }
         Class parameterClass = classResolver.resolveClass(parameter);
         if (!ParameterType.ENTITY_LIST.equals(parameter.getType())) {

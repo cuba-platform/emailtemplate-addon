@@ -26,16 +26,14 @@ public class ParameterValue extends StandardEntity {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "TEMPLATE_PARAMETER_ID")
-    protected TemplateParameters templateParameters;
-
-    public void setTemplateParameters(TemplateParameters templateParameters) {
-        this.templateParameters = templateParameters;
-    }
-
-    public TemplateParameters getTemplateParameters() {
+    protected TemplateReport templateParameters;
+    public TemplateReport getTemplateParameters() {
         return templateParameters;
     }
 
+    public void setTemplateParameters(TemplateReport templateParameters) {
+        this.templateParameters = templateParameters;
+    }
 
     public void setParameterType(ParameterType parameterType) {
         this.parameterType = parameterType == null ? null : parameterType.getId();

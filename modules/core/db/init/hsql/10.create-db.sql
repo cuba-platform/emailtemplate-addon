@@ -22,7 +22,7 @@ create table EMAILTEMPLATES_EMAIL_TEMPLATE (
     --
     -- from emailtemplates$ReportEmailTemplate
     USE_REPORT_SUBJECT boolean,
-    TEMPLATE_REPORT_ID varchar(36),
+    EMAIL_BODY_REPORT_ID varchar(36),
     --
     -- from emailtemplates$JsonEmailTemplate
     JSON_TEMPLATE longvarchar,
@@ -48,23 +48,7 @@ create table EMAILTEMPLATES_TEMPLATE_GROUP (
     primary key (ID)
 )^
 -- end EMAILTEMPLATES_TEMPLATE_GROUP
--- begin EMAILTEMPLATES_TEMPLATE_PARAMETER
-create table EMAILTEMPLATES_TEMPLATE_PARAMETER (
-    ID varchar(36) not null,
-    VERSION integer not null,
-    CREATE_TS timestamp,
-    CREATED_BY varchar(50),
-    UPDATE_TS timestamp,
-    UPDATED_BY varchar(50),
-    DELETE_TS timestamp,
-    DELETED_BY varchar(50),
-    --
-    REPORT_ID varchar(36) not null,
-    EMAIL_TEMPLATE_ID varchar(36) not null,
-    --
-    primary key (ID)
-)^
--- end EMAILTEMPLATES_TEMPLATE_PARAMETER
+
 -- begin EMAILTEMPLATES_PARAMETER_VALUE
 create table EMAILTEMPLATES_PARAMETER_VALUE (
     ID varchar(36) not null,
@@ -84,13 +68,7 @@ create table EMAILTEMPLATES_PARAMETER_VALUE (
     primary key (ID)
 )^
 -- end EMAILTEMPLATES_PARAMETER_VALUE
--- begin EMAILTEMPLATES_LAYOUT_EMAIL_TEMPLATE_REPORT_LINK
-create table EMAILTEMPLATES_LAYOUT_EMAIL_TEMPLATE_REPORT_LINK (
-    LAYOUT_EMAIL_TEMPLATE_ID varchar(36) not null,
-    REPORT_ID varchar(36) not null,
-    primary key (LAYOUT_EMAIL_TEMPLATE_ID, REPORT_ID)
-)^
--- end EMAILTEMPLATES_LAYOUT_EMAIL_TEMPLATE_REPORT_LINK
+
 -- begin EMAILTEMPLATES_EMAIL_TEMPLATE_FILE_DESCRIPTOR_LINK
 create table EMAILTEMPLATES_EMAIL_TEMPLATE_FILE_DESCRIPTOR_LINK (
     EMAIL_TEMPLATE_ID varchar(36) not null,
@@ -98,3 +76,20 @@ create table EMAILTEMPLATES_EMAIL_TEMPLATE_FILE_DESCRIPTOR_LINK (
     primary key (EMAIL_TEMPLATE_ID, FILE_DESCRIPTOR_ID)
 )^
 -- end EMAILTEMPLATES_EMAIL_TEMPLATE_FILE_DESCRIPTOR_LINK
+-- begin EMAILTEMPLATES_TEMPLATE_REPORT
+create table EMAILTEMPLATES_TEMPLATE_REPORT (
+    ID varchar(36) not null,
+    VERSION integer not null,
+    CREATE_TS timestamp,
+    CREATED_BY varchar(50),
+    UPDATE_TS timestamp,
+    UPDATED_BY varchar(50),
+    DELETE_TS timestamp,
+    DELETED_BY varchar(50),
+    --
+    REPORT_ID varchar(36) not null,
+    EMAIL_TEMPLATE_ID varchar(36),
+    --
+    primary key (ID)
+)^
+-- end EMAILTEMPLATES_TEMPLATE_REPORT

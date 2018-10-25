@@ -4,9 +4,10 @@ import com.google.common.collect.ImmutableMap;
 import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.ParameterValue;
-import com.haulmont.addon.emailtemplates.entity.TemplateParameters;
+import com.haulmont.addon.emailtemplates.entity.ReportEmailTemplate;
+import com.haulmont.addon.emailtemplates.entity.TemplateReport;
 import com.haulmont.addon.emailtemplates.exceptions.ReportParameterTypeChangedException;
-import com.haulmont.addon.emailtemplates.service.OutboundTemplateService;
+import com.haulmont.addon.emailtemplates.service.EmailTemplatesService;
 import com.haulmont.chile.core.model.MetaClass;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.global.Scripting;
@@ -19,7 +20,10 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 
 @Component(TemplateParametersExtractor.NAME)
@@ -42,27 +46,22 @@ public class TemplateParametersExtractor {
     protected Metadata metadata;
 
     @Inject
-    protected OutboundTemplateService outboundTemplateService;
+    protected EmailTemplatesService emailTemplatesService;
 
     @Inject
     protected ReportService reportService;
 
     public List<ReportWithParams> getTemplateDefaultValues(EmailTemplate emailTemplate) throws ReportParameterTypeChangedException {
-        List<Report> reports = createParamsCollectionByTemplate(emailTemplate);
+        List<TemplateReport> templateReports = createParamsCollectionByTemplate(emailTemplate);
         List<ReportWithParams> reportWithParams = new ArrayList<>();
         List<String> exceptionMessages = new ArrayList<>();
-        List<TemplateParameters> templateParameters = emailTemplate.getParameters() != null ? emailTemplate.getParameters() : Collections.emptyList();
-        for (Report report : reports) {
+        for (TemplateReport templateReport : templateReports) {
             try {
-                TemplateParameters parameters = templateParameters.stream()
-                        .filter(e -> report.equals(e.getReport()))
-                        .findFirst()
-                        .orElse(null);
                 List<ParameterValue> parameterValues = null;
-                if (parameters != null) {
-                    parameterValues = parameters.getParameterValues();
+                if (templateReport != null) {
+                    parameterValues = templateReport.getParameterValues();
+                    reportWithParams.add(getReportDefaultValues(templateReport.getReport(), parameterValues));
                 }
-                reportWithParams.add(getReportDefaultValues(report, parameterValues));
             } catch (ReportParameterTypeChangedException e) {
                 exceptionMessages.add(e.getMessage());
             }
@@ -93,7 +92,7 @@ public class TemplateParametersExtractor {
                         .orElse(null);
                 if (inputParameter != null) {
                     try {
-                        outboundTemplateService.checkParameterTypeChanged(inputParameter, paramValue);
+                        emailTemplatesService.checkParameterTypeChanged(inputParameter, paramValue);
                     } catch (ReportParameterTypeChangedException e) {
                         exceptionMessages.add(e.getMessage());
                     }
@@ -114,15 +113,19 @@ public class TemplateParametersExtractor {
         return paramsData;
     }
 
-    protected List<Report> createParamsCollectionByTemplate(EmailTemplate emailTemplate) {
-        List<Report> parameters = new ArrayList<>();
-        if (emailTemplate.getEmailBodyReport() != null) {
-            parameters.add(emailTemplate.getEmailBodyReport());
+    protected List<TemplateReport> createParamsCollectionByTemplate(EmailTemplate emailTemplate) {
+        List<TemplateReport> templateReports = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(emailTemplate.getAttachedTemplateReports())) {
+            templateReports.addAll(emailTemplate.getAttachedTemplateReports());
         }
-        if (CollectionUtils.isNotEmpty(emailTemplate.getAttachedReports())) {
-            parameters.addAll(emailTemplate.getAttachedReports());
+        if (emailTemplate instanceof ReportEmailTemplate) {
+            templateReports.add(((ReportEmailTemplate) emailTemplate).getEmailBodyReport());
+        } else {
+            TemplateReport templateReport = metadata.create(TemplateReport.class);
+            templateReport.setReport(emailTemplate.getReport());
+            templateReports.add(templateReport);
         }
-        return parameters;
+        return templateReports;
     }
 
     protected Class resolveClass(ReportInputParameter parameter) {

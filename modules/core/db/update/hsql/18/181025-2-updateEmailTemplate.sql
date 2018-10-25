@@ -1,0 +1,1 @@
+alter table EMAILTEMPLATES_EMAIL_TEMPLATE add column EMAIL_BODY_REPORT_ID varchar(36) ;

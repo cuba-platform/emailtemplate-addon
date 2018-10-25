@@ -95,7 +95,7 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
         if (PersistenceHelper.isNew(getItem())) {
             report = createReport();
         } else {
-            report = getItem().getEmailBodyReport();
+            report = getItem().getReport();
         }
 
         reportDs.setItem(report);
@@ -389,7 +389,7 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
 
     protected void orderParameters() {
         if (report.getInputParameters() == null) {
-            report.setInputParameters(new ArrayList<ReportInputParameter>());
+            report.setInputParameters(new ArrayList<>());
         }
 
         for (int i = 0; i < report.getInputParameters().size(); i++) {
@@ -438,7 +438,7 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
 
 
     public void exportReport() {
-        Report report = getItem().getEmailBodyReport();
+        Report report = getItem().getReport();
         openEditor(report, WindowManager.OpenType.NEW_TAB);
     }
 }

@@ -12,15 +12,12 @@ import com.haulmont.reports.entity.ReportInputParameter;
 import java.util.Collection;
 import java.util.Map;
 
-public interface OutboundTemplateService {
+public interface EmailTemplatesService {
     String NAME = "emailtemplates_OutboundTemplateService";
-
 
     EmailInfo generateEmail(EmailTemplate emailTemplate, Map<String, Object> params) throws TemplateNotFoundException;
 
     EmailInfo generateEmail(EmailTemplate emailTemplate, Collection<ReportWithParams> params) throws TemplateNotFoundException;
-
-    EmailInfo generateEmail(String emailTemplateCode) throws TemplateNotFoundException, ReportParameterTypeChangedException;
 
     EmailInfo generateEmail(String emailTemplateCode, Map<String, Object> params) throws TemplateNotFoundException;
 

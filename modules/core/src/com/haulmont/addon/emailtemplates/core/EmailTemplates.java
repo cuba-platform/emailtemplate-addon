@@ -5,6 +5,7 @@ import com.haulmont.addon.emailtemplates.dto.EmailTemplateBuilder;
 import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.ParameterValue;
+import com.haulmont.addon.emailtemplates.entity.TemplateReport;
 import com.haulmont.addon.emailtemplates.exceptions.ReportParameterTypeChangedException;
 import com.haulmont.addon.emailtemplates.exceptions.TemplateNotFoundException;
 import com.haulmont.cuba.core.app.FileStorageAPI;
@@ -51,19 +52,18 @@ public class EmailTemplates implements EmailTemplatesAPI {
         }
         List<ReportWithParams> parameters = new ArrayList<>(params);
 
-        Report bodyReport = emailTemplate.getEmailBodyReport();
+        Report bodyReport = emailTemplate.getReport();
         ReportWithParams bodyReportWithParams = parameters.stream()
                 .filter(e -> e.getReport().equals(bodyReport))
                 .findFirst()
                 .orElse(new ReportWithParams(bodyReport));
         parameters.remove(bodyReportWithParams);
         List<ReportWithParams> attachmentsWithParams = new ArrayList<>();
-        for (Report report : emailTemplate.getAttachedReports()) {
+        for (TemplateReport report : emailTemplate.getAttachedTemplateReports()) {
             ReportWithParams reportWithParams = parameters.stream()
-                    .filter(e -> e.getReport().equals(report))
+                    .filter(e -> e.getReport().equals(report.getReport()))
                     .findFirst()
-                    .orElse(new ReportWithParams(report));
-            parameters.remove(bodyReportWithParams);
+                    .orElse(new ReportWithParams(report.getReport()));
             attachmentsWithParams.add(reportWithParams);
         }
         EmailInfo emailInfo = generateEmailInfoWithoutAttachments(bodyReportWithParams);
@@ -108,18 +108,12 @@ public class EmailTemplates implements EmailTemplatesAPI {
         }
 
         List<ReportWithParams> paramList = new ArrayList<>();
-        Report bodyReport = emailTemplate.getEmailBodyReport();
+        Report bodyReport = emailTemplate.getReport();
         paramList.add(createParamsMapForReport(bodyReport, params));
-        for (Report report : emailTemplate.getAttachedReports()) {
-            paramList.add(createParamsMapForReport(report, params));
+        for (TemplateReport templateReport : emailTemplate.getAttachedTemplateReports()) {
+            paramList.add(createParamsMapForReport(templateReport.getReport(), params));
         }
         return generateEmail(emailTemplate, paramList);
-    }
-
-    @Override
-    public EmailInfo generateEmail(String emailTemplateCode) throws TemplateNotFoundException, ReportParameterTypeChangedException {
-        EmailTemplate emailTemplate = getEmailTemplateByCode(emailTemplateCode);
-        return generateEmail(emailTemplate, templateParametersExtractor.getTemplateDefaultValues(emailTemplate));
     }
 
     @Override
@@ -209,15 +203,8 @@ public class EmailTemplates implements EmailTemplatesAPI {
     }
 
     protected boolean bodyAndAttachmentsIsEmpty(EmailTemplate emailTemplate) {
-        Report body = emailTemplate.getEmailBodyReport();
-        List<Report> attachments = emailTemplate.getAttachedReports();
-        Report notNullReport = null;
-        if (attachments != null) {
-            notNullReport = attachments.stream()
-                    .filter(Objects::nonNull)
-                    .findFirst()
-                    .orElse(null);
-        }
-        return body == null && notNullReport == null;
+        Report body = emailTemplate.getReport();
+        List<TemplateReport> attachments = emailTemplate.getAttachedTemplateReports();
+        return body == null && attachments.isEmpty();
     }
 }

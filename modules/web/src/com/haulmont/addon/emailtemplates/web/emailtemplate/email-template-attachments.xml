@@ -17,11 +17,11 @@
                             <action id="remove"/>
                         </actions>
                         <columns>
-                            <column id="name"/>
-                            <column id="code"/>
-                            <column id="group"/>
-                            <column id="reportType"/>
-                            <column id="description"/>
+                            <column id="report.name"/>
+                            <column id="report.code"/>
+                            <column id="report.group"/>
+                            <column id="report.reportType"/>
+                            <column id="report.description"/>
                         </columns>
                         <rows datasource="attachedReportsDs"/>
                         <rowsCount/>

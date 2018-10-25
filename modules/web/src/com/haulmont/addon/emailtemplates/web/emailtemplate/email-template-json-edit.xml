@@ -9,10 +9,12 @@
         <datasource id="emailTemplateDs"
                     class="com.haulmont.addon.emailtemplates.entity.JsonEmailTemplate"
                     view="emailTemplate-view">
-            <collectionDatasource id="attachedReportsDs"
-                                  property="attachedReports"/>
             <collectionDatasource id="attachedFilesDs"
                                   property="attachedFiles"/>
+            <collectionDatasource id="attachedReportsDs"
+                                  property="attachedTemplateReports">
+                <collectionDatasource id="parameterValuesDs" property="parameterValues"/>
+            </collectionDatasource>
         </datasource>
 
         <datasource

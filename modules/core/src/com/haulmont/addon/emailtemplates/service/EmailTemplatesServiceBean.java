@@ -14,8 +14,8 @@ import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Map;
 
-@Service(OutboundTemplateService.NAME)
-public class OutboundTemplateServiceBean implements OutboundTemplateService {
+@Service(EmailTemplatesService.NAME)
+public class EmailTemplatesServiceBean implements EmailTemplatesService {
 
     @Inject
     protected EmailTemplatesAPI emailTemplatesAPI;
@@ -29,11 +29,6 @@ public class OutboundTemplateServiceBean implements OutboundTemplateService {
     @Override
     public EmailInfo generateEmail(EmailTemplate emailTemplate, Collection<ReportWithParams> params) throws TemplateNotFoundException {
         return emailTemplatesAPI.generateEmail(emailTemplate, params);
-    }
-
-    @Override
-    public EmailInfo generateEmail(String emailTemplateCode) throws TemplateNotFoundException, ReportParameterTypeChangedException {
-        return emailTemplatesAPI.generateEmail(emailTemplateCode);
     }
 
     @Override

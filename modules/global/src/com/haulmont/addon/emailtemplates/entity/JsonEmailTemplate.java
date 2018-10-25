@@ -54,7 +54,7 @@ public class JsonEmailTemplate extends EmailTemplate {
     }
 
     @Override
-    public Report getEmailBodyReport() {
+    public Report getReport() {
         Report report = AppBeans.get(ReportService.class).convertToReport(getReportXml());
         String html = getHtml();
         html = html.replaceAll("\\$\\{([a-zA-Z0-9.]*[^}]*)}","\\$\\{Root.fields.$1\\}");

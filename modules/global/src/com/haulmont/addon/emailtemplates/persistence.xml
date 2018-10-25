@@ -5,7 +5,7 @@
                       transaction-type="RESOURCE_LOCAL">
         <class>com.haulmont.addon.emailtemplates.entity.EmailTemplate</class>
         <class>com.haulmont.addon.emailtemplates.entity.TemplateGroup</class>
-        <class>com.haulmont.addon.emailtemplates.entity.TemplateParameters</class>
+        <class>com.haulmont.addon.emailtemplates.entity.TemplateReport</class>
         <class>com.haulmont.addon.emailtemplates.entity.ParameterValue</class>
         <class>com.haulmont.addon.emailtemplates.entity.ReportEmailTemplate</class>
         <class>com.haulmont.addon.emailtemplates.entity.JsonEmailTemplate</class>

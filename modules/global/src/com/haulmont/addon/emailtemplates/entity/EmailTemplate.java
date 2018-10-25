@@ -7,7 +7,6 @@ import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.cuba.core.entity.annotation.Lookup;
 import com.haulmont.cuba.core.entity.annotation.LookupType;
 import com.haulmont.cuba.core.entity.annotation.OnDelete;
-import com.haulmont.cuba.core.entity.annotation.OnDeleteInverse;
 import com.haulmont.cuba.core.global.DeletePolicy;
 import com.haulmont.reports.entity.Report;
 
@@ -65,17 +64,21 @@ public abstract class EmailTemplate extends StandardEntity {
     @ManyToMany
     protected List<FileDescriptor> attachedFiles;
 
-    @JoinTable(name = "EMAILTEMPLATES_LAYOUT_EMAIL_TEMPLATE_REPORT_LINK",
-        joinColumns = @JoinColumn(name = "LAYOUT_EMAIL_TEMPLATE_ID"),
-        inverseJoinColumns = @JoinColumn(name = "REPORT_ID"))
-    @OnDeleteInverse(DeletePolicy.UNLINK)
-    @ManyToMany
-    protected List<Report> attachedReports;
+
 
     @Composition
     @OnDelete(DeletePolicy.CASCADE)
-    @OneToMany(mappedBy = "emailTemplate")
-    protected List<TemplateParameters> parameters;
+    @OneToMany(mappedBy = "emailTemplate", cascade = CascadeType.ALL)
+    protected List<TemplateReport> attachedTemplateReports;
+
+    public void setAttachedTemplateReports(List<TemplateReport> attachedTemplateReports) {
+        this.attachedTemplateReports = attachedTemplateReports;
+    }
+
+    public List<TemplateReport> getAttachedTemplateReports() {
+        return attachedTemplateReports;
+    }
+
 
     public void setAttachedFiles(List<FileDescriptor> attachedFiles) {
         this.attachedFiles = attachedFiles;
@@ -84,16 +87,6 @@ public abstract class EmailTemplate extends StandardEntity {
     public List<FileDescriptor> getAttachedFiles() {
         return attachedFiles;
     }
-
-
-    public void setAttachedReports(List<Report> attachedReports) {
-        this.attachedReports = attachedReports;
-    }
-
-    public List<Report> getAttachedReports() {
-        return attachedReports;
-    }
-
 
     public void setType(TemplateType type) {
         this.type = type == null ? null : type.getId();
@@ -143,16 +136,6 @@ public abstract class EmailTemplate extends StandardEntity {
         return subject;
     }
 
-    public void setParameters(List<TemplateParameters> parameters) {
-        this.parameters = parameters;
-    }
-
-    public List<TemplateParameters> getParameters() {
-        return parameters;
-    }
-
-
-
     public void setGroup(TemplateGroup group) {
         this.group = group;
     }
@@ -177,5 +160,5 @@ public abstract class EmailTemplate extends StandardEntity {
         return code;
     }
 
-    public abstract Report getEmailBodyReport();
+    public abstract Report getReport();
 }

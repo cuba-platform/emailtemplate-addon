@@ -1,8 +1,6 @@
 package com.haulmont.addon.emailtemplates.entity;
 
-import com.haulmont.cuba.core.entity.annotation.Lookup;
-import com.haulmont.cuba.core.entity.annotation.LookupType;
-import com.haulmont.cuba.core.entity.annotation.OnDeleteInverse;
+import com.haulmont.cuba.core.entity.annotation.OnDelete;
 import com.haulmont.cuba.core.global.DeletePolicy;
 import com.haulmont.reports.entity.Report;
 
@@ -15,11 +13,19 @@ public class ReportEmailTemplate extends EmailTemplate {
     @Column(name = "USE_REPORT_SUBJECT")
     protected Boolean useReportSubject;
 
-    @OnDeleteInverse(DeletePolicy.UNLINK)
-    @Lookup(type = LookupType.SCREEN, actions = {"lookup", "open"})
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "TEMPLATE_REPORT_ID")
-    protected Report emailBody;
+    @OnDelete(DeletePolicy.CASCADE)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "EMAIL_BODY_REPORT_ID")
+    protected TemplateReport emailBodyReport;
+
+
+    public void setEmailBodyReport(TemplateReport emailBodyReport) {
+        this.emailBodyReport = emailBodyReport;
+    }
+
+    public TemplateReport getEmailBodyReport() {
+        return emailBodyReport;
+    }
 
     public ReportEmailTemplate() {
         setType(TemplateType.REPORT);
@@ -33,16 +39,8 @@ public class ReportEmailTemplate extends EmailTemplate {
         this.useReportSubject = useReportSubject;
     }
 
-    public Report getEmailBody() {
-        return emailBody;
-    }
-
-    public void setEmailBody(Report emailBody) {
-        this.emailBody = emailBody;
-    }
-
     @Override
-    public Report getEmailBodyReport() {
-        return getEmailBody();
+    public Report getReport() {
+        return getEmailBodyReport() != null ? getEmailBodyReport().getReport() : null;
     }
 }

@@ -11,7 +11,7 @@
         <property name="remoteServices">
             <map>
                 <entry key="emailtemplates_OutboundTemplateService"
-                       value="com.haulmont.addon.emailtemplates.service.OutboundTemplateService"/>
+                       value="com.haulmont.addon.emailtemplates.service.EmailTemplatesService"/>
                 <entry key="emailtemplates_TemplateParametersExtractorService"
                        value="com.haulmont.addon.emailtemplates.service.TemplateParametersExtractorService"/>
             </map>

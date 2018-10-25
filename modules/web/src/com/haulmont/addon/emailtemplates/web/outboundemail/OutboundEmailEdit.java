@@ -4,7 +4,7 @@ import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.OutboundEmail;
 import com.haulmont.addon.emailtemplates.exceptions.TemplateNotFoundException;
-import com.haulmont.addon.emailtemplates.service.OutboundTemplateService;
+import com.haulmont.addon.emailtemplates.service.EmailTemplatesService;
 import com.haulmont.addon.emailtemplates.web.frames.EmailTemplateParametersFrame;
 import com.haulmont.bali.util.ParamsMap;
 import com.haulmont.cuba.client.ClientConfig;
@@ -41,7 +41,7 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
     @Inject
     protected ClientConfig clientConfig;
     @Inject
-    protected OutboundTemplateService outboundTemplateService;
+    protected EmailTemplatesService emailTemplatesService;
     @Inject
     protected ComponentsFactory componentsFactory;
 
@@ -110,7 +110,7 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
         }
         List<ReportWithParams> reportsWithParams = parametersFrame.collectParameters();
 
-        EmailInfo emailInfo = outboundTemplateService.generateEmail(getItem().getEmailTemplate(), reportsWithParams);
+        EmailInfo emailInfo = emailTemplatesService.generateEmail(getItem().getEmailTemplate(), reportsWithParams);
         emailInfo.setAddresses(addressesField.getRawValue());
         emailInfo.setFrom(fromField.getRawValue());
 
@@ -124,7 +124,7 @@ public class OutboundEmailEdit extends AbstractEditor<OutboundEmail> {
         }
         List<ReportWithParams> reportsWithParams = parametersFrame.collectParameters();
 
-        EmailInfo emailInfo = outboundTemplateService.generateEmail(getItem().getEmailTemplate(), reportsWithParams);
+        EmailInfo emailInfo = emailTemplatesService.generateEmail(getItem().getEmailTemplate(), reportsWithParams);
         emailInfo.setAddresses(addressesField.getRawValue());
         emailInfo.setFrom(fromField.getRawValue());
 

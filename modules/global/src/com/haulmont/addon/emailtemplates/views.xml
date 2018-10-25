@@ -3,14 +3,11 @@
     <view class="com.haulmont.addon.emailtemplates.entity.EmailTemplate"
           extends="_local"
           name="emailTemplate-view">
-        <property name="parameters"
-                  view="templateParameters-view"/>
         <property name="group"
                   view="_minimal"/>
-        <property name="attachedReports"
-                  view="emailTemplate-view"/>
+        <property name="attachedTemplateReports"
+                  view="templateParameters-view"/>
     </view>
-
     <view class="com.haulmont.reports.entity.Report"
           extends="report.view"
           name="emailTemplate-view">
@@ -21,41 +18,41 @@
             <property name="parameterClassName"/>
             <property name="enumerationClass"/>
         </property>
+        <property name="defaultTemplate">
+            <property name="reportOutputType"/>
+        </property>
         <property name="xml"/>
     </view>
-
     <view class="com.haulmont.addon.emailtemplates.entity.ReportEmailTemplate"
           extends="_local"
           name="emailTemplate-view">
-        <property name="attachedReports"
-                  view="emailTemplate-view"/>
-        <property name="attachedFiles" view="_local"/>
-        <property name="parameters"
+        <property name="attachedFiles"
+                  view="_local"/>
+        <property name="attachedTemplateReports"
                   view="templateParameters-view">
         </property>
         <property name="group"
                   view="_minimal"/>
-        <property name="emailBody"
-                  view="emailTemplate-view"/>
+        <property name="emailBodyReport"
+                  view="templateParameters-view"/>
     </view>
     <view class="com.haulmont.addon.emailtemplates.entity.JsonEmailTemplate"
           extends="_local"
           name="emailTemplate-view">
-        <property name="attachedReports"
-                  view="emailTemplate-view"/>
-        <property name="attachedFiles" view="_local"/>
-        <property name="parameters"
+        <property name="attachedFiles"
+                  view="_local"/>
+        <property name="attachedTemplateReports"
                   view="templateParameters-view">
         </property>
         <property name="group"
                   view="_minimal"/>
     </view>
-    <view class="com.haulmont.addon.emailtemplates.entity.TemplateParameters"
+    <view class="com.haulmont.addon.emailtemplates.entity.TemplateReport"
           extends="_local"
           name="templateParameters-view">
         <property name="report"
                   view="emailTemplate-view"/>
         <property name="parameterValues"
-                  view="_minimal"/>
+                  view="_local"/>
     </view>
 </views>

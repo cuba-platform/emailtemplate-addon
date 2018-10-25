@@ -9,7 +9,9 @@
                     class="com.haulmont.addon.emailtemplates.entity.ReportEmailTemplate"
                     view="emailTemplate-view">
             <collectionDatasource id="attachedReportsDs"
-                                  property="attachedReports"/>
+                                  property="attachedTemplateReports">
+                <collectionDatasource id="parameterValuesDs" property="parameterValues"/>
+            </collectionDatasource>
             <collectionDatasource id="attachedFilesDs"
                                   property="attachedFiles"/>
         </datasource>
@@ -57,13 +59,10 @@
                                 </fieldGroup>
                             </groupBox>
                             <groupBox id="reportBox" caption="msg://content" collapsable="true" spacing="true">
-                                <fieldGroup id="reportGroup"
-                                            datasource="emailTemplateDs" width="100%">
-                                    <column width="100%">
-                                        <field optionsDatasource="emailBodiesDs"
-                                               property="emailBody"/>
-                                    </column>
-                                </fieldGroup>
+                                <hbox spacing="true" width="100%" expand="emailBody">
+                                    <label value="msg://emailBody"/>
+                                    <lookupPickerField id="emailBody" optionsDatasource="emailBodiesDs"/>
+                                </hbox>
                                 <vbox spacing="true">
                                     <label value="msg://defaultParameters"/>
                                     <scrollBox id="propertiesScrollBox"
