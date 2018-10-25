@@ -10,10 +10,7 @@ import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.global.PersistenceHelper;
 import com.haulmont.cuba.gui.WindowManager;
-import com.haulmont.cuba.gui.components.Button;
-import com.haulmont.cuba.gui.components.Component;
-import com.haulmont.cuba.gui.components.FileUploadField;
-import com.haulmont.cuba.gui.components.Table;
+import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.actions.BaseAction;
 import com.haulmont.cuba.gui.components.actions.CreateAction;
 import com.haulmont.cuba.gui.components.actions.EditAction;
@@ -78,6 +75,9 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
     @Named("parametersFrame.down")
     protected Button paramDownButton;
 
+    @Named("defaultGroup.subject")
+    private TextField subjectField;
+
     @Inject
     protected CollectionDatasource.Sortable<ReportInputParameter, UUID> parametersDs;
 
@@ -122,6 +122,8 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
                 throw new RuntimeException(e);
             }
         });
+
+        subjectField.addValueChangeListener(e -> updateReportOutputName());
     }
 
     private void createParameters() {
@@ -238,8 +240,15 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
         rootDefinition.setReport(report);
         rootDefinition.setName("Root");
         rootDefinition.setPosition(0);
+        rootDefinition.setDataSets(new ArrayList<>());
         report.setBands(new HashSet<>());
         report.getBands().add(rootDefinition);
+
+        DataSet dataSet = metadata.create(DataSet.class);
+        dataSet.setBandDefinition(rootDefinition);
+        dataSet.setType(DataSetType.GROOVY);
+        dataSet.setName("Root");
+        rootDefinition.getDataSets().add(dataSet);
 
         rootDefinition.setReport(report);
 
@@ -412,6 +421,7 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
     protected boolean preCommit() {
         getItem().setJsonBody(templateEditor.getJson().toString());
         String html = templateEditor.getHTML();
+        updateReportOutputName();
         if (html != null) {
             getItem().setHtml(html);
             report.getDefaultTemplate().setContent(html.getBytes());
@@ -419,6 +429,28 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
         report.setName(getItem().getName());
         getItem().setReportXml(reportService.convertToString(report));
         return true;
+    }
+
+    public void updateReportOutputName() {
+        DataSet dataSet = report.getRootBandDefinition().getDataSets().stream()
+                .filter(e -> "Root".equals(e.getName()))
+                .findFirst()
+                .orElse(null);
+        if (dataSet == null) {
+            dataSet = metadata.create(DataSet.class);
+            dataSet.setBandDefinition(report.getRootBandDefinition());
+            dataSet.setType(DataSetType.GROOVY);
+            dataSet.setName("Root");
+            report.getRootBandDefinition().getDataSets().add(dataSet);
+        }
+        String subject = getItem().getSubject();
+        if (StringUtils.isNotBlank(subject)) {
+            subject = subject.replaceAll("\\$\\{([a-zA-Z0-9]*)}", "\"+params[\"$1\"]+\"");
+            subject = subject.replaceAll("\\$\\{([a-zA-Z0-9]*).([a-zA-Z0-9.]*)}", "\"+params[\"$1\"].$2+\"");
+            dataSet.setText("return [[\"__REPORT_FILE_NAME\": \"" + subject + "\"]]");
+        } else {
+            dataSet.setText(null);
+        }
     }
 
     public void exportJson() {
@@ -438,7 +470,8 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
 
 
     public void exportReport() {
-        Report report = getItem().getReport();
-        openEditor(report, WindowManager.OpenType.NEW_TAB);
+        getItem().setReportXml(reportService.convertToString(report));
+        AbstractEditor reportEditor = openEditor(getItem().getReport(), WindowManager.OpenType.NEW_TAB);
+        reportEditor.getDsContext().get("reportDs").setItem(getItem().getReport());
     }
 }
