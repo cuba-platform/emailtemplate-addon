@@ -7,7 +7,7 @@ com_haulmont_addon_emailtemplates_web_toolkit_ui_unlayereditorcomponent_UnlayerE
 
         unlayer.init({
           id: 'editor-container',
-          displayMode: 'web'
+          displayMode: 'email'
         });
 
         unlayer.addEventListener('design:updated', function(data) {
