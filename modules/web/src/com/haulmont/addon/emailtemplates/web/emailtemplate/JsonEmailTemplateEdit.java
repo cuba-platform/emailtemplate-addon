@@ -37,8 +37,8 @@ import java.util.stream.Collectors;
 
 public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTemplate> {
 
-    private static Pattern SIMPLE_FIELD_PATTERN = Pattern.compile("\\$\\{([a-zA-Z0-9]*)[^}]*}");
-    private static Pattern ENTITY_FIELD_PATTERN = Pattern.compile("\\$\\{([a-zA-Z0-9]*)\\.([a-zA-Z0-9]*)[^}]*}");
+    private static final Pattern SIMPLE_FIELD_PATTERN = Pattern.compile("\\$\\{([a-zA-Z0-9]*)[^}]*}");
+    private static final Pattern ENTITY_FIELD_PATTERN = Pattern.compile("\\$\\{([a-zA-Z0-9]*)\\.([a-zA-Z0-9]*)[^}]*}");
 
     @Inject
     private UnlayerTemplateEditor templateEditor;
@@ -309,9 +309,9 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
                     int index = parameter.getPosition();
                     if (index > 0) {
                         ReportInputParameter previousParameter = null;
-                        for (ReportInputParameter _param : inputParameters) {
-                            if (_param.getPosition() == index - 1) {
-                                previousParameter = _param;
+                        for (ReportInputParameter inputParameter : inputParameters) {
+                            if (inputParameter.getPosition() == index - 1) {
+                                previousParameter = inputParameter;
                                 break;
                             }
                         }
@@ -347,9 +347,9 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
                     int index = parameter.getPosition();
                     if (index < parametersDs.getItemIds().size() - 1) {
                         ReportInputParameter nextParameter = null;
-                        for (ReportInputParameter _param : inputParameters) {
-                            if (_param.getPosition() == index + 1) {
-                                nextParameter = _param;
+                        for (ReportInputParameter inputParameter : inputParameters) {
+                            if (inputParameter.getPosition() == index + 1) {
+                                nextParameter = inputParameter;
                                 break;
                             }
                         }

@@ -11,5 +11,11 @@ public class UnlayerEditorComponentState extends JavaScriptComponentState {
 
     public String html;
 
+    public String customJs;
+
+    public String customCss;
+
+    public Integer projectId;
+
     public List<NameValue> parameters;
 }

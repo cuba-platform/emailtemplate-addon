@@ -3,6 +3,7 @@ package com.haulmont.addon.emailtemplates.web.gui.xml.layout.loaders;
 import com.haulmont.addon.emailtemplates.web.gui.components.UnlayerTemplateEditor;
 import com.haulmont.cuba.gui.components.Component;
 import com.haulmont.cuba.gui.xml.layout.loaders.AbstractComponentLoader;
+import org.dom4j.Element;
 
 public class UnlayerTemplateEditorLoader extends AbstractComponentLoader<UnlayerTemplateEditor> {
     @Override
@@ -21,6 +22,13 @@ public class UnlayerTemplateEditorLoader extends AbstractComponentLoader<Unlayer
         loadEnable(resultComponent, element);
         loadStyleName(resultComponent, element);
 
-
+        Element customJsElement = element.element("customJs");
+        if (customJsElement != null) {
+            resultComponent.setCustomJs(customJsElement.getStringValue());
+        }
+        Element customCssElement = element.element("customCss");
+        if (customCssElement != null) {
+            resultComponent.setCustomCss(customCssElement.getStringValue());
+        }
     }
 }

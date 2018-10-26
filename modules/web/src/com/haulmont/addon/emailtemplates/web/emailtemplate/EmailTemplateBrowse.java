@@ -28,11 +28,11 @@ public class EmailTemplateBrowse extends AbstractLookup {
     @Inject
     private PopupButton createBtn;
 
-    protected class TemplateCreateAction<T extends Entity> extends CreateAction{
+    protected class TemplateCreateAction<T extends Entity> extends CreateAction {
 
         private Class<T> clazz;
 
-        public TemplateCreateAction(ListComponent target,  Class<T> clazz) {
+        public TemplateCreateAction(ListComponent target, Class<T> clazz) {
             super(target);
             this.clazz = clazz;
         }
@@ -44,12 +44,12 @@ public class EmailTemplateBrowse extends AbstractLookup {
 
         @Override
         public String getWindowId() {
-            return metadata.getClass(clazz).getName()+".edit";
+            return metadata.getClass(clazz).getName() + ".edit";
         }
 
         @Override
         public String getId() {
-            return "create."+metadata.getClass(clazz).getName();
+            return "create." + metadata.getClass(clazz).getName();
         }
 
         @Override

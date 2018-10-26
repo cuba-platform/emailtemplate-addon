@@ -8,7 +8,20 @@
     <xs:element name="unlayerTemplateEditor">
         <xs:complexType>
             <xs:complexContent>
-                <xs:extension base="cuba:baseComponent"/>
+                <xs:extension base="cuba:baseComponent">
+                    <xs:sequence>
+                        <xs:element name="customJs" minOccurs="0" maxOccurs="1">
+                            <xs:complexType mixed="true">
+                                <xs:sequence/>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="customCss" minOccurs="0" maxOccurs="1">
+                            <xs:complexType mixed="true">
+                                <xs:sequence/>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:extension>
             </xs:complexContent>
         </xs:complexType>
     </xs:element>

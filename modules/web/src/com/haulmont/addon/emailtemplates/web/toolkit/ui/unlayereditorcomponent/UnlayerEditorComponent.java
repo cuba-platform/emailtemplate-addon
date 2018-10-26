@@ -46,6 +46,18 @@ public class UnlayerEditorComponent extends AbstractJavaScriptComponent {
         return getState(false).html;
     }
 
+    public void setCustomJs(String customJs) {
+        getState(false).customJs = customJs;
+    }
+
+    public void setCustomCss(String customCss) {
+        getState(false).customCss = customCss;
+    }
+
+    public void setProjectId(Integer projectId) {
+        getState(false).projectId = projectId;
+    }
+
     public interface ValueChangeListener {
         void valueChanged(JsonObject json);
     }

@@ -59,12 +59,15 @@
                               spacing="true">
                             <hbox id="dropZone" spacing="true" stylename="c-edit-window-actions" margin="true"
                                   width="100%" expand="space">
-                                <upload id="fileUpload" dropZone="dropZone" uploadButtonIcon="DOWNLOAD" description="msg://importJson"
+                                <upload id="fileUpload" dropZone="dropZone" uploadButtonIcon="DOWNLOAD"
+                                        description="msg://importJson"
                                         uploadButtonCaption=""/>
-                                <button id="exportJson" invoke="exportJson" icon="UPLOAD" description="msg://exportJson"/>
-                                <button id="exportHtml" invoke="exportHtml" icon="CODE"  description="msg://exportHtml"/>
-                                <button id="viewHtml" invoke="viewHtml" icon="EYE"  description="msg://viewHtml"/>
-                                <button id="exportReport" invoke="exportReport" icon="FILE_TEXT"  description="msg://exportReport"/>
+                                <button id="exportJson" invoke="exportJson" icon="UPLOAD"
+                                        description="msg://exportJson"/>
+                                <button id="exportHtml" invoke="exportHtml" icon="CODE" description="msg://exportHtml"/>
+                                <button id="viewHtml" invoke="viewHtml" icon="EYE" description="msg://viewHtml"/>
+                                <button id="exportReport" invoke="exportReport" icon="FILE_TEXT"
+                                        description="msg://exportReport"/>
                                 <label id="space"/>
                             </hbox>
                             <groupBox caption="msg://info"
@@ -106,7 +109,7 @@
                                               height="100%"/>
                 </split>
             </tab>
-            <tab id="parametersAndFormatsTab" caption="msg://parametersAndFormatsTab" >
+            <tab id="parametersAndFormatsTab" caption="msg://parametersAndFormatsTab">
                 <hbox width="100%" height="100%" spacing="true" margin="false;true;true;true">
                     <frame src="/com/haulmont/reports/gui/report/edit/tabs/parameters.xml" id="parametersFrame"
                            height="100%" width="100%"/>
@@ -115,7 +118,8 @@
                 </hbox>
             </tab>
             <tab id="attachments" caption="msg://attachments" lazy="true">
-                <frame src="/com/haulmont/addon/emailtemplates/web/emailtemplate/email-template-attachments.xml" id="attachmentsFrame"
+                <frame src="/com/haulmont/addon/emailtemplates/web/emailtemplate/email-template-attachments.xml"
+                       id="attachmentsFrame"
                        height="100%" width="100%"/>
 
             </tab>
