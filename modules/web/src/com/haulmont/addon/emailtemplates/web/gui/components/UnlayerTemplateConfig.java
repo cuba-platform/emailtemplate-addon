@@ -8,6 +8,9 @@ import com.haulmont.cuba.core.config.SourceType;
 @Source(type = SourceType.APP)
 public interface UnlayerTemplateConfig extends Config {
 
+    /**
+     * @return project id for registered unlayer account
+     */
     @Property("cuba.addon.emailtemplates.unlayer.projectId")
     Integer getProjectId();
 }
