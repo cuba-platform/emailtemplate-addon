@@ -1,4 +1,4 @@
-package com.haulmont.addon.emailtemplates.web.emailtemplate;
+package com.haulmont.addon.emailtemplates.web.emailtemplate.attachment;
 
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.TemplateReport;
@@ -63,8 +63,7 @@ public class AttachmentFrame extends AbstractFrame {
 
         EmailTemplate template = emailTemplateDs.getItem();
         parametersFrame = (EmailTemplateParametersFrame) openFrame(defaultValuesBox, "emailtemplates$parametersFrame",
-                ParamsMap.of(EmailTemplateParametersFrame.TEMPLATE, template,
-                        EmailTemplateParametersFrame.IS_DEFAULT_PARAM_VALUES, true,
+                ParamsMap.of(EmailTemplateParametersFrame.IS_DEFAULT_PARAM_VALUES, true,
                         EmailTemplateParametersFrame.HIDE_REPORT_CAPTION, true));
 
         attachedReportsDs.addItemChangeListener(e -> {

@@ -1,7 +1,8 @@
-package com.haulmont.addon.emailtemplates.web.emailtemplate;
+package com.haulmont.addon.emailtemplates.web.emailtemplate.report;
 
 import com.haulmont.addon.emailtemplates.entity.ReportEmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.TemplateReport;
+import com.haulmont.addon.emailtemplates.web.emailtemplate.AbstractTemplateEditor;
 import com.haulmont.addon.emailtemplates.web.frames.EmailTemplateParametersFrame;
 import com.haulmont.bali.util.ParamsMap;
 import com.haulmont.cuba.core.global.Metadata;
@@ -49,8 +50,7 @@ public class ReportEmailTemplateEdit extends AbstractTemplateEditor<ReportEmailT
         ReportEmailTemplate emailTemplate = getItem();
 
         parametersFrame = (EmailTemplateParametersFrame) openFrame(defaultValuesBox, "emailtemplates$parametersFrame",
-                ParamsMap.of(EmailTemplateParametersFrame.TEMPLATE, emailTemplate,
-                        EmailTemplateParametersFrame.IS_DEFAULT_PARAM_VALUES, true,
+                ParamsMap.of(EmailTemplateParametersFrame.IS_DEFAULT_PARAM_VALUES, true,
                         EmailTemplateParametersFrame.HIDE_REPORT_CAPTION, true));
 
         parametersFrame.setTemplateReport(getItem().getEmailBodyReport());

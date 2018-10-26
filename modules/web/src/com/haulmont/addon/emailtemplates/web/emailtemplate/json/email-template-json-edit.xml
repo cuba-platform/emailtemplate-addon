@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
         caption="msg://editorCaption"
-        class="com.haulmont.addon.emailtemplates.web.emailtemplate.JsonEmailTemplateEdit"
+        class="com.haulmont.addon.emailtemplates.web.emailtemplate.json.JsonEmailTemplateEdit"
         datasource="emailTemplateDs"
         messagesPack="com.haulmont.addon.emailtemplates.web.emailtemplate"
         xmlns:et="http://schemas.haulmont.com/emailtemplates/0.1/ui-component.xsd">
@@ -118,7 +118,7 @@
                 </hbox>
             </tab>
             <tab id="attachments" caption="msg://attachments" lazy="true">
-                <frame src="/com/haulmont/addon/emailtemplates/web/emailtemplate/email-template-attachments.xml"
+                <frame src="/com/haulmont/addon/emailtemplates/web/emailtemplate/attachment/email-template-attachments.xml"
                        id="attachmentsFrame"
                        height="100%" width="100%"/>
 

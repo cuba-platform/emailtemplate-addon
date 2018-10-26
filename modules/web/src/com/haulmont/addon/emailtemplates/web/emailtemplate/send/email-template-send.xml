@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+        caption="msg://sendCaption"
+        class="com.haulmont.addon.emailtemplates.web.emailtemplate.send.EmailTemplateSender"
+        focusComponent="defaultGroup"
+        messagesPack="com.haulmont.addon.emailtemplates.web.emailtemplate">
+    <dsContext>
+        <datasource id="emailTemplateDs" allowCommit="false"
+                    class="com.haulmont.addon.emailtemplates.entity.EmailTemplate"/>
+    </dsContext>
+    <dialogMode height="640"
+                width="1000"/>
+    <layout expand="buttonsPanel"
+            spacing="true">
+        <hbox id="main" spacing="true" width="100%" expand="emailInfoBox" >
+            <groupBox id="emailInfoBox" caption="msg://emailInfo">
+                <fieldGroup id="defaultGroup"
+                            captionAlignment="TOP"
+                            datasource="emailTemplateDs"
+                            width="100%">
+                    <column width="100%">
+                        <field property="subject"/>
+                        <field property="from"/>
+                        <field property="to"
+                               required="true"
+                               rows="3"/>
+                        <field property="cc"
+                               rows="3"/>
+                        <field property="bcc"
+                               rows="3"/>
+                    </column>
+                </fieldGroup>
+            </groupBox>
+            <scrollBox id="propertiesScrollBox"
+                       spacing="true" width="470px" height="100%">
+                <groupBox caption="msg://defaultBodyParameters">
+                    <vbox id="defaultBodyParameters"/>
+                </groupBox>
+                <groupBox id="attachmentGroupBox" caption="msg://attachmentParameters">
+                    <vbox id="attachmentParameters"/>
+                </groupBox>
+            </scrollBox>
+        </hbox>
+        <buttonsPanel id="buttonsPanel">
+            <button id="sendButton"
+                    caption="msg://send"
+                    icon="ENVELOPE"
+                    invoke="onSendButtonClick"/>
+            <button id="previewButton"
+                    caption="msg://preview"
+                    icon="CHECK"
+                    invoke="onTestButtonClick"/>
+            <button id="cancelButton"
+                    caption="msg://cancel"
+                    icon="CANCEL"
+                    invoke="onCancelButtonClick"/>
+        </buttonsPanel>
+    </layout>
+</window>

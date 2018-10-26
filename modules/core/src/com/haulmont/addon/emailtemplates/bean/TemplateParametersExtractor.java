@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableMap;
 import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.ParameterValue;
-import com.haulmont.addon.emailtemplates.entity.ReportEmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.TemplateReport;
 import com.haulmont.addon.emailtemplates.exceptions.ReportParameterTypeChangedException;
 import com.haulmont.addon.emailtemplates.service.EmailTemplatesService;
@@ -118,13 +117,7 @@ public class TemplateParametersExtractor {
         if (CollectionUtils.isNotEmpty(emailTemplate.getAttachedTemplateReports())) {
             templateReports.addAll(emailTemplate.getAttachedTemplateReports());
         }
-        if (emailTemplate instanceof ReportEmailTemplate) {
-            templateReports.add(((ReportEmailTemplate) emailTemplate).getEmailBodyReport());
-        } else {
-            TemplateReport templateReport = metadata.create(TemplateReport.class);
-            templateReport.setReport(emailTemplate.getReport());
-            templateReports.add(templateReport);
-        }
+        templateReports.add(emailTemplate.getEmailBodyReport());
         return templateReports;
     }
 

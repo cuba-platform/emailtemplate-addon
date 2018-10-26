@@ -38,7 +38,6 @@ public abstract class EmailTemplate extends StandardEntity {
     @Column(name = "CODE", nullable = false, unique = true)
     protected String code;
 
-
     @Column(name = "FROM_")
     protected String from;
 
@@ -59,11 +58,10 @@ public abstract class EmailTemplate extends StandardEntity {
 
 
     @JoinTable(name = "EMAILTEMPLATES_EMAIL_TEMPLATE_FILE_DESCRIPTOR_LINK",
-        joinColumns = @JoinColumn(name = "EMAIL_TEMPLATE_ID"),
-        inverseJoinColumns = @JoinColumn(name = "FILE_DESCRIPTOR_ID"))
+            joinColumns = @JoinColumn(name = "EMAIL_TEMPLATE_ID"),
+            inverseJoinColumns = @JoinColumn(name = "FILE_DESCRIPTOR_ID"))
     @ManyToMany
     protected List<FileDescriptor> attachedFiles;
-
 
 
     @Composition
@@ -161,4 +159,8 @@ public abstract class EmailTemplate extends StandardEntity {
     }
 
     public abstract Report getReport();
+
+    public abstract TemplateReport getEmailBodyReport();
+
+    public abstract Boolean getUseReportSubject();
 }

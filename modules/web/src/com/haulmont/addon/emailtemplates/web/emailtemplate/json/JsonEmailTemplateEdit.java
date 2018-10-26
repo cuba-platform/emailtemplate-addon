@@ -1,6 +1,7 @@
-package com.haulmont.addon.emailtemplates.web.emailtemplate;
+package com.haulmont.addon.emailtemplates.web.emailtemplate.json;
 
 import com.haulmont.addon.emailtemplates.entity.JsonEmailTemplate;
+import com.haulmont.addon.emailtemplates.web.emailtemplate.AbstractTemplateEditor;
 import com.haulmont.addon.emailtemplates.web.gui.components.UnlayerTemplateEditor;
 import com.haulmont.bali.util.ParamsMap;
 import com.haulmont.chile.core.model.MetaClass;

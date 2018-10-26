@@ -2,7 +2,6 @@ package com.haulmont.addon.emailtemplates.web.frames;
 
 import com.haulmont.addon.emailtemplates.dto.ReportWithParamField;
 import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
-import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.ParameterValue;
 import com.haulmont.addon.emailtemplates.entity.TemplateReport;
 import com.haulmont.addon.emailtemplates.exceptions.ReportParameterTypeChangedException;
@@ -33,6 +32,8 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
     public static final String IS_DEFAULT_PARAM_VALUES = "isDefault";
     public static final String HIDE_REPORT_CAPTION = "hideReportCaption";
     public static final String TEMPLATE = "emailTemplate";
+    public static final String TEMPLATE_REPORTS = "templateReports";
+    public static final String TEMPLATE_REPORT = "templateReport";
 
     @WindowParam(name = IS_DEFAULT_PARAM_VALUES, required = true)
     protected Boolean isDefaultValues;
@@ -57,7 +58,7 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
     private TemplateParametersExtractorService templateParametersExtractorService;
 
     @WindowParam
-    private EmailTemplate emailTemplate;
+    private List<TemplateReport> templateReports;
 
     @WindowParam
     private TemplateReport templateReport;
@@ -71,29 +72,21 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
     @Override
     public void init(Map<String, Object> params) {
         super.init(params);
-
-        try {
-            List<ReportWithParams> parameters = getTemplateDefaultValues();
-            if (CollectionUtils.isEmpty(parameters)) {
-                return;
-            }
-        } catch (ReportParameterTypeChangedException e) {
-            showNotification(e.getMessage());
-            return;
+        if (templateReport != null) {
+            setTemplateReport(templateReport);
         }
     }
 
     private List<ReportWithParams> getTemplateDefaultValues() throws ReportParameterTypeChangedException {
-        if (templateReport != null) {
-            List<ParameterValue> values = templateReport.getParameterValues();
-            return Collections.singletonList(templateParametersExtractorService.getReportDefaultValues(templateReport.getReport(), values));
-        } else {
-            return templateParametersExtractorService.getTemplateDefaultValues(emailTemplate);
+        List<ReportWithParams> reportWithParams = new ArrayList<>();
+        for (TemplateReport templateReport : templateReports) {
+            reportWithParams.add(templateParametersExtractorService.getReportDefaultValues(templateReport.getReport(), templateReport.getParameterValues()));
         }
+        return reportWithParams;
     }
 
     public void setTemplateReport(TemplateReport templateReport) {
-        this.templateReport = templateReport;
+        this.templateReports = Collections.singletonList(templateReport);
     }
 
     public void createComponents() {
@@ -185,7 +178,6 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
         Label label = componentsFactory.createComponent(Label.class);
         label.setWidth(Component.AUTO_SIZE);
         label.setValue(report.getName());
-        label.setStyleName("h2");
         parametersGrid.add(label, 0, currentGridRow, 1, currentGridRow);
     }
 
@@ -198,7 +190,6 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
                 return field;
             }
         }
-        field.setWidth("400px");
 
         Object value = null;
         if (MapUtils.isNotEmpty(values)) {
@@ -249,6 +240,10 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
     private void updateDefaultValue(ReportInputParameter parameter, Object fieldValue) {
         String alias = parameter.getAlias();
         Report report = parameter.getReport();
+        TemplateReport templateReport = templateReports.stream()
+                .filter(e -> e.getReport().equals(report))
+                .findFirst()
+                .orElse(null);
         if (fieldValue == null && templateReport == null) {
             return;
         }

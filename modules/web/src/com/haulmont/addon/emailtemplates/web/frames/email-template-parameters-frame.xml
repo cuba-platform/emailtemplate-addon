@@ -4,7 +4,7 @@
         messagesPack="com.haulmont.addon.emailtemplates.web.frames">
     <dialogMode height="600"
                 width="800"/>
-    <layout spacing="true">
+    <layout spacing="true" width="100%">
         <grid id="parametersGrid"
               spacing="true"
               width="100%">

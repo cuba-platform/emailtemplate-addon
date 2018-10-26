@@ -2,6 +2,5 @@
 <metadata xmlns="http://schemas.haulmont.com/cuba/metadata.xsd">
     <metadata-model namespace="emailtemplates"
                     root-package="com.haulmont.addon.emailtemplates">
-        <class>com.haulmont.addon.emailtemplates.entity.OutboundEmail</class>
     </metadata-model>
 </metadata>
