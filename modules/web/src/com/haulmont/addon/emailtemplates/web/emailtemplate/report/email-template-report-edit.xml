@@ -58,24 +58,9 @@
                                     </column>
                                 </fieldGroup>
                             </groupBox>
-                            <groupBox id="reportBox" caption="msg://content" collapsable="true" spacing="true">
-                                <hbox spacing="true" width="100%" expand="emailBody">
-                                    <label value="msg://emailBody"/>
-                                    <lookupPickerField id="emailBody" optionsDatasource="emailBodiesDs"/>
-                                </hbox>
-                                <vbox spacing="true">
-                                    <label value="msg://defaultParameters"/>
-                                    <scrollBox id="propertiesScrollBox"
-                                               height="100%">
-                                        <vbox id="defaultValuesBox"/>
-                                    </scrollBox>
-                                </vbox>
-                            </groupBox>
-
-                        </vbox>
-                        <vbox spacing="true">
                             <groupBox caption="msg://defaultValues"
-                                      collapsable="true">
+                                      collapsable="true"
+                                      collapsed="true">
                                 <fieldGroup id="useReportSubjectGroup"
                                             datasource="emailTemplateDs"
                                             width="100%">
@@ -98,6 +83,21 @@
                                                rows="3"/>
                                     </column>
                                 </fieldGroup>
+                            </groupBox>
+                        </vbox>
+                        <vbox spacing="true">
+                            <groupBox id="reportBox" caption="msg://content" collapsable="true" spacing="true">
+                                <hbox spacing="true" width="100%" expand="emailBody">
+                                    <label value="msg://emailBody"/>
+                                    <lookupPickerField id="emailBody" optionsDatasource="emailBodiesDs"/>
+                                </hbox>
+                                <vbox spacing="true">
+                                    <label value="msg://defaultParameters"/>
+                                    <scrollBox id="propertiesScrollBox"
+                                               height="100%">
+                                        <vbox id="defaultValuesBox"/>
+                                    </scrollBox>
+                                </vbox>
                             </groupBox>
                         </vbox>
                     </hbox>
