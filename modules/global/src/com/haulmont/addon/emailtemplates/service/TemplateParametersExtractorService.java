@@ -6,6 +6,7 @@ import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.ParameterValue;
 import com.haulmont.addon.emailtemplates.exceptions.ReportParameterTypeChangedException;
 import com.haulmont.reports.entity.Report;
+import com.haulmont.reports.entity.ReportInputParameter;
 
 import java.util.List;
 
@@ -18,4 +19,6 @@ public interface TemplateParametersExtractorService {
 
     ReportWithParams getReportDefaultValues(Report report, List<ParameterValue> parameterValues)
             throws ReportParameterTypeChangedException;
+
+    Class resolveClass(ReportInputParameter parameter);
 }

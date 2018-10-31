@@ -1,7 +1,11 @@
 package com.haulmont.addon.emailtemplates.dto;
 
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
+import com.haulmont.addon.emailtemplates.entity.TemplateGroup;
+import com.haulmont.addon.emailtemplates.exceptions.ReportParameterTypeChangedException;
+import com.haulmont.addon.emailtemplates.exceptions.TemplateNotFoundException;
 import com.haulmont.cuba.core.entity.FileDescriptor;
+import com.haulmont.cuba.core.global.EmailException;
 import com.haulmont.cuba.core.global.EmailInfo;
 import com.haulmont.reports.entity.Report;
 
@@ -10,6 +14,8 @@ import java.util.Collection;
 import java.util.Map;
 
 public interface EmailTemplateBuilder {
+
+    EmailTemplateBuilder setGroup(TemplateGroup group);
 
     EmailTemplateBuilder setSubject(String subject);
 
@@ -27,33 +33,45 @@ public interface EmailTemplateBuilder {
 
     EmailTemplateBuilder setAttachmentReports(Collection<Report> reports);
 
-    EmailTemplateBuilder setAttachmentReportsWithParams(Collection<ReportWithParams> reportsWithParams);
+    EmailTemplateBuilder addAttachmentFile(FileDescriptor fileDescriptor);
 
-    EmailTemplateBuilder addAttachment(FileDescriptor fileDescriptor);
+    EmailTemplateBuilder addAttachmentFile(File file);
 
-    EmailTemplateBuilder addAttachment(File file);
+    EmailTemplateBuilder addAttachmentFile(byte[] bytes);
 
-    EmailTemplateBuilder addAttachment(byte[] bytes);
+    EmailTemplateBuilder setAttachmentParameter(String key, Object value);
 
-    EmailTemplateBuilder setParameter(String key, Object value);
+    EmailTemplateBuilder setBodyParameter(String key, Object value);
 
-    EmailTemplateBuilder setParameter(Report report, String key, Object value);
+    EmailTemplateBuilder addAttachmentParameter(String key, Object value);
 
-    EmailTemplateBuilder addParameters(Map<String, Object> params);
+    EmailTemplateBuilder addBodyParameter(String key, Object value);
 
-    EmailTemplateBuilder setParameters(ReportWithParams params);
+    EmailTemplateBuilder setAttachmentParameter(Report report, String key, Object value);
 
-    EmailTemplateBuilder setParameters(Map<String, Object> params);
+    EmailTemplateBuilder setBodyParameter(Report report, String key, Object value);
 
-    EmailTemplateBuilder setParameters(Collection<ReportWithParams> params);
+    EmailTemplateBuilder addAttachmentParameters(Map<String, Object> params);
 
-    EmailInfo generateEmail();
+    EmailTemplateBuilder addBodyParameters(Map<String, Object> params);
 
-    EmailTemplate getTemplate();
+    EmailTemplateBuilder setAttachmentParameters(ReportWithParams reportWithParams);
 
-    void sendEmail();
+    EmailTemplateBuilder setBodyParameters(ReportWithParams reportWithParams);
 
-    void sendEmail(boolean async);
+    EmailTemplateBuilder setAttachmentParameters(Map<String, Object> params);
 
-    void sendEmailAsync();
+    EmailTemplateBuilder setBodyParameters(Map<String, Object> params);
+
+    EmailTemplateBuilder setAttachmentParameters(Collection<ReportWithParams> reportsWithParams);
+
+    EmailInfo generateEmail() throws ReportParameterTypeChangedException, TemplateNotFoundException;
+
+    EmailTemplate build();
+
+    void sendEmail() throws TemplateNotFoundException, ReportParameterTypeChangedException, EmailException;
+
+    void sendEmail(boolean async) throws TemplateNotFoundException, ReportParameterTypeChangedException, EmailException;
+
+    void sendEmailAsync() throws TemplateNotFoundException, ReportParameterTypeChangedException;
 }

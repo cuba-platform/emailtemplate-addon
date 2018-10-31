@@ -39,8 +39,6 @@ public class EmailTemplates implements EmailTemplatesAPI {
     @Inject
     private FileStorageAPI fileStorageAPI;
 
-    @Inject
-    private TemplateParametersExtractor templateParametersExtractor;
 
     @Override
     public EmailInfo generateEmail(EmailTemplate emailTemplate, Collection<ReportWithParams> params) throws TemplateNotFoundException {
