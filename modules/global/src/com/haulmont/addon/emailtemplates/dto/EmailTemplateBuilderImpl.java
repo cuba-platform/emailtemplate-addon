@@ -1,6 +1,8 @@
 package com.haulmont.addon.emailtemplates.dto;
 
-import com.haulmont.addon.emailtemplates.entity.*;
+import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
+import com.haulmont.addon.emailtemplates.entity.ParameterValue;
+import com.haulmont.addon.emailtemplates.entity.TemplateReport;
 import com.haulmont.addon.emailtemplates.exceptions.ReportParameterTypeChangedException;
 import com.haulmont.addon.emailtemplates.exceptions.TemplateNotFoundException;
 import com.haulmont.addon.emailtemplates.service.EmailTemplatesService;
@@ -17,13 +19,11 @@ import com.haulmont.reports.entity.Report;
 import com.haulmont.reports.entity.ReportInputParameter;
 import org.springframework.beans.BeanUtils;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
 
@@ -37,12 +37,6 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
 
     public EmailTemplateBuilderImpl(EmailTemplate emailTemplate) {
         this.emailTemplate = cloneTemplate(emailTemplate);
-    }
-
-    @Override
-    public EmailTemplateBuilder setGroup(TemplateGroup group) {
-        emailTemplate.setGroup(group);
-        return this;
     }
 
     @Override
@@ -105,43 +99,14 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
 
 
     @Override
-    public EmailTemplateBuilder addAttachmentFile(FileDescriptor fileDescriptor) {
-        emailTemplate.getAttachedFiles().add(fileDescriptor);
+    public EmailTemplateBuilder addAttachmentFile(FileDescriptor file) {
+        emailTemplate.getAttachedFiles().add(file);
         return this;
     }
 
     @Override
-    public EmailTemplateBuilder addAttachmentFile(File file) {
-        return this;
-    }
-
-    @Override
-    public EmailTemplateBuilder addAttachmentFile(byte[] bytes) {
-        return this;
-    }
-
-    @Override
-    public EmailTemplateBuilder setAttachmentParameter(String key, Object value) {
-        List<TemplateReport> attachedTemplateReports = emailTemplate.getAttachedTemplateReports();
-        attachedTemplateReports.stream()
-                .filter(r -> r.getReport().getInputParameters().stream()
-                        .anyMatch(p -> p.getAlias().equals(key)))
-                .forEach(e -> e.getParameterValues().stream()
-                        .filter(v -> v.getAlias().equals(key))
-                        .forEach(v -> {
-                            ReportInputParameter inputParameter = e.getReport().getInputParameters().stream()
-                                    .filter(r -> r.getAlias().equals(key))
-                                    .findFirst()
-                                    .orElse(null);
-                            if (inputParameter != null) {
-                                if (!ParameterType.ENTITY_LIST.equals(inputParameter.getType())) {
-                                    Class parameterClass = extractorService.resolveClass(inputParameter);
-                                    String stringValue = reportService.convertToString(parameterClass, value);
-                                    v.setDefaultValue(stringValue);
-                                }
-                                v.setParameterType(inputParameter.getType());
-                            }
-                        }));
+    public EmailTemplateBuilder setAttachmentFiles(List<FileDescriptor> files) {
+        emailTemplate.setAttachedFiles(files);
         return this;
     }
 
@@ -162,44 +127,6 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
                             v.setDefaultValue(stringValue);
                         }
                         v.setParameterType(inputParameter.getType());
-                    }
-                });
-        return this;
-    }
-
-    @Override
-    public EmailTemplateBuilder addAttachmentParameter(String key, Object value) {
-        List<TemplateReport> attachedTemplateReports = emailTemplate.getAttachedTemplateReports();
-        attachedTemplateReports.stream()
-                .filter(e -> e.getReport().getInputParameters().stream()
-                        .anyMatch(r -> r.getAlias().equals(key)))
-                .filter(e -> e.getParameterValues().stream()
-                        .noneMatch(p -> p.getAlias().equals(key)))
-                .forEach(e -> {
-                    List<ParameterValue> values = e.getParameterValues();
-                    ParameterValue parameterValue = createParameterValue(e.getReport(), key, value);
-                    if (parameterValue != null) {
-                        parameterValue.setTemplateParameters(e);
-                        values.add(parameterValue);
-                    }
-                });
-        return null;
-    }
-
-    @Override
-    public EmailTemplateBuilder addBodyParameter(String key, Object value) {
-        TemplateReport emailBodyReport = emailTemplate.getEmailBodyReport();
-        Stream.of(emailBodyReport)
-                .filter(e -> e.getReport().getInputParameters().stream()
-                        .anyMatch(r -> r.getAlias().equals(key)))
-                .filter(e -> e.getParameterValues().stream()
-                        .noneMatch(p -> p.getAlias().equals(key)))
-                .forEach(e -> {
-                    List<ParameterValue> values = e.getParameterValues();
-                    ParameterValue parameterValue = createParameterValue(e.getReport(), key, value);
-                    if (parameterValue != null) {
-                        parameterValue.setTemplateParameters(e);
-                        values.add(parameterValue);
                     }
                 });
         return this;
@@ -228,35 +155,9 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
     }
 
     @Override
-    public EmailTemplateBuilder setBodyParameter(Report report, String key, Object value) {
-        TemplateReport templateReport = metadata.create(TemplateReport.class);
-        templateReport.setReport(report);
-        List<ParameterValue> values = new ArrayList<>();
-
-        ParameterValue parameterValue = createParameterValue(report, key, value);
-        if (parameterValue != null) {
-            parameterValue.setTemplateParameters(templateReport);
-            values.add(parameterValue);
-        }
-        templateReport.setParameterValues(values);
-        if (emailTemplate instanceof ReportEmailTemplate) {
-            ((ReportEmailTemplate) emailTemplate).setEmailBodyReport(templateReport);
-        }
-        return this;
-    }
-
-    @Override
-    public EmailTemplateBuilder addAttachmentParameters(Map<String, Object> params) {
-        for (String alias : params.keySet()) {
-            addAttachmentParameter(alias, params.get(alias));
-        }
-        return this;
-    }
-
-    @Override
     public EmailTemplateBuilder addBodyParameters(Map<String, Object> params) {
         for (String alias : params.keySet()) {
-            addBodyParameter(alias, params.get(alias));
+            setBodyParameter(alias, params.get(alias));
         }
         return this;
     }
@@ -288,31 +189,10 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
     }
 
     @Override
-    public EmailTemplateBuilder setBodyParameters(ReportWithParams reportWithParams) {
-        Report report = reportWithParams.getReport();
-        TemplateReport templateReport = metadata.create(TemplateReport.class);
-        templateReport.setReport(report);
-        List<ParameterValue> values = new ArrayList<>();
-        Map<String, Object> reportParams = reportWithParams.getParams();
-        for (String alias : reportParams.keySet()) {
-            ParameterValue parameterValue = createParameterValue(report, alias, reportParams.get(alias));
-            if (parameterValue != null) {
-                parameterValue.setTemplateParameters(templateReport);
-                values.add(parameterValue);
-            }
-        }
-        templateReport.setParameterValues(values);
-        if (emailTemplate instanceof ReportEmailTemplate) {
-            ((ReportEmailTemplate) emailTemplate).setEmailBodyReport(templateReport);
-        }
-        return this;
-    }
-
-    @Override
-    public EmailTemplateBuilder setAttachmentParameters(Map<String, Object> params) {
-        for (String alias : params.keySet()) {
-            setAttachmentParameter(alias, params.get(alias));
-        }
+    public EmailTemplateBuilder setAttachmentParameters(Report report, Map<String, Object> params) {
+        ReportWithParams reportWithParams = new ReportWithParams(report);
+        reportWithParams.setParams(params);
+        setAttachmentParameters(reportWithParams);
         return this;
     }
 
