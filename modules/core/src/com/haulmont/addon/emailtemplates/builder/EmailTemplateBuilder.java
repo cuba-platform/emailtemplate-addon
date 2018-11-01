@@ -1,5 +1,6 @@
-package com.haulmont.addon.emailtemplates.dto;
+package com.haulmont.addon.emailtemplates.builder;
 
+import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.exceptions.ReportParameterTypeChangedException;
 import com.haulmont.addon.emailtemplates.exceptions.TemplateNotFoundException;
@@ -18,13 +19,13 @@ public interface EmailTemplateBuilder {
 
     EmailTemplateBuilder setFrom(String address);
 
-    EmailTemplateBuilder addAddressee(String addressee);
+    EmailTemplateBuilder addTo(String to);
 
-    EmailTemplateBuilder setAddressee(String addressee);
+    EmailTemplateBuilder setTo(String to);
 
-    EmailTemplateBuilder setCopyAddressee(String addressee);
+    EmailTemplateBuilder setCc(String cc);
 
-    EmailTemplateBuilder setHiddenCopyAddressee(String addressee);
+    EmailTemplateBuilder setBcc(String bcc);
 
     EmailTemplateBuilder addAttachmentReport(Report report);
 
@@ -33,8 +34,6 @@ public interface EmailTemplateBuilder {
     EmailTemplateBuilder addAttachmentFile(FileDescriptor file);
 
     EmailTemplateBuilder setAttachmentFiles(List<FileDescriptor> files);
-
-    EmailTemplateBuilder setBodyParameter(String key, Object value);
 
     EmailTemplateBuilder addBodyParameters(Map<String, Object> params);
 

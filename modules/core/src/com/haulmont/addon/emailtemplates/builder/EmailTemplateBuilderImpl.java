@@ -1,12 +1,13 @@
-package com.haulmont.addon.emailtemplates.dto;
+package com.haulmont.addon.emailtemplates.builder;
 
+import com.haulmont.addon.emailtemplates.bean.TemplateParametersExtractor;
+import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.ParameterValue;
 import com.haulmont.addon.emailtemplates.entity.TemplateReport;
 import com.haulmont.addon.emailtemplates.exceptions.ReportParameterTypeChangedException;
 import com.haulmont.addon.emailtemplates.exceptions.TemplateNotFoundException;
 import com.haulmont.addon.emailtemplates.service.EmailTemplatesService;
-import com.haulmont.addon.emailtemplates.service.TemplateParametersExtractorService;
 import com.haulmont.cuba.core.app.EmailService;
 import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.core.global.AppBeans;
@@ -30,7 +31,7 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
     protected EmailTemplate emailTemplate;
 
     protected Metadata metadata = AppBeans.get(Metadata.class);
-    protected TemplateParametersExtractorService extractorService = AppBeans.get(TemplateParametersExtractorService.class);
+    protected TemplateParametersExtractor extractorService = AppBeans.get(TemplateParametersExtractor.class);
     protected ReportService reportService = AppBeans.get(ReportService.class);
     protected EmailTemplatesService templatesService = AppBeans.get(EmailTemplatesService.class);
     protected EmailService emailService = AppBeans.get(EmailService.class);
@@ -52,29 +53,29 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
     }
 
     @Override
-    public EmailTemplateBuilder addAddressee(String addressee) {
+    public EmailTemplateBuilder addTo(String to) {
         StringBuilder toAddresses = new StringBuilder(emailTemplate.getTo());
         toAddresses.append(", ");
-        toAddresses.append(addressee);
+        toAddresses.append(to);
         emailTemplate.setTo(toAddresses.toString());
         return this;
     }
 
     @Override
-    public EmailTemplateBuilder setAddressee(String addressee) {
-        emailTemplate.setTo(addressee);
+    public EmailTemplateBuilder setTo(String to) {
+        emailTemplate.setTo(to);
         return this;
     }
 
     @Override
-    public EmailTemplateBuilder setCopyAddressee(String addressee) {
-        emailTemplate.setCc(addressee);
+    public EmailTemplateBuilder setCc(String cc) {
+        emailTemplate.setCc(cc);
         return this;
     }
 
     @Override
-    public EmailTemplateBuilder setHiddenCopyAddressee(String addressee) {
-        emailTemplate.setBcc(addressee);
+    public EmailTemplateBuilder setBcc(String bcc) {
+        emailTemplate.setBcc(bcc);
         return this;
     }
 
@@ -111,28 +112,6 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
     }
 
     @Override
-    public EmailTemplateBuilder setBodyParameter(String key, Object value) {
-        TemplateReport emailBodyReport = emailTemplate.getEmailBodyReport();
-        emailBodyReport.getParameterValues().stream()
-                .filter(v -> v.getAlias().equals(key))
-                .forEach(v -> {
-                    ReportInputParameter inputParameter = emailBodyReport.getReport().getInputParameters().stream()
-                            .filter(r -> r.getAlias().equals(key))
-                            .findFirst()
-                            .orElse(null);
-                    if (inputParameter != null) {
-                        if (!ParameterType.ENTITY_LIST.equals(inputParameter.getType())) {
-                            Class parameterClass = extractorService.resolveClass(inputParameter);
-                            String stringValue = reportService.convertToString(parameterClass, value);
-                            v.setDefaultValue(stringValue);
-                        }
-                        v.setParameterType(inputParameter.getType());
-                    }
-                });
-        return this;
-    }
-
-    @Override
     public EmailTemplateBuilder setAttachmentParameter(Report report, String key, Object value) {
         List<TemplateReport> attachedTemplateReports = emailTemplate.getAttachedTemplateReports();
         List<TemplateReport> templateReports = attachedTemplateReports.stream()
@@ -156,9 +135,20 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
 
     @Override
     public EmailTemplateBuilder addBodyParameters(Map<String, Object> params) {
-        for (String alias : params.keySet()) {
-            setBodyParameter(alias, params.get(alias));
-        }
+        TemplateReport emailBodyReport = emailTemplate.getEmailBodyReport();
+        params.keySet().stream()
+                .filter(a -> emailBodyReport.getReport().getInputParameters().stream()
+                        .anyMatch(r -> r.getAlias().equals(a)))
+                .filter(a -> emailBodyReport.getParameterValues().stream()
+                        .noneMatch(p -> p.getAlias().equals(a)))
+                .forEach(a -> {
+                    List<ParameterValue> values = emailBodyReport.getParameterValues();
+                    ParameterValue parameterValue = createParameterValue(emailBodyReport.getReport(), a, params.get(a));
+                    if (parameterValue != null) {
+                        parameterValue.setTemplateParameters(emailBodyReport);
+                        values.add(parameterValue);
+                    }
+                });
         return this;
     }
 
@@ -198,8 +188,24 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
 
     @Override
     public EmailTemplateBuilder setBodyParameters(Map<String, Object> params) {
+        TemplateReport emailBodyReport = emailTemplate.getEmailBodyReport();
         for (String alias : params.keySet()) {
-            setBodyParameter(alias, params.get(alias));
+            emailBodyReport.getParameterValues().stream()
+                    .filter(v -> v.getAlias().equals(alias))
+                    .forEach(v -> {
+                        ReportInputParameter inputParameter = emailBodyReport.getReport().getInputParameters().stream()
+                                .filter(r -> r.getAlias().equals(alias))
+                                .findFirst()
+                                .orElse(null);
+                        if (inputParameter != null) {
+                            if (!ParameterType.ENTITY_LIST.equals(inputParameter.getType())) {
+                                Class parameterClass = extractorService.resolveClass(inputParameter);
+                                String stringValue = reportService.convertToString(parameterClass, params.get(alias));
+                                v.setDefaultValue(stringValue);
+                            }
+                            v.setParameterType(inputParameter.getType());
+                        }
+                    });
         }
         return this;
     }
@@ -236,7 +242,6 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
         return this;
     }
 
-
     protected ParameterValue createParameterValue(Report report, String key, Object value) {
         ParameterValue parameterValue = null;
 
@@ -265,12 +270,19 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
 
     @Override
     public EmailTemplate build() {
-        return emailTemplate;
+        return cloneTemplate(emailTemplate);
     }
 
     protected EmailTemplate cloneTemplate(EmailTemplate emailTemplate) {
         EmailTemplate clonedTemplate = metadata.create(emailTemplate.getClass());
         BeanUtils.copyProperties(emailTemplate, clonedTemplate);
+        List<TemplateReport> attachedTemplateReports = new ArrayList<>();
+        for (TemplateReport templateReport: emailTemplate.getAttachedTemplateReports()) {
+            TemplateReport newTemplateReport = metadata.create(templateReport.getClass());
+            BeanUtils.copyProperties(templateReport, newTemplateReport);
+            attachedTemplateReports.add(newTemplateReport);
+        }
+        clonedTemplate.setAttachedTemplateReports(attachedTemplateReports);
         return clonedTemplate;
     }
 
