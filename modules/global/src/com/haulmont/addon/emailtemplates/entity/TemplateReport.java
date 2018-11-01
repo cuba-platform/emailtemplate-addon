@@ -4,6 +4,7 @@ import com.haulmont.chile.core.annotations.Composition;
 import com.haulmont.chile.core.annotations.NamePattern;
 import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.cuba.core.entity.annotation.OnDelete;
+import com.haulmont.cuba.core.entity.annotation.OnDeleteInverse;
 import com.haulmont.cuba.core.global.DeletePolicy;
 import com.haulmont.reports.entity.Report;
 
@@ -20,6 +21,7 @@ public class TemplateReport extends StandardEntity {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "REPORT_ID")
+    @OnDeleteInverse(DeletePolicy.DENY)
     protected Report report;
 
     @ManyToOne(fetch = FetchType.LAZY)
