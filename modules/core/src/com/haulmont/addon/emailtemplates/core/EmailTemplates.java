@@ -134,7 +134,7 @@ public class EmailTemplates implements EmailTemplatesAPI {
         EmailTemplate emailTemplate = dataManager.load(loadContext);
 
         if (emailTemplate == null) {
-            throw new TemplateNotFoundException(messages.getMessage(EmailTemplates.class, "notFoundTemplate"));
+            throw new TemplateNotFoundException(messages.formatMessage(EmailTemplates.class, "notFoundTemplate", emailTemplateCode));
         }
         return emailTemplate;
     }
@@ -155,13 +155,8 @@ public class EmailTemplates implements EmailTemplatesAPI {
     }
 
     @Override
-    public EmailTemplateBuilder buildFromTemplate(String code) {
-        try {
-            return new EmailTemplateBuilderImpl(getEmailTemplateByCode(code));
-        } catch (TemplateNotFoundException e) {
-            LOG.error("Could not create builder by email template code", e);
-        }
-        return null;
+    public EmailTemplateBuilder buildFromTemplate(String code) throws TemplateNotFoundException {
+        return new EmailTemplateBuilderImpl(getEmailTemplateByCode(code));
     }
 
     protected EmailInfo generateEmailInfoWithoutAttachments(ReportWithParams reportWithParams) {
