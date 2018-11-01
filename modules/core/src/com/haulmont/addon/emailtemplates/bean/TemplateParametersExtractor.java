@@ -121,7 +121,7 @@ public class TemplateParametersExtractor {
         return templateReports;
     }
 
-    protected Class resolveClass(ReportInputParameter parameter) {
+    public Class resolveClass(ReportInputParameter parameter) {
         Class aClass = primitiveParameterTypeMapping.get(parameter.getType());
         if (aClass == null) {
             if (parameter.getType() == ParameterType.ENTITY || parameter.getType() == ParameterType.ENTITY_LIST) {

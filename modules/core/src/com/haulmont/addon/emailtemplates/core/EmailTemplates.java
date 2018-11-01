@@ -1,7 +1,7 @@
 package com.haulmont.addon.emailtemplates.core;
 
-import com.haulmont.addon.emailtemplates.bean.TemplateParametersExtractor;
-import com.haulmont.addon.emailtemplates.dto.EmailTemplateBuilder;
+import com.haulmont.addon.emailtemplates.builder.EmailTemplateBuilder;
+import com.haulmont.addon.emailtemplates.builder.EmailTemplateBuilderImpl;
 import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.ParameterValue;
@@ -39,8 +39,6 @@ public class EmailTemplates implements EmailTemplatesAPI {
     @Inject
     private FileStorageAPI fileStorageAPI;
 
-    @Inject
-    private TemplateParametersExtractor templateParametersExtractor;
 
     @Override
     public EmailInfo generateEmail(EmailTemplate emailTemplate, Collection<ReportWithParams> params) throws TemplateNotFoundException {
@@ -153,11 +151,16 @@ public class EmailTemplates implements EmailTemplatesAPI {
 
     @Override
     public EmailTemplateBuilder buildFromTemplate(EmailTemplate emailTemplate) {
-        return null;
+        return new EmailTemplateBuilderImpl(emailTemplate);
     }
 
     @Override
     public EmailTemplateBuilder buildFromTemplate(String code) {
+        try {
+            return new EmailTemplateBuilderImpl(getEmailTemplateByCode(code));
+        } catch (TemplateNotFoundException e) {
+            LOG.error("Could not create builder by email template code", e);
+        }
         return null;
     }
 
