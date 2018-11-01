@@ -23,7 +23,11 @@ public interface EmailTemplateBuilder {
 
     EmailTemplateBuilder setTo(String to);
 
+    EmailTemplateBuilder addCc(String cc);
+
     EmailTemplateBuilder setCc(String cc);
+
+    EmailTemplateBuilder addBcc(String bcc);
 
     EmailTemplateBuilder setBcc(String bcc);
 
@@ -35,7 +39,7 @@ public interface EmailTemplateBuilder {
 
     EmailTemplateBuilder setAttachmentFiles(List<FileDescriptor> files);
 
-    EmailTemplateBuilder addBodyParameters(Map<String, Object> params);
+    EmailTemplateBuilder setBodyParameter(String key, Object value);
 
     EmailTemplateBuilder setBodyParameters(Map<String, Object> params);
 

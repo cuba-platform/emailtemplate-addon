@@ -54,10 +54,8 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
 
     @Override
     public EmailTemplateBuilder addTo(String to) {
-        StringBuilder toAddresses = new StringBuilder(emailTemplate.getTo());
-        toAddresses.append(", ");
-        toAddresses.append(to);
-        emailTemplate.setTo(toAddresses.toString());
+        String toAddresses = emailTemplate.getTo() + ", " + to;
+        emailTemplate.setTo(toAddresses);
         return this;
     }
 
@@ -68,9 +66,23 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
     }
 
     @Override
+    public EmailTemplateBuilder addCc(String cc) {
+        String ccAddresses = emailTemplate.getCc() + ", " + cc;
+        emailTemplate.setCc(ccAddresses);
+        return this;
+    }
+
+    @Override
     public EmailTemplateBuilder setCc(String cc) {
         emailTemplate.setCc(cc);
         return this;
+    }
+
+    @Override
+    public EmailTemplateBuilder addBcc(String bcc) {
+        String bccAddresses = emailTemplate.getBcc() + ", " + bcc;
+        emailTemplate.setBcc(bccAddresses);
+        return null;
     }
 
     @Override
@@ -134,25 +146,6 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
     }
 
     @Override
-    public EmailTemplateBuilder addBodyParameters(Map<String, Object> params) {
-        TemplateReport emailBodyReport = emailTemplate.getEmailBodyReport();
-        params.keySet().stream()
-                .filter(a -> emailBodyReport.getReport().getInputParameters().stream()
-                        .anyMatch(r -> r.getAlias().equals(a)))
-                .filter(a -> emailBodyReport.getParameterValues().stream()
-                        .noneMatch(p -> p.getAlias().equals(a)))
-                .forEach(a -> {
-                    List<ParameterValue> values = emailBodyReport.getParameterValues();
-                    ParameterValue parameterValue = createParameterValue(emailBodyReport.getReport(), a, params.get(a));
-                    if (parameterValue != null) {
-                        parameterValue.setTemplateParameters(emailBodyReport);
-                        values.add(parameterValue);
-                    }
-                });
-        return this;
-    }
-
-    @Override
     public EmailTemplateBuilder setAttachmentParameters(ReportWithParams reportWithParams) {
         Report report = reportWithParams.getReport();
         List<TemplateReport> attachedTemplateReports = emailTemplate.getAttachedTemplateReports();
@@ -187,25 +180,31 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
     }
 
     @Override
-    public EmailTemplateBuilder setBodyParameters(Map<String, Object> params) {
+    public EmailTemplateBuilder setBodyParameter(String key, Object value) {
         TemplateReport emailBodyReport = emailTemplate.getEmailBodyReport();
-        for (String alias : params.keySet()) {
-            emailBodyReport.getParameterValues().stream()
-                    .filter(v -> v.getAlias().equals(alias))
-                    .forEach(v -> {
-                        ReportInputParameter inputParameter = emailBodyReport.getReport().getInputParameters().stream()
-                                .filter(r -> r.getAlias().equals(alias))
-                                .findFirst()
-                                .orElse(null);
-                        if (inputParameter != null) {
-                            if (!ParameterType.ENTITY_LIST.equals(inputParameter.getType())) {
-                                Class parameterClass = extractorService.resolveClass(inputParameter);
-                                String stringValue = reportService.convertToString(parameterClass, params.get(alias));
-                                v.setDefaultValue(stringValue);
-                            }
-                            v.setParameterType(inputParameter.getType());
+        emailBodyReport.getParameterValues().stream()
+                .filter(v -> v.getAlias().equals(key))
+                .forEach(v -> {
+                    ReportInputParameter inputParameter = emailBodyReport.getReport().getInputParameters().stream()
+                            .filter(r -> r.getAlias().equals(key))
+                            .findFirst()
+                            .orElse(null);
+                    if (inputParameter != null) {
+                        if (!ParameterType.ENTITY_LIST.equals(inputParameter.getType())) {
+                            Class parameterClass = extractorService.resolveClass(inputParameter);
+                            String stringValue = reportService.convertToString(parameterClass, value);
+                            v.setDefaultValue(stringValue);
                         }
-                    });
+                        v.setParameterType(inputParameter.getType());
+                    }
+                });
+        return this;
+    }
+
+    @Override
+    public EmailTemplateBuilder setBodyParameters(Map<String, Object> params) {
+        for (String alias : params.keySet()) {
+            setBodyParameter(alias, params.get(alias));
         }
         return this;
     }
