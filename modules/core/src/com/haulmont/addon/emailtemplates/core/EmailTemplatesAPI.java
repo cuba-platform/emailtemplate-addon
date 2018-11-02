@@ -74,5 +74,5 @@ public interface EmailTemplatesAPI {
 
     EmailTemplateBuilder buildFromTemplate(EmailTemplate emailTemplate);
 
-    EmailTemplateBuilder buildFromTemplate(String code);
+    EmailTemplateBuilder buildFromTemplate(String code) throws TemplateNotFoundException;
 }
