@@ -2,6 +2,8 @@ package com.haulmont.addon.emailtemplates.web.emailtemplate.send;
 
 import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
+import com.haulmont.addon.emailtemplates.entity.ParameterValue;
+import com.haulmont.addon.emailtemplates.entity.TemplateReport;
 import com.haulmont.addon.emailtemplates.exceptions.ReportParameterTypeChangedException;
 import com.haulmont.addon.emailtemplates.exceptions.TemplateNotFoundException;
 import com.haulmont.addon.emailtemplates.service.EmailTemplatesService;
@@ -12,6 +14,7 @@ import com.haulmont.cuba.client.ClientConfig;
 import com.haulmont.cuba.core.app.EmailService;
 import com.haulmont.cuba.core.global.EmailException;
 import com.haulmont.cuba.core.global.EmailInfo;
+import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.WindowParam;
 import com.haulmont.cuba.gui.components.AbstractWindow;
 import com.haulmont.cuba.gui.components.GroupBoxLayout;
@@ -20,12 +23,17 @@ import com.haulmont.cuba.gui.components.Window;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.export.ByteArrayDataProvider;
 import com.haulmont.cuba.gui.export.ExportDisplay;
+import com.haulmont.reports.app.service.ReportService;
+import com.haulmont.reports.entity.ParameterType;
+import com.haulmont.reports.entity.ReportInputParameter;
 import com.haulmont.reports.exception.ReportParametersValidationException;
 import com.haulmont.reports.gui.ReportParameterValidator;
+import com.haulmont.reports.gui.report.run.ParameterClassResolver;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -62,12 +70,26 @@ public class EmailTemplateSender extends AbstractWindow {
     private EmailService emailService;
 
     @Inject
+    private Metadata metadata;
+
+    @Inject
+    protected ReportService reportService;
+
+    @Inject
+    protected ParameterClassResolver classResolver;
+
+    @Inject
     private TemplateParametersExtractorService templateParametersExtractorService;
 
     @Override
     public void init(Map<String, Object> params) {
         super.init(params);
+        if (emailTemplate == null) {
+            throw new IllegalStateException("'emailTemplate' parameter is required");
+        }
         emailTemplateDs.setItem(emailTemplate);
+
+        updateDefaultTemplateParameters(params);
 
         defaultBodyParametersFrame = (EmailTemplateParametersFrame) openFrame(defaultBodyParameters, "emailtemplates$parametersFrame",
                 ParamsMap.of(EmailTemplateParametersFrame.TEMPLATE_REPORT, emailTemplate.getEmailBodyReport(),
@@ -80,6 +102,39 @@ public class EmailTemplateSender extends AbstractWindow {
             attachmentParametersFrame.createComponents();
         } else {
             attachmentGroupBox.setVisible(false);
+        }
+    }
+
+    private void updateDefaultTemplateParameters(Map<String, Object> params) {
+        List<TemplateReport> templateReports = new ArrayList<>();
+        templateReports.add(emailTemplate.getEmailBodyReport());
+        templateReports.addAll(emailTemplate.getAttachedTemplateReports());
+        for (String alias : params.keySet()) {
+            for (TemplateReport templateReport : templateReports) {
+                ReportInputParameter inputParameter = templateReport.getReport().getInputParameters().stream()
+                        .filter(e -> alias.equals(e.getAlias()))
+                        .findFirst()
+                        .orElse(null);
+                if (inputParameter != null) {
+                    ParameterValue parameterValue = templateReport.getParameterValues().stream()
+                            .filter(pv -> pv.getAlias().equals(alias))
+                            .findFirst()
+                            .orElse(null);
+                    if (parameterValue == null) {
+                        parameterValue = metadata.create(ParameterValue.class);
+                        parameterValue.setAlias(alias);
+                        parameterValue.setParameterType(inputParameter.getType());
+                        parameterValue.setTemplateParameters(templateReport);
+                        templateReport.getParameterValues().add(parameterValue);
+                    }
+                    Class parameterClass = classResolver.resolveClass(inputParameter);
+                    if (!ParameterType.ENTITY_LIST.equals(inputParameter.getType())) {
+                        String stringValue = reportService.convertToString(parameterClass, params.get(alias));
+                        parameterValue.setDefaultValue(stringValue);
+                    }
+                }
+            }
+
         }
     }
 
@@ -141,19 +196,12 @@ public class EmailTemplateSender extends AbstractWindow {
             showNotification(getMessage("emailSent"), NotificationType.HUMANIZED);
             close(COMMIT_ACTION_ID);
         } catch (EmailException e) {
-            showNotification(StringUtils.join(e.getMessages(),"\n"), NotificationType.ERROR);
+            showNotification(StringUtils.join(e.getMessages(), "\n"), NotificationType.ERROR);
         }
     }
 
     private EmailInfo getEmailInfo() throws ReportParameterTypeChangedException, TemplateNotFoundException {
         List<ReportWithParams> reportsWithParams = templateParametersExtractorService.getTemplateDefaultValues(emailTemplate);
-
-        EmailInfo emailInfo = emailTemplatesService.generateEmail(emailTemplate, reportsWithParams);
-        emailInfo.setAddresses(emailTemplate.getTo());
-        emailInfo.setFrom(emailTemplate.getFrom());
-        if (BooleanUtils.isNotTrue(emailTemplate.getUseReportSubject())) {
-            emailInfo.setCaption(emailTemplate.getSubject());
-        }
-        return emailInfo;
+        return emailTemplatesService.generateEmail(emailTemplate, reportsWithParams);
     }
 }

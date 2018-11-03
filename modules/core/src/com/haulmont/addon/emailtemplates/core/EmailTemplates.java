@@ -70,7 +70,9 @@ public class EmailTemplates implements EmailTemplatesAPI {
         templateAttachments.addAll(createFilesAttachments(emailTemplate.getAttachedFiles()));
         EmailAttachment[] emailAttachments = templateAttachments
                 .toArray(new EmailAttachment[attachmentsWithParams.size()]);
-        emailInfo.setCaption(emailTemplate.getSubject());
+        emailInfo.setCaption(emailTemplate.getUseReportSubject() ? emailTemplate.getSubject() : emailInfo.getCaption());
+        emailInfo.setAddresses(emailTemplate.getTo());
+        emailInfo.setFrom(emailTemplate.getFrom());
         emailInfo.setAttachments(emailAttachments);
         return emailInfo;
     }
@@ -161,13 +163,15 @@ public class EmailTemplates implements EmailTemplatesAPI {
 
     protected EmailInfo generateEmailInfoWithoutAttachments(ReportWithParams reportWithParams) {
         String body = null;
+        String caption = null;
         if (reportWithParams.getReport() != null) {
             ReportOutputDocument outputDocument = reportingApi.createReport(
                     reportWithParams.getReport(),
                     reportWithParams.getParams());
             body = new String(outputDocument.getContent());
+            caption = outputDocument.getDocumentName();
         }
-        return new EmailInfo(null, null, body, EmailInfo.HTML_CONTENT_TYPE);
+        return new EmailInfo(null, caption, body, EmailInfo.HTML_CONTENT_TYPE);
     }
 
     protected List<EmailAttachment> createReportAttachments(List<ReportWithParams> reportsWithParams) {
