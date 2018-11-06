@@ -1,13 +1,13 @@
 package com.haulmont.addon.emailtemplates.builder;
 
 import com.haulmont.addon.emailtemplates.bean.TemplateParametersExtractor;
+import com.haulmont.addon.emailtemplates.core.EmailTemplatesAPI;
 import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.ParameterValue;
 import com.haulmont.addon.emailtemplates.entity.TemplateReport;
 import com.haulmont.addon.emailtemplates.exceptions.ReportParameterTypeChangedException;
 import com.haulmont.addon.emailtemplates.exceptions.TemplateNotFoundException;
-import com.haulmont.addon.emailtemplates.service.EmailTemplatesService;
 import com.haulmont.cuba.core.app.EmailService;
 import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.core.global.AppBeans;
@@ -33,7 +33,7 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
     protected Metadata metadata = AppBeans.get(Metadata.class);
     protected TemplateParametersExtractor extractorService = AppBeans.get(TemplateParametersExtractor.class);
     protected ReportService reportService = AppBeans.get(ReportService.class);
-    protected EmailTemplatesService templatesService = AppBeans.get(EmailTemplatesService.class);
+    protected EmailTemplatesAPI emailTemplatesAPI = AppBeans.get(EmailTemplatesAPI.class);
     protected EmailService emailService = AppBeans.get(EmailService.class);
 
     public EmailTemplateBuilderImpl(EmailTemplate emailTemplate) {
@@ -264,7 +264,7 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
 
     @Override
     public EmailInfo generateEmail() throws ReportParameterTypeChangedException, TemplateNotFoundException {
-        return templatesService.generateEmail(emailTemplate, extractorService.getTemplateDefaultValues(emailTemplate));
+        return emailTemplatesAPI.generateEmail(emailTemplate, extractorService.getTemplateDefaultValues(emailTemplate));
     }
 
     @Override
