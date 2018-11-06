@@ -47,8 +47,8 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
     }
 
     @Override
-    public EmailTemplateBuilder setFrom(String address) {
-        emailTemplate.setFrom(address);
+    public EmailTemplateBuilder setFrom(String from) {
+        emailTemplate.setFrom(from);
         return this;
     }
 
