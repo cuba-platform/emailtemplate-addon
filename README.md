@@ -38,8 +38,7 @@ Developer can use the next methods from EmailTemplatesAPI:
     void checkParameterTypeChanged(ReportInputParameter inputParameter, ParameterValue parameterValue)
 ```
 
-The EmailTemplate class contains caption, body and attachments for email where body is a report 
-and attachments is a collection of reports.
+The EmailTemplate entity contains subject, body and attachments. It also contains from, to, cc, bcc addresses.
 
 The ReportWithParams class is a wrapper for report a map of parameters for that report.
 
@@ -48,3 +47,28 @@ The ParameterValue class is the storage for string representation of default val
 The ReportInputParameter is a class of reporting component.
 
 The EmailInfo is a one of the classes of cuba email service.
+
+#### Email templates builder
+
+Email templates API contains builder that can create and fill EmailTemplate entity.
+EmailTemplateBuilderImpl is implementation of EmailTemplateBuilder that provides intermediate methods for 
+setting and adding email template properties. It also contains terminal methods that can build EmailTemplate,
+generate or send EmailInfo.
+
+In constructor is created a copy of specified EmailTemplate. Everything intermediate methods fill created copy.
+```
+    public EmailTemplateBuilderImpl(EmailTemplate emailTemplate) {
+        this.emailTemplate = cloneTemplate(emailTemplate);
+    }
+```
+The build() method create the copy from the copy inside builder. It necessary to save state of existed entity or builder.
+
+Example of using the builder:
+```
+    EmailTemplate newTemplate = emailTemplatesAPI.buildFromTemplate(emailTemplate)
+            .setSubject("Test subject")
+            .setTo("address@haulmont.com")
+            .setBodyParameter("entity", someEntity)
+            .setAttachmentParameters(reportsWithParams)
+            .build();
+```

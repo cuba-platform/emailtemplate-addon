@@ -17,7 +17,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 /**
- * That interface provides abilities builder pattern to create filled email template {@link EmailTemplate}.
+ * That interface provides abilities of builder pattern to create filled email template {@link EmailTemplate}.
  * There are a lot of 'set' and 'add' intermediate methods and five terminal methods.
  * The implementation must contain copy of email template that have to filled by terminal methods.
  */
