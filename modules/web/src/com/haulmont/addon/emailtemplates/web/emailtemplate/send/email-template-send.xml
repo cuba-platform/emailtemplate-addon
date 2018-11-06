@@ -5,15 +5,20 @@
         focusComponent="defaultGroup"
         messagesPack="com.haulmont.addon.emailtemplates.web.emailtemplate">
     <dsContext>
-        <datasource id="emailTemplateDs" allowCommit="false"
+        <datasource id="emailTemplateDs"
+                    allowCommit="false"
                     class="com.haulmont.addon.emailtemplates.entity.EmailTemplate"/>
     </dsContext>
     <dialogMode height="640"
                 width="1000"/>
     <layout expand="buttonsPanel"
             spacing="true">
-        <hbox id="main" spacing="true" width="100%" expand="emailInfoBox" >
-            <groupBox id="emailInfoBox" caption="msg://emailInfo">
+        <hbox id="main"
+              expand="emailInfoBox"
+              spacing="true"
+              width="100%">
+            <groupBox id="emailInfoBox"
+                      caption="msg://emailInfo">
                 <fieldGroup id="defaultGroup"
                             captionAlignment="TOP"
                             datasource="emailTemplateDs"
@@ -21,22 +26,28 @@
                     <column width="100%">
                         <field property="subject"/>
                         <field property="from"/>
-                        <field property="to"
+                        <field contextHelpText="msg://separatedAddresses"
+                               property="to"
                                required="true"
                                rows="3"/>
-                        <field property="cc"
+                        <field contextHelpText="msg://separatedAddresses"
+                               property="cc"
                                rows="3"/>
-                        <field property="bcc"
+                        <field contextHelpText="msg://separatedAddresses"
+                               property="bcc"
                                rows="3"/>
                     </column>
                 </fieldGroup>
             </groupBox>
             <scrollBox id="propertiesScrollBox"
-                       spacing="true" width="470px" height="100%">
+                       height="100%"
+                       spacing="true"
+                       width="470px">
                 <groupBox caption="msg://defaultBodyParameters">
                     <vbox id="defaultBodyParameters"/>
                 </groupBox>
-                <groupBox id="attachmentGroupBox" caption="msg://attachmentParameters">
+                <groupBox id="attachmentGroupBox"
+                          caption="msg://attachmentParameters">
                     <vbox id="attachmentParameters"/>
                 </groupBox>
             </scrollBox>

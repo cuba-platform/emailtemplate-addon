@@ -10,12 +10,12 @@
                     view="emailTemplate-view">
             <collectionDatasource id="attachedReportsDs"
                                   property="attachedTemplateReports">
-                <collectionDatasource id="parameterValuesDs" property="parameterValues"/>
+                <collectionDatasource id="parameterValuesDs"
+                                      property="parameterValues"/>
             </collectionDatasource>
             <collectionDatasource id="attachedFilesDs"
                                   property="attachedFiles"/>
         </datasource>
-
         <collectionDatasource id="groupsDs"
                               class="com.haulmont.addon.emailtemplates.entity.TemplateGroup"
                               view="_minimal">
@@ -23,7 +23,6 @@
                 <![CDATA[select e from emailtemplates$TemplateGroup e]]>
             </query>
         </collectionDatasource>
-
         <collectionDatasource id="emailBodiesDs"
                               class="com.haulmont.reports.entity.Report"
                               view="_minimal">
@@ -41,7 +40,9 @@
                  caption="msg://main">
                 <scrollBox id="propertiesScroll"
                            height="100%">
-                    <hbox width="100%" height="100%" spacing="true">
+                    <hbox height="100%"
+                          spacing="true"
+                          width="100%">
                         <vbox margin="false,true,false,false"
                               spacing="true">
                             <groupBox caption="msg://info"
@@ -51,7 +52,8 @@
                                             datasource="emailTemplateDs"
                                             width="100%">
                                     <column width="100%">
-                                        <field property="name" required="true"/>
+                                        <field property="name"
+                                               required="true"/>
                                         <field property="code"/>
                                         <field optionsDatasource="groupsDs"
                                                property="group"/>
@@ -75,21 +77,30 @@
                                     <column width="100%">
                                         <field property="subject"/>
                                         <field property="from"/>
-                                        <field property="to"
+                                        <field contextHelpText="msg://separatedAddresses"
+                                               property="to"
                                                rows="3"/>
-                                        <field property="cc"
+                                        <field contextHelpText="msg://separatedAddresses"
+                                               property="cc"
                                                rows="3"/>
-                                        <field property="bcc"
+                                        <field contextHelpText="msg://separatedAddresses"
+                                               property="bcc"
                                                rows="3"/>
                                     </column>
                                 </fieldGroup>
                             </groupBox>
                         </vbox>
                         <vbox spacing="true">
-                            <groupBox id="reportBox" caption="msg://content" collapsable="true" spacing="true">
-                                <hbox spacing="true" width="100%" expand="emailBody">
+                            <groupBox id="reportBox"
+                                      caption="msg://content"
+                                      collapsable="true"
+                                      spacing="true">
+                                <hbox expand="emailBody"
+                                      spacing="true"
+                                      width="100%">
                                     <label value="msg://emailBody"/>
-                                    <lookupPickerField id="emailBody" optionsDatasource="emailBodiesDs"/>
+                                    <lookupPickerField id="emailBody"
+                                                       optionsDatasource="emailBodiesDs"/>
                                 </hbox>
                                 <vbox spacing="true">
                                     <label value="msg://defaultParameters"/>
@@ -102,13 +113,13 @@
                         </vbox>
                     </hbox>
                 </scrollBox>
-
             </tab>
-            <tab id="attachments" caption="msg://attachments" lazy="true">
-                <frame src="/com/haulmont/addon/emailtemplates/web/emailtemplate/attachment/email-template-attachments.xml"
-                       id="attachmentsFrame"
-                       height="100%" width="100%"/>
-
+            <tab id="attachments"
+                 caption="msg://attachments"
+                 lazy="true">
+                <frame id="attachmentsFrame"
+                       height="100%"
+                       src="/com/haulmont/addon/emailtemplates/web/emailtemplate/attachment/email-template-attachments.xml"/>
             </tab>
         </tabSheet>
         <frame id="windowActions"
