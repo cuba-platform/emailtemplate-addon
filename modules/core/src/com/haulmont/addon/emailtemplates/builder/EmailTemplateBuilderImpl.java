@@ -8,7 +8,7 @@ import com.haulmont.addon.emailtemplates.entity.ParameterValue;
 import com.haulmont.addon.emailtemplates.entity.TemplateReport;
 import com.haulmont.addon.emailtemplates.exceptions.ReportParameterTypeChangedException;
 import com.haulmont.addon.emailtemplates.exceptions.TemplateNotFoundException;
-import com.haulmont.cuba.core.app.EmailService;
+import com.haulmont.cuba.core.app.EmailerAPI;
 import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.EmailException;
@@ -33,8 +33,8 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
     protected Metadata metadata = AppBeans.get(Metadata.class);
     protected TemplateParametersExtractor extractorService = AppBeans.get(TemplateParametersExtractor.class);
     protected ReportService reportService = AppBeans.get(ReportService.class);
-    protected EmailTemplatesAPI emailTemplatesAPI = AppBeans.get(EmailTemplatesAPI.class);
-    protected EmailService emailService = AppBeans.get(EmailService.class);
+    protected EmailTemplatesAPI emailTemplates = AppBeans.get(EmailTemplatesAPI.class);
+    protected EmailerAPI emailer = AppBeans.get(EmailerAPI.class);
 
     public EmailTemplateBuilderImpl(EmailTemplate emailTemplate) {
         this.emailTemplate = cloneTemplate(emailTemplate);
@@ -264,7 +264,7 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
 
     @Override
     public EmailInfo generateEmail() throws ReportParameterTypeChangedException, TemplateNotFoundException {
-        return emailTemplatesAPI.generateEmail(emailTemplate, extractorService.getTemplateDefaultValues(emailTemplate));
+        return emailTemplates.generateEmail(emailTemplate, extractorService.getTemplateDefaultValues(emailTemplate));
     }
 
     @Override
@@ -287,7 +287,7 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
 
     @Override
     public void sendEmail() throws TemplateNotFoundException, ReportParameterTypeChangedException, EmailException {
-        emailService.sendEmail(generateEmail());
+        emailer.sendEmail(generateEmail());
     }
 
     @Override
@@ -301,6 +301,6 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
 
     @Override
     public void sendEmailAsync() throws TemplateNotFoundException, ReportParameterTypeChangedException {
-        emailService.sendEmailAsync(generateEmail());
+        emailer.sendEmailAsync(generateEmail());
     }
 }
