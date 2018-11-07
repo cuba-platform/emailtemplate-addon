@@ -61,7 +61,7 @@ In constructor is created a copy of specified EmailTemplate. Everything intermed
         this.emailTemplate = cloneTemplate(emailTemplate);
     }
 ```
-The build() method create the copy from the copy inside builder. It necessary to save state of existed entity or builder.
+The build() method creates the copy from the copy inside builder. It necessary to save state of existed entity or builder.
 
 Example of using the builder:
 ```
