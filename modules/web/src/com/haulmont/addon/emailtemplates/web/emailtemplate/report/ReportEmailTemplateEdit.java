@@ -39,6 +39,7 @@ public class ReportEmailTemplateEdit extends AbstractTemplateEditor<ReportEmailT
     protected VBoxLayout defaultValuesBox;
 
     protected EmailTemplateParametersFrame parametersFrame;
+    protected TemplateReport templateReport;
 
     @Override
     public void init(Map<String, Object> params) {
@@ -47,8 +48,6 @@ public class ReportEmailTemplateEdit extends AbstractTemplateEditor<ReportEmailT
 
     @Override
     protected void postInit() {
-        ReportEmailTemplate emailTemplate = getItem();
-
         parametersFrame = (EmailTemplateParametersFrame) openFrame(defaultValuesBox, "emailtemplates$parametersFrame",
                 ParamsMap.of(EmailTemplateParametersFrame.IS_DEFAULT_PARAM_VALUES, true,
                         EmailTemplateParametersFrame.HIDE_REPORT_CAPTION, true));
@@ -73,9 +72,10 @@ public class ReportEmailTemplateEdit extends AbstractTemplateEditor<ReportEmailT
                 Report report = getDsContext().getDataSupplier().reload(value, "emailTemplate-view");
                 if (ReportOutputType.HTML == report.getDefaultTemplate().getReportOutputType()) {
                     removeTemplateReportIfRequired(report);
-                    TemplateReport templateReport = metadata.create(TemplateReport.class);
+                    templateReport = metadata.create(TemplateReport.class);
                     templateReport.setParameterValues(new ArrayList<>());
                     templateReport.setReport(report);
+
                     getItem().setEmailBodyReport(templateReport);
                     parametersFrame.setTemplateReport(getItem().getEmailBodyReport());
                     parametersFrame.createComponents();
@@ -91,6 +91,11 @@ public class ReportEmailTemplateEdit extends AbstractTemplateEditor<ReportEmailT
                 parametersFrame.setTemplateReport(getItem().getEmailBodyReport());
                 parametersFrame.clearComponents();
             }
+        });
+
+        getDsContext().addBeforeCommitListener(context -> {
+            if (templateReport != null)
+                context.getCommitInstances().add(templateReport);
         });
 
         useReportSubject.addValueChangeListener(e -> {
