@@ -1,13 +1,9 @@
 package com.haulmont.addon.emailtemplates.builder;
 
-import com.haulmont.addon.emailtemplates.core.EmailTemplatesAPI;
 import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
-import com.haulmont.addon.emailtemplates.entity.ParameterValue;
-import com.haulmont.addon.emailtemplates.entity.TemplateReport;
 import com.haulmont.addon.emailtemplates.exceptions.ReportParameterTypeChangedException;
 import com.haulmont.addon.emailtemplates.exceptions.TemplateNotFoundException;
-import com.haulmont.cuba.core.app.EmailService;
 import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.core.global.EmailException;
 import com.haulmont.cuba.core.global.EmailInfo;
@@ -84,7 +80,7 @@ public interface EmailTemplateBuilder {
     EmailTemplateBuilder setBcc(String bcc);
     /**
      * That terminal method fills 'attachedTemplateReports' property of email template {@link EmailTemplate}
-     * by one {@link TemplateReport} for that report.
+     * by one {@link com.haulmont.addon.emailtemplates.entity.TemplateReport} for that report.
      *
      * @param report {@link Report}
      * @return {@link EmailTemplateBuilder}
@@ -92,7 +88,7 @@ public interface EmailTemplateBuilder {
     EmailTemplateBuilder addAttachmentReport(Report report);
     /**
      * That terminal method fills 'attachedTemplateReports' property of email template {@link EmailTemplate}
-     * by collection of {@link TemplateReport} for each reports.
+     * by collection of {@link com.haulmont.addon.emailtemplates.entity.TemplateReport} for each reports.
      *
      * @param reports {@link Collection<Report>}
      * @return {@link EmailTemplateBuilder}
@@ -113,16 +109,16 @@ public interface EmailTemplateBuilder {
      */
     EmailTemplateBuilder setAttachmentFiles(List<FileDescriptor> files);
     /**
-     * That terminal method fills {@link TemplateReport} for child entity of email template {@link EmailTemplate}.
+     * That terminal method fills {@link com.haulmont.addon.emailtemplates.entity.TemplateReport} for child entity of email template {@link EmailTemplate}.
      * If there are no reports with parameter with alias 'key', do nothing.
      *
-     * @param key {@link String} is alias property of {@link ParameterValue}
-     * @param value {@link Object} will be converted to defaultValue property of {@link ParameterValue}
+     * @param key {@link String} is alias property of {@link com.haulmont.addon.emailtemplates.entity.ParameterValue}
+     * @param value {@link Object} will be converted to defaultValue property of {@link com.haulmont.addon.emailtemplates.entity.ParameterValue}
      * @return {@link EmailTemplateBuilder}
      */
     EmailTemplateBuilder setBodyParameter(String key, Object value);
     /**
-     * That terminal method fills {@link TemplateReport} of child entity of email template {@link EmailTemplate}.
+     * That terminal method fills {@link com.haulmont.addon.emailtemplates.entity.TemplateReport} of child entity of email template {@link EmailTemplate}.
      * If there are no reports with parameter with aliases that contained in key set, do nothing.
      *
      * @param params {@link Map}
@@ -131,16 +127,16 @@ public interface EmailTemplateBuilder {
     EmailTemplateBuilder setBodyParameters(Map<String, Object> params);
     /**
      * That terminal method fills 'attachedTemplateReports' property of email template {@link EmailTemplate}.
-     * Method removes all {@link TemplateReport} with same report if they exist.
+     * Method removes all {@link com.haulmont.addon.emailtemplates.entity.TemplateReport} with same report if they exist.
      *
-     * @param key {@link String} is alias property of {@link ParameterValue}
-     * @param value {@link Object} will be converted to defaultValue property of {@link ParameterValue}
+     * @param key {@link String} is alias property of {@link com.haulmont.addon.emailtemplates.entity.ParameterValue}
+     * @param value {@link Object} will be converted to defaultValue property of {@link com.haulmont.addon.emailtemplates.entity.ParameterValue}
      * @return {@link EmailTemplateBuilder}
      */
     EmailTemplateBuilder setAttachmentParameter(Report report, String key, Object value);
     /**
      * That terminal method fills 'attachedTemplateReports' property of email template {@link EmailTemplate}.
-     * Method removes all {@link TemplateReport} with same report if they exist.
+     * Method removes all {@link com.haulmont.addon.emailtemplates.entity.TemplateReport} with same report if they exist.
      *
      * @param reportWithParams {@link ReportWithParams}
      * @return {@link EmailTemplateBuilder}
@@ -148,7 +144,7 @@ public interface EmailTemplateBuilder {
     EmailTemplateBuilder setAttachmentParameters(ReportWithParams reportWithParams);
     /**
      * That terminal method fills 'attachedTemplateReports' property of email template {@link EmailTemplate}.
-     * Method removes all {@link TemplateReport} with same report if they exist.
+     * Method removes all {@link com.haulmont.addon.emailtemplates.entity.TemplateReport} with same report if they exist.
      *
      * @param report {@link Report}
      * @param params {@link Map}
@@ -157,14 +153,14 @@ public interface EmailTemplateBuilder {
     EmailTemplateBuilder setAttachmentParameters(Report report, Map<String, Object> params);
     /**
      * That terminal method fills 'attachedTemplateReports' property of email template {@link EmailTemplate}.
-     * Method removes all {@link TemplateReport} with same report if they exist.
+     * Method removes all {@link com.haulmont.addon.emailtemplates.entity.TemplateReport} with same report if they exist.
      *
      * @param reportsWithParams {@link Collection<ReportWithParams>}
      * @return {@link EmailTemplateBuilder}
      */
     EmailTemplateBuilder setAttachmentParameters(Collection<ReportWithParams> reportsWithParams);
     /**
-     * That intermediate method creates {@link EmailInfo} by filled email template using {@link EmailTemplatesAPI}.
+     * That intermediate method creates {@link EmailInfo} by filled email template using {@link com.haulmont.addon.emailtemplates.core.EmailTemplatesAPI}.
      *
      * @return {@link EmailInfo} from cuba emailer
      * @throws ReportParameterTypeChangedException If parameter type of inputParameter does not equal to type saved in parameterValue.
@@ -178,14 +174,14 @@ public interface EmailTemplateBuilder {
      */
     EmailTemplate build();
     /**
-     * That intermediate method sends filled email template {@link EmailTemplate} using {@link EmailService}.
+     * That intermediate method sends filled email template {@link EmailTemplate} using {@link com.haulmont.cuba.core.app.EmailService}.
      *
      * @throws ReportParameterTypeChangedException If parameter type of inputParameter does not equal to type saved in parameterValue.
      * @throws TemplateNotFoundException If emailTemplate does not contain reports or null.
      */
     void sendEmail() throws TemplateNotFoundException, ReportParameterTypeChangedException, EmailException;
     /**
-     * That intermediate method sends filled email template {@link EmailTemplate} using {@link EmailService}.
+     * That intermediate method sends filled email template {@link EmailTemplate} using {@link com.haulmont.cuba.core.app.EmailService}.
      *
      * @param async Provides choice of selecting asynchronous option.
      * @throws ReportParameterTypeChangedException If parameter type of inputParameter does not equal to type saved in parameterValue.
@@ -193,7 +189,7 @@ public interface EmailTemplateBuilder {
      */
     void sendEmail(boolean async) throws TemplateNotFoundException, ReportParameterTypeChangedException, EmailException;
     /**
-     * That intermediate method asynchronously sends filled email template {@link EmailTemplate} using {@link EmailService}.
+     * That intermediate method asynchronously sends filled email template {@link EmailTemplate} using {@link com.haulmont.cuba.core.app.EmailService}.
      *
      * @throws ReportParameterTypeChangedException If parameter type of inputParameter does not equal to type saved in parameterValue.
      * @throws TemplateNotFoundException If emailTemplate does not contain reports or null.
