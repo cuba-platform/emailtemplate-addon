@@ -80,7 +80,8 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
     private List<ReportWithParams> getTemplateDefaultValues() throws ReportParameterTypeChangedException {
         List<ReportWithParams> reportWithParams = new ArrayList<>();
         for (TemplateReport templateReport : templateReports) {
-            reportWithParams.add(templateParametersExtractorService.getReportDefaultValues(templateReport.getReport(), templateReport.getParameterValues()));
+            reportWithParams.add(templateParametersExtractorService.getReportDefaultValues(templateReport.getReport(),
+                    templateReport.getParameterValues()));
         }
         return reportWithParams;
     }

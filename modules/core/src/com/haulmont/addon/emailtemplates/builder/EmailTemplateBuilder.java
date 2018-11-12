@@ -109,7 +109,8 @@ public interface EmailTemplateBuilder {
      */
     EmailTemplateBuilder setAttachmentFiles(List<FileDescriptor> files);
     /**
-     * That terminal method fills {@link com.haulmont.addon.emailtemplates.entity.TemplateReport} for child entity of email template {@link EmailTemplate}.
+     * That terminal method fills {@link com.haulmont.addon.emailtemplates.entity.TemplateReport}
+     * for child entity of email template {@link EmailTemplate}.
      * If there are no reports with parameter with alias 'key', do nothing.
      *
      * @param key {@link String} is alias property of {@link com.haulmont.addon.emailtemplates.entity.ParameterValue}
@@ -118,7 +119,8 @@ public interface EmailTemplateBuilder {
      */
     EmailTemplateBuilder setBodyParameter(String key, Object value);
     /**
-     * That terminal method fills {@link com.haulmont.addon.emailtemplates.entity.TemplateReport} of child entity of email template {@link EmailTemplate}.
+     * That terminal method fills {@link com.haulmont.addon.emailtemplates.entity.TemplateReport}
+     * of child entity of email template {@link EmailTemplate}.
      * If there are no reports with parameter with aliases that contained in key set, do nothing.
      *
      * @param params {@link Map}
@@ -160,7 +162,8 @@ public interface EmailTemplateBuilder {
      */
     EmailTemplateBuilder setAttachmentParameters(Collection<ReportWithParams> reportsWithParams);
     /**
-     * That intermediate method creates {@link EmailInfo} by filled email template using {@link com.haulmont.addon.emailtemplates.core.EmailTemplatesAPI}.
+     * That intermediate method creates {@link EmailInfo} by filled email template
+     * using {@link com.haulmont.addon.emailtemplates.core.EmailTemplatesAPI}.
      *
      * @return {@link EmailInfo} from cuba emailer
      * @throws ReportParameterTypeChangedException If parameter type of inputParameter does not equal to type saved in parameterValue.
@@ -189,7 +192,8 @@ public interface EmailTemplateBuilder {
      */
     void sendEmail(boolean async) throws TemplateNotFoundException, ReportParameterTypeChangedException, EmailException;
     /**
-     * That intermediate method asynchronously sends filled email template {@link EmailTemplate} using {@link com.haulmont.cuba.core.app.EmailService}.
+     * That intermediate method asynchronously sends filled email template {@link EmailTemplate}
+     * using {@link com.haulmont.cuba.core.app.EmailService}.
      *
      * @throws ReportParameterTypeChangedException If parameter type of inputParameter does not equal to type saved in parameterValue.
      * @throws TemplateNotFoundException If emailTemplate does not contain reports or null.
