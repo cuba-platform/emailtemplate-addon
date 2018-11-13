@@ -70,7 +70,8 @@ public class EmailTemplates implements EmailTemplatesAPI {
         templateAttachments.addAll(createFilesAttachments(emailTemplate.getAttachedFiles()));
         EmailAttachment[] emailAttachments = templateAttachments
                 .toArray(new EmailAttachment[attachmentsWithParams.size()]);
-        emailInfo.setCaption(emailTemplate.getUseReportSubject() ? emailTemplate.getSubject() : emailInfo.getCaption());
+        emailInfo.setCaption(Boolean.TRUE.equals(emailTemplate.getUseReportSubject()) ?
+                emailTemplate.getSubject() : emailInfo.getCaption());
         emailInfo.setAddresses(emailTemplate.getTo());
         emailInfo.setFrom(emailTemplate.getFrom());
         emailInfo.setAttachments(emailAttachments);
