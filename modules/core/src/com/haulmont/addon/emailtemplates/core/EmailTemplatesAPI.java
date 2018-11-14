@@ -31,7 +31,7 @@ public interface EmailTemplatesAPI {
      * @return {@link EmailInfo} from cuba emailer
      * @throws TemplateNotFoundException If emailTemplate do not contain reports or null
      */
-    EmailInfo generateEmail(EmailTemplate emailTemplate, Map<String, Object> params) throws TemplateNotFoundException;
+    EmailInfo generateEmail(EmailTemplate emailTemplate, Map<String, Object> params) throws TemplateNotFoundException, ReportParameterTypeChangedException;
 
     /**
      * That method creates {@link EmailInfo} from template that may contain the same reports with different parameter values.
@@ -41,7 +41,7 @@ public interface EmailTemplatesAPI {
      * @return {@link EmailInfo} from cuba emailer
      * @throws TemplateNotFoundException If emailTemplate does not contain reports or null
      */
-    EmailInfo generateEmail(EmailTemplate emailTemplate, Collection<ReportWithParams> params) throws TemplateNotFoundException;
+    EmailInfo generateEmail(EmailTemplate emailTemplate, Collection<ReportWithParams> params) throws TemplateNotFoundException, ReportParameterTypeChangedException;
 
     /**
      * That method creates {@link EmailInfo} by template with unique string code.
@@ -51,7 +51,7 @@ public interface EmailTemplatesAPI {
      * @return {@link EmailInfo} from cuba emailer
      * @throws TemplateNotFoundException If emailTemplate does not contain reports or null
      */
-    EmailInfo generateEmail(String emailTemplateCode, Map<String, Object> params) throws TemplateNotFoundException;
+    EmailInfo generateEmail(String emailTemplateCode, Map<String, Object> params) throws TemplateNotFoundException, ReportParameterTypeChangedException;
 
     /**
      * That method creates {@link EmailInfo} by template with unique string code.
@@ -61,7 +61,7 @@ public interface EmailTemplatesAPI {
      * @return {@link EmailInfo} from cuba emailer
      * @throws TemplateNotFoundException If emailTemplate does not contain reports or null
      */
-    EmailInfo generateEmail(String emailTemplateCode, Collection<ReportWithParams> params) throws TemplateNotFoundException;
+    EmailInfo generateEmail(String emailTemplateCode, Collection<ReportWithParams> params) throws TemplateNotFoundException, ReportParameterTypeChangedException;
 
     /**
      * That method checks that the report input parameter did not change own parameter type

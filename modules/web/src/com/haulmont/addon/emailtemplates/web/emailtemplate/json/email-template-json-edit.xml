@@ -69,6 +69,7 @@
                                 <upload id="fileUpload"
                                         description="msg://importJson"
                                         dropZone="dropZone"
+                                        uploadButtonCaption=""
                                         uploadButtonIcon="DOWNLOAD"/>
                                 <button id="exportJson"
                                         description="msg://exportJson"

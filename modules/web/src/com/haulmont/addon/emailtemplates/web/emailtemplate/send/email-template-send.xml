@@ -9,7 +9,7 @@
                     allowCommit="false"
                     class="com.haulmont.addon.emailtemplates.entity.EmailTemplate"/>
     </dsContext>
-    <dialogMode height="640"
+    <dialogMode height="AUTO"
                 width="1000"/>
     <layout expand="buttonsPanel"
             spacing="true">
