@@ -26,6 +26,11 @@
     <view class="com.haulmont.addon.emailtemplates.entity.ReportEmailTemplate"
           extends="_local"
           name="emailTemplate-view">
+        <property name="createTs"/>
+        <property name="createdBy"/>
+        <property name="updateTs"/>
+        <property name="updatedBy"/>
+        <property name="deletedBy"/>
         <property name="attachedFiles"
                   view="_local"/>
         <property name="attachedTemplateReports"
@@ -39,6 +44,11 @@
     <view class="com.haulmont.addon.emailtemplates.entity.JsonEmailTemplate"
           extends="_local"
           name="emailTemplate-view">
+        <property name="createTs"/>
+        <property name="createdBy"/>
+        <property name="updateTs"/>
+        <property name="updatedBy"/>
+        <property name="deletedBy"/>
         <property name="attachedFiles"
                   view="_local"/>
         <property name="attachedTemplateReports"
