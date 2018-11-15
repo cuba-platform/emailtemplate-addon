@@ -61,7 +61,6 @@ public class AttachmentFrame extends AbstractFrame {
             }
         });
 
-        EmailTemplate template = emailTemplateDs.getItem();
         parametersFrame = (EmailTemplateParametersFrame) openFrame(defaultValuesBox, "emailtemplates$parametersFrame",
                 ParamsMap.of(EmailTemplateParametersFrame.IS_DEFAULT_PARAM_VALUES, true,
                         EmailTemplateParametersFrame.HIDE_REPORT_CAPTION, true));

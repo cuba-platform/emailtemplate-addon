@@ -12,18 +12,20 @@ import java.util.stream.Collectors;
 
 public abstract class AbstractTemplateEditor<T extends EmailTemplate> extends AbstractEditor<T> {
 
-    protected List<Entity> entityToRemove = new ArrayList<>();
+    protected List<Entity> entitiesToRemove = new ArrayList<>();
+    protected List<Entity> entitiesToUpdate = new ArrayList<>();
 
     @Override
     protected boolean preCommit() {
-        entityToRemove = new ArrayList<>();
+        entitiesToRemove = new ArrayList<>();
         EmailTemplate original = getDsContext().getDataSupplier().reload(getItem(), "emailTemplate-view");
         if (original != null) {
             EmailTemplate current = getItem();
             List<TemplateReport> obsoleteTemplateReports = original.getAttachedTemplateReports().stream()
                     .filter(e -> !current.getAttachedTemplateReports().contains(e))
                     .collect(Collectors.toList());
-            entityToRemove.addAll(obsoleteTemplateReports);
+            entitiesToRemove.addAll(obsoleteTemplateReports);
+
         }
         return true;
     }
@@ -32,7 +34,7 @@ public abstract class AbstractTemplateEditor<T extends EmailTemplate> extends Ab
     protected boolean postCommit(boolean committed, boolean close) {
         if (committed) {
             CommitContext commitContext = new CommitContext();
-            entityToRemove.forEach(commitContext::addInstanceToRemove);
+            entitiesToRemove.forEach(commitContext::addInstanceToRemove);
             getDsContext().getDataSupplier().commit(commitContext);
         }
         return super.postCommit(committed, close);

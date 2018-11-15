@@ -1,5 +1,6 @@
 package com.haulmont.addon.emailtemplates.entity;
 
+import com.haulmont.chile.core.annotations.Composition;
 import com.haulmont.cuba.core.entity.annotation.OnDelete;
 import com.haulmont.cuba.core.global.DeletePolicy;
 import com.haulmont.reports.entity.Report;
@@ -13,6 +14,7 @@ public class ReportEmailTemplate extends EmailTemplate {
     @Column(name = "USE_REPORT_SUBJECT")
     protected Boolean useReportSubject;
 
+    @Composition
     @OnDelete(DeletePolicy.CASCADE)
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "EMAIL_BODY_REPORT_ID")

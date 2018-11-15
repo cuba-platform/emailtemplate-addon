@@ -13,6 +13,9 @@
                 <collectionDatasource id="parameterValuesDs"
                                       property="parameterValues"/>
             </collectionDatasource>
+            <datasource id="emailBodyReportDs" property="emailBodyReport">
+                <collectionDatasource id="bodyParameterValuesDs" property="parameterValues"/>
+            </datasource>
             <collectionDatasource id="attachedFilesDs"
                                   property="attachedFiles"/>
         </datasource>
