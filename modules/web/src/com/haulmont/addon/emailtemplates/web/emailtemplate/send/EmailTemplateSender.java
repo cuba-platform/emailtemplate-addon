@@ -7,7 +7,6 @@ import com.haulmont.addon.emailtemplates.entity.TemplateReport;
 import com.haulmont.addon.emailtemplates.exceptions.ReportParameterTypeChangedException;
 import com.haulmont.addon.emailtemplates.exceptions.TemplateNotFoundException;
 import com.haulmont.addon.emailtemplates.service.EmailTemplatesService;
-import com.haulmont.addon.emailtemplates.service.TemplateParametersExtractorService;
 import com.haulmont.addon.emailtemplates.web.frames.EmailTemplateParametersFrame;
 import com.haulmont.bali.util.ParamsMap;
 import com.haulmont.cuba.client.ClientConfig;
@@ -77,9 +76,6 @@ public class EmailTemplateSender extends AbstractWindow {
 
     @Inject
     protected ParameterClassResolver classResolver;
-
-    @Inject
-    private TemplateParametersExtractorService templateParametersExtractorService;
 
     @Override
     public void init(Map<String, Object> params) {
