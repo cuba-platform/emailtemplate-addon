@@ -57,7 +57,7 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
     private TemplateParametersExtractorService templateParametersExtractorService;
 
     @WindowParam
-    private List<TemplateReport> templateReports;
+    private List<TemplateReport> templateReports = new ArrayList<>();
 
     @WindowParam
     private TemplateReport templateReport;
@@ -86,7 +86,9 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
     }
 
     public void setTemplateReport(TemplateReport templateReport) {
-        this.templateReports = Collections.singletonList(templateReport);
+        if (templateReport != null) {
+            this.templateReports = Collections.singletonList(templateReport);
+        }
     }
 
     public void createComponents() {

@@ -53,7 +53,7 @@ public class EmailTemplates implements EmailTemplatesAPI {
         List<ReportWithParams> parameters = new ArrayList<>(params);
 
         TemplateReport bodyReport = emailTemplate.getEmailBodyReport();
-        ReportWithParams bodyReportWithParams = getReportWithParams(bodyReport, parameters);
+        ReportWithParams bodyReportWithParams = bodyReport != null ? getReportWithParams(bodyReport, parameters) : null;
 
         List<ReportWithParams> attachmentsWithParams = new ArrayList<>();
         for (TemplateReport report : emailTemplate.getAttachedTemplateReports()) {
@@ -173,9 +173,9 @@ public class EmailTemplates implements EmailTemplatesAPI {
     }
 
     protected EmailInfo generateEmailInfoWithoutAttachments(ReportWithParams reportWithParams) {
-        String body = null;
-        String caption = null;
-        if (reportWithParams.getReport() != null) {
+        String body = "";
+        String caption = "";
+        if (reportWithParams != null && reportWithParams.getReport() != null) {
             ReportOutputDocument outputDocument = reportingApi.createReport(
                     reportWithParams.getReport(),
                     reportWithParams.getParams());

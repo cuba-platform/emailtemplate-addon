@@ -103,7 +103,9 @@ public class EmailTemplateSender extends AbstractWindow {
 
     private void updateDefaultTemplateParameters(Map<String, Object> params) {
         List<TemplateReport> templateReports = new ArrayList<>();
-        templateReports.add(emailTemplate.getEmailBodyReport());
+        if (emailTemplate.getEmailBodyReport() != null) {
+            templateReports.add(emailTemplate.getEmailBodyReport());
+        }
         templateReports.addAll(emailTemplate.getAttachedTemplateReports());
         for (String alias : params.keySet()) {
             for (TemplateReport templateReport : templateReports) {
