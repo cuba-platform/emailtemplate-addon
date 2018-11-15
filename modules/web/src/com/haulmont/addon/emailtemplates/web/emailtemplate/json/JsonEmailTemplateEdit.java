@@ -429,7 +429,7 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
         }
         report.setName(getItem().getName());
         getItem().setReportXml(reportService.convertToString(report));
-        return true;
+        return super.preCommit();
     }
 
     public void updateReportOutputName() {
