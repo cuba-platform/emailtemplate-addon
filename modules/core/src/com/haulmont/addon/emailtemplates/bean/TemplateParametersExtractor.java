@@ -14,15 +14,14 @@ import com.haulmont.reports.app.service.ReportService;
 import com.haulmont.reports.entity.ParameterType;
 import com.haulmont.reports.entity.Report;
 import com.haulmont.reports.entity.ReportInputParameter;
+import com.haulmont.yarg.util.converter.ObjectToStringConverter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Component(TemplateParametersExtractor.NAME)
@@ -49,6 +48,9 @@ public class TemplateParametersExtractor {
 
     @Inject
     protected ReportService reportService;
+
+    @Inject
+    protected ObjectToStringConverter objectToStringConverter;
 
     public List<ReportWithParams> getTemplateDefaultValues(EmailTemplate emailTemplate) throws ReportParameterTypeChangedException {
         List<TemplateReport> templateReports = createParamsCollectionByTemplate(emailTemplate);
@@ -96,7 +98,7 @@ public class TemplateParametersExtractor {
                         exceptionMessages.add(e.getMessage());
                     }
                     Class parameterClass = resolveClass(inputParameter);
-                    Object value = reportService.convertFromString(parameterClass, stringValue);
+                    Object value = convertFromString(inputParameter.getType(), parameterClass, stringValue);
                     paramsData.put(alias, value);
                 }
             }
@@ -138,5 +140,36 @@ public class TemplateParametersExtractor {
             }
         }
         return aClass;
+    }
+
+    public String convertToString(ParameterType parameterType, Class parameterClass, Object paramValue) {
+        if (ParameterType.ENTITY_LIST == parameterType) {
+            if (paramValue instanceof Collection) {
+                return (String) ((Collection) paramValue).stream()
+                        .map(e -> objectToStringConverter.convertToString(parameterClass, e))
+                        .collect(Collectors.joining(","));
+            }
+        } else {
+            return objectToStringConverter.convertToString(parameterClass, paramValue);
+
+        }
+        return null;
+    }
+
+    public Object convertFromString(ParameterType parameterType, Class parameterClass, String paramValueStr) {
+        if (ParameterType.ENTITY_LIST == parameterType) {
+            String[] strValues = paramValueStr.split(",");
+            List tokenListValues = new ArrayList();
+            for (String s : strValues) {
+                Object colValue = objectToStringConverter.convertFromString(parameterClass, s);
+                if (colValue != null) {
+                    tokenListValues.add(colValue);
+                }
+            }
+            return tokenListValues;
+        } else if (paramValueStr != null) {
+            return objectToStringConverter.convertFromString(parameterClass, paramValueStr);
+        }
+        return null;
     }
 }

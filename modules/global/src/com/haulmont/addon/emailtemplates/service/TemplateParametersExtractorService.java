@@ -5,6 +5,7 @@ import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.ParameterValue;
 import com.haulmont.addon.emailtemplates.exceptions.ReportParameterTypeChangedException;
+import com.haulmont.reports.entity.ParameterType;
 import com.haulmont.reports.entity.Report;
 import com.haulmont.reports.entity.ReportInputParameter;
 
@@ -21,4 +22,8 @@ public interface TemplateParametersExtractorService {
             throws ReportParameterTypeChangedException;
 
     Class resolveClass(ReportInputParameter parameter);
+
+    String convertToString(ParameterType parameterType, Class parameterClass, Object paramValue);
+
+    Object convertFromString(ParameterType parameterType, Class parameterClass, String paramValueStr);
 }

@@ -14,7 +14,6 @@ import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.DataSupplier;
 import com.haulmont.cuba.gui.xml.layout.ComponentsFactory;
 import com.haulmont.reports.app.service.ReportService;
-import com.haulmont.reports.entity.ParameterType;
 import com.haulmont.reports.entity.Report;
 import com.haulmont.reports.entity.ReportInputParameter;
 import com.haulmont.reports.gui.report.run.ParameterClassResolver;
@@ -186,10 +185,6 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
         Field field = parameterFieldCreator.createField(parameter);
         if (BooleanUtils.isTrue(isDefaultValues)) {
             field.setRequired(false);
-            if (ParameterType.ENTITY_LIST.equals(parameter.getType())) {
-                field.setVisible(false);
-                return field;
-            }
         }
 
         Object value = null;
@@ -200,13 +195,11 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
         if (value == null && parameter.getDefaultValue() != null) {
             Class parameterClass = parameterClassResolver.resolveClass(parameter);
             if (parameterClass != null) {
-                value = reportService.convertFromString(parameterClass, parameter.getDefaultValue());
+                value = templateParametersExtractorService.convertFromString(parameter.getType(), parameterClass, parameter.getDefaultValue());
             }
         }
 
-        if (!(field instanceof TokenList)) {
-            field.setValue(value);
-        } else {
+        if (field instanceof TokenList) {
             CollectionDatasource datasource = (CollectionDatasource) field.getDatasource();
             if (value instanceof Collection) {
                 Collection collection = (Collection) value;
@@ -214,6 +207,8 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
                     datasource.includeItem((Entity) selected);
                 }
             }
+        } else {
+            field.setValue(value);
         }
 
         if (BooleanUtils.isTrue(parameter.getValidationOn())) {
@@ -234,6 +229,14 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
             Object fieldValue = e.getValue();
             updateDefaultValue(parameter, fieldValue);
         });
+
+        if (field instanceof TokenList) {
+            TokenList tokenList = (TokenList) field;
+            tokenList.getDatasource().addCollectionChangeListener(e -> {
+                List items = e.getItems();
+                updateDefaultValue(parameter, items);
+            });
+        }
 
         return field;
     }
@@ -260,10 +263,8 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
             templateReport.getParameterValues().add(parameterValue);
         }
         Class parameterClass = classResolver.resolveClass(parameter);
-        if (!ParameterType.ENTITY_LIST.equals(parameter.getType())) {
-            String stringValue = reportService.convertToString(parameterClass, fieldValue);
-            parameterValue.setDefaultValue(stringValue);
-        }
+        String stringValue = templateParametersExtractorService.convertToString(parameter.getType(), parameterClass, fieldValue);
+        parameterValue.setDefaultValue(stringValue);
     }
 
 }

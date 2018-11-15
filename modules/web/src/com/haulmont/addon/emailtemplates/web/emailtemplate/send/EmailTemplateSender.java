@@ -201,7 +201,6 @@ public class EmailTemplateSender extends AbstractWindow {
     }
 
     private EmailInfo getEmailInfo() throws ReportParameterTypeChangedException, TemplateNotFoundException {
-        List<ReportWithParams> reportsWithParams = templateParametersExtractorService.getTemplateDefaultValues(emailTemplate);
         return emailTemplatesService.generateEmail(emailTemplate, new ArrayList<>());
     }
 }

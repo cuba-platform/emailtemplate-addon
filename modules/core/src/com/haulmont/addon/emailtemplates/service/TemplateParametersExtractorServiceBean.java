@@ -5,6 +5,7 @@ import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.ParameterValue;
 import com.haulmont.addon.emailtemplates.exceptions.ReportParameterTypeChangedException;
+import com.haulmont.reports.entity.ParameterType;
 import com.haulmont.reports.entity.Report;
 import com.haulmont.reports.entity.ReportInputParameter;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,16 @@ public class TemplateParametersExtractorServiceBean implements TemplateParameter
     @Override
     public Class resolveClass(ReportInputParameter parameter) {
         return templateParametersExtractor.resolveClass(parameter);
+    }
+
+    @Override
+    public String convertToString(ParameterType parameterType, Class parameterClass, Object paramValue) {
+        return templateParametersExtractor.convertToString(parameterType, parameterClass, paramValue);
+    }
+
+    @Override
+    public Object convertFromString(ParameterType parameterType, Class parameterClass, String paramValueStr) {
+        return templateParametersExtractor.convertFromString(parameterType, parameterClass, paramValueStr);
     }
 
 
