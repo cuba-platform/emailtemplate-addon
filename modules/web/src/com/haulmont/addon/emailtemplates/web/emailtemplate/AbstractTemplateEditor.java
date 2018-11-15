@@ -4,6 +4,7 @@ import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.TemplateReport;
 import com.haulmont.cuba.core.entity.Entity;
 import com.haulmont.cuba.core.global.CommitContext;
+import com.haulmont.cuba.core.global.PersistenceHelper;
 import com.haulmont.cuba.gui.components.AbstractEditor;
 
 import java.util.ArrayList;
@@ -18,8 +19,8 @@ public abstract class AbstractTemplateEditor<T extends EmailTemplate> extends Ab
     @Override
     protected boolean preCommit() {
         entitiesToRemove = new ArrayList<>();
-        EmailTemplate original = getDsContext().getDataSupplier().reload(getItem(), "emailTemplate-view");
-        if (original != null) {
+        if (!PersistenceHelper.isNew(getItem())) {
+            EmailTemplate original = getDsContext().getDataSupplier().reload(getItem(), "emailTemplate-view");
             EmailTemplate current = getItem();
             List<TemplateReport> obsoleteTemplateReports = original.getAttachedTemplateReports().stream()
                     .filter(e -> !current.getAttachedTemplateReports().contains(e))
