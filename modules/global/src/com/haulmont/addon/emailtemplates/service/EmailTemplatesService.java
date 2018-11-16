@@ -15,14 +15,19 @@ import java.util.Map;
 public interface EmailTemplatesService {
     String NAME = "emailtemplates_OutboundTemplateService";
 
-    EmailInfo generateEmail(EmailTemplate emailTemplate, Map<String, Object> params) throws TemplateNotFoundException, ReportParameterTypeChangedException;
+    EmailInfo generateEmail(EmailTemplate emailTemplate, Map<String, Object> params)
+            throws TemplateNotFoundException, ReportParameterTypeChangedException;
 
-    EmailInfo generateEmail(EmailTemplate emailTemplate, Collection<ReportWithParams> params) throws TemplateNotFoundException, ReportParameterTypeChangedException;
+    EmailInfo generateEmail(EmailTemplate emailTemplate, Collection<ReportWithParams> params)
+            throws TemplateNotFoundException, ReportParameterTypeChangedException;
 
-    EmailInfo generateEmail(String emailTemplateCode, Map<String, Object> params) throws TemplateNotFoundException, ReportParameterTypeChangedException;
+    EmailInfo generateEmail(String emailTemplateCode, Map<String, Object> params)
+            throws TemplateNotFoundException, ReportParameterTypeChangedException;
 
-    EmailInfo generateEmail(String emailTemplateCode, Collection<ReportWithParams> params) throws TemplateNotFoundException, ReportParameterTypeChangedException;
+    EmailInfo generateEmail(String emailTemplateCode, Collection<ReportWithParams> params) 
+            throws TemplateNotFoundException, ReportParameterTypeChangedException;
 
-    void checkParameterTypeChanged(ReportInputParameter inputParameter, ParameterValue parameterValue) throws ReportParameterTypeChangedException;
+    void checkParameterTypeChanged(ReportInputParameter inputParameter, ParameterValue parameterValue)
+            throws ReportParameterTypeChangedException;
 
 }
