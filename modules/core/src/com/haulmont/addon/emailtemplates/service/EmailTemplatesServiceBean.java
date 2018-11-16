@@ -22,22 +22,26 @@ public class EmailTemplatesServiceBean implements EmailTemplatesService {
 
 
     @Override
-    public EmailInfo generateEmail(EmailTemplate emailTemplate, Map<String, Object> params) throws TemplateNotFoundException, ReportParameterTypeChangedException {
+    public EmailInfo generateEmail(EmailTemplate emailTemplate, Map<String, Object> params)
+            throws TemplateNotFoundException, ReportParameterTypeChangedException {
         return emailTemplatesAPI.generateEmail(emailTemplate, params);
     }
 
     @Override
-    public EmailInfo generateEmail(EmailTemplate emailTemplate, Collection<ReportWithParams> params) throws TemplateNotFoundException, ReportParameterTypeChangedException {
+    public EmailInfo generateEmail(EmailTemplate emailTemplate, Collection<ReportWithParams> params)
+            throws TemplateNotFoundException, ReportParameterTypeChangedException {
         return emailTemplatesAPI.generateEmail(emailTemplate, params);
     }
 
     @Override
-    public EmailInfo generateEmail(String emailTemplateCode, Map<String, Object> params) throws TemplateNotFoundException, ReportParameterTypeChangedException {
+    public EmailInfo generateEmail(String emailTemplateCode, Map<String, Object> params)
+            throws TemplateNotFoundException, ReportParameterTypeChangedException {
         return emailTemplatesAPI.generateEmail(emailTemplateCode, params);
     }
 
     @Override
-    public EmailInfo generateEmail(String emailTemplateCode, Collection<ReportWithParams> params) throws TemplateNotFoundException, ReportParameterTypeChangedException {
+    public EmailInfo generateEmail(String emailTemplateCode, Collection<ReportWithParams> params)
+            throws TemplateNotFoundException, ReportParameterTypeChangedException {
         return emailTemplatesAPI.generateEmail(emailTemplateCode, params);
     }
 

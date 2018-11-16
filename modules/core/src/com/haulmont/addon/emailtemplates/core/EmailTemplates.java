@@ -45,7 +45,8 @@ public class EmailTemplates implements EmailTemplatesAPI {
     private TemplateParametersExtractor parametersExtractor;
 
     @Override
-    public EmailInfo generateEmail(EmailTemplate emailTemplate, Collection<ReportWithParams> params) throws TemplateNotFoundException, ReportParameterTypeChangedException {
+    public EmailInfo generateEmail(EmailTemplate emailTemplate, Collection<ReportWithParams> params)
+            throws TemplateNotFoundException, ReportParameterTypeChangedException {
         if (emailTemplate == null) {
             throw new TemplateNotFoundException(messages.getMessage(EmailTemplates.class, "nullTemplate"));
         }
@@ -76,7 +77,8 @@ public class EmailTemplates implements EmailTemplatesAPI {
         return emailInfo;
     }
 
-    private ReportWithParams getReportWithParams(TemplateReport templateReport, List<ReportWithParams> parameters) throws ReportParameterTypeChangedException {
+    private ReportWithParams getReportWithParams(TemplateReport templateReport, List<ReportWithParams> parameters)
+            throws ReportParameterTypeChangedException {
         ReportWithParams bodyReportWithParams = parametersExtractor.getReportDefaultValues(templateReport.getReport(),
                 templateReport.getParameterValues());
         ReportWithParams bodyReportExternalParams = parameters.stream()
@@ -113,7 +115,8 @@ public class EmailTemplates implements EmailTemplatesAPI {
     }
 
     @Override
-    public EmailInfo generateEmail(EmailTemplate emailTemplate, Map<String, Object> params) throws TemplateNotFoundException, ReportParameterTypeChangedException {
+    public EmailInfo generateEmail(EmailTemplate emailTemplate, Map<String, Object> params)
+            throws TemplateNotFoundException, ReportParameterTypeChangedException {
         if (emailTemplate == null) {
             throw new TemplateNotFoundException(messages.getMessage(EmailTemplates.class, "nullTemplate"));
         }
@@ -131,13 +134,15 @@ public class EmailTemplates implements EmailTemplatesAPI {
     }
 
     @Override
-    public EmailInfo generateEmail(String emailTemplateCode, Map<String, Object> params) throws TemplateNotFoundException, ReportParameterTypeChangedException {
+    public EmailInfo generateEmail(String emailTemplateCode, Map<String, Object> params)
+            throws TemplateNotFoundException, ReportParameterTypeChangedException {
         EmailTemplate emailTemplate = getEmailTemplateByCode(emailTemplateCode);
         return generateEmail(emailTemplate, params);
     }
 
     @Override
-    public EmailInfo generateEmail(String emailTemplateCode, Collection<ReportWithParams> params) throws TemplateNotFoundException, ReportParameterTypeChangedException {
+    public EmailInfo generateEmail(String emailTemplateCode, Collection<ReportWithParams> params)
+            throws TemplateNotFoundException, ReportParameterTypeChangedException {
         EmailTemplate emailTemplate = getEmailTemplateByCode(emailTemplateCode);
         return generateEmail(emailTemplate, params);
     }
