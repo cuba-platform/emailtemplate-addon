@@ -7,10 +7,7 @@ import com.haulmont.bali.util.ParamsMap;
 import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.AppConfig;
-import com.haulmont.cuba.gui.components.AbstractFrame;
-import com.haulmont.cuba.gui.components.Component;
-import com.haulmont.cuba.gui.components.Table;
-import com.haulmont.cuba.gui.components.VBoxLayout;
+import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.actions.AddAction;
 import com.haulmont.cuba.gui.components.actions.ItemTrackingAction;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
@@ -45,6 +42,9 @@ public class AttachmentFrame extends AbstractFrame {
     @Inject
     private VBoxLayout defaultValuesBox;
 
+    @Inject
+    private FieldGroup attachmentGroup;
+
     protected EmailTemplateParametersFrame parametersFrame;
 
     @Override
@@ -70,8 +70,10 @@ public class AttachmentFrame extends AbstractFrame {
             if (templateReport != null) {
                 parametersFrame.setTemplateReport(templateReport);
                 parametersFrame.createComponents();
+                attachmentGroup.setVisible(true);
             } else {
                 parametersFrame.clearComponents();
+                attachmentGroup.setVisible(false);
             }
         });
 

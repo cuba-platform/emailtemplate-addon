@@ -18,6 +18,9 @@ import java.util.List;
 public class TemplateReport extends StandardEntity {
     private static final long serialVersionUID = -3260053745502523549L;
 
+    @Column(name = "NAME")
+    protected String name;
+
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "REPORT_ID")
@@ -32,6 +35,15 @@ public class TemplateReport extends StandardEntity {
     @OnDelete(DeletePolicy.CASCADE)
     @OneToMany(mappedBy = "templateParameters",cascade = CascadeType.ALL)
     protected List<ParameterValue> parameterValues;
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
 
     public void setParameterValues(List<ParameterValue> parameterValues) {
         this.parameterValues = parameterValues;

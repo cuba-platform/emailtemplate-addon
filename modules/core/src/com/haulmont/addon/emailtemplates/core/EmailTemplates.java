@@ -1,5 +1,6 @@
 package com.haulmont.addon.emailtemplates.core;
 
+import com.google.common.io.Files;
 import com.haulmont.addon.emailtemplates.bean.TemplateParametersExtractor;
 import com.haulmont.addon.emailtemplates.builder.EmailTemplateBuilder;
 import com.haulmont.addon.emailtemplates.builder.EmailTemplateBuilderImpl;
@@ -18,6 +19,7 @@ import com.haulmont.reports.entity.ReportInputParameter;
 import com.haulmont.yarg.reporting.ReportOutputDocument;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -55,10 +57,10 @@ public class EmailTemplates implements EmailTemplatesAPI {
         TemplateReport bodyReport = emailTemplate.getEmailBodyReport();
         ReportWithParams bodyReportWithParams = bodyReport != null ? getReportWithParams(bodyReport, parameters) : null;
 
-        List<ReportWithParams> attachmentsWithParams = new ArrayList<>();
-        for (TemplateReport report : emailTemplate.getAttachedTemplateReports()) {
-            ReportWithParams reportWithParams = getReportWithParams(report, parameters);
-            attachmentsWithParams.add(reportWithParams);
+        Map<TemplateReport, ReportWithParams> attachmentsWithParams = new HashMap<>();
+        for (TemplateReport templateReport : emailTemplate.getAttachedTemplateReports()) {
+            ReportWithParams reportWithParams = getReportWithParams(templateReport, parameters);
+            attachmentsWithParams.put(templateReport, reportWithParams);
         }
         EmailInfo emailInfo = generateEmailInfoWithoutAttachments(bodyReportWithParams);
         List<EmailAttachment> templateAttachments = new ArrayList<>();
@@ -78,7 +80,7 @@ public class EmailTemplates implements EmailTemplatesAPI {
         ReportWithParams bodyReportWithParams = parametersExtractor.getReportDefaultValues(templateReport.getReport(),
                 templateReport.getParameterValues());
         ReportWithParams bodyReportExternalParams = parameters.stream()
-                .filter(e -> e.getReport().equals(templateReport))
+                .filter(e -> e.getReport().equals(templateReport.getReport()))
                 .findFirst()
                 .orElse(null);
         if (bodyReportExternalParams != null) {
@@ -185,22 +187,31 @@ public class EmailTemplates implements EmailTemplatesAPI {
         return new EmailInfo(null, caption, body, EmailInfo.HTML_CONTENT_TYPE);
     }
 
-    protected List<EmailAttachment> createReportAttachments(List<ReportWithParams> reportsWithParams) {
+    protected List<EmailAttachment> createReportAttachments(Map<TemplateReport, ReportWithParams> reportsWithParams) {
         List<EmailAttachment> attachmentsList = new ArrayList<>();
-        if (CollectionUtils.isNotEmpty(reportsWithParams)) {
-            attachmentsList = reportsWithParams.stream()
-                    .map(reportsWithParam ->
-                            createEmailAttachmentByReportAndParams(
-                                    reportsWithParam.getReport(), reportsWithParam.getParams()))
-                    .collect(Collectors.toList());
-
+        for (TemplateReport templateReport : reportsWithParams.keySet()) {
+            ReportWithParams reportWithParams = reportsWithParams.get(templateReport);
+            EmailAttachment emailAttachment = createEmailAttachment(templateReport.getName(), reportWithParams);
+            attachmentsList.add(emailAttachment);
         }
         return attachmentsList;
     }
 
-    protected EmailAttachment createEmailAttachmentByReportAndParams(Report report, Map<String, Object> params) {
-        ReportOutputDocument outputDocument = reportingApi.createReport(report, params);
-        return new EmailAttachment(outputDocument.getContent(), outputDocument.getDocumentName());
+    protected EmailAttachment createEmailAttachment(String templateName, ReportWithParams reportWithParams) {
+        ReportOutputDocument outputDocument = reportingApi.createReport(reportWithParams.getReport(), reportWithParams.getParams());
+        String fileName = outputDocument.getDocumentName();
+        if (StringUtils.isNotBlank(templateName)) {
+            String extension = Files.getFileExtension(templateName);
+            String docExtension = Files.getFileExtension(fileName);
+            if (StringUtils.isNotBlank(extension)) {
+                fileName = templateName;
+            } else if (StringUtils.isNotBlank(docExtension)) {
+                fileName = templateName + "." + docExtension;
+            } else {
+                fileName = templateName;
+            }
+        }
+        return new EmailAttachment(outputDocument.getContent(), fileName);
     }
 
     protected ReportWithParams createParamsMapForReport(Report report, Map<String, Object> params) {

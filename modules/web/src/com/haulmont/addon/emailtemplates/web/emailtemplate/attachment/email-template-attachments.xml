@@ -6,7 +6,7 @@
                 width="800"/>
     <layout spacing="true" expand="attachmentsSplit">
         <split id="attachmentsSplit" width="100%">
-            <vbox spacing="true" expand="reportAttachmentBox" height="100%"  margin="true">
+            <vbox spacing="true" expand="reportAttachmentBox" height="100%" margin="true">
                 <label value="msg://attachedReports" stylename="h2"/>
                 <hbox id="reportAttachmentBox" spacing="true" expand="reportsTable" width="100%">
                     <table id="reportsTable"
@@ -19,8 +19,7 @@
                         <columns>
                             <column id="report.name"/>
                             <column id="report.code"/>
-                            <column id="report.group"/>
-                            <column id="report.reportType"/>
+                            <column id="report.defaultTemplate.reportOutputType"/>
                             <column id="report.description"/>
                         </columns>
                         <rows datasource="attachedReportsDs"/>
@@ -33,7 +32,15 @@
                     <vbox spacing="true" width="500px" height="100%" expand="parametersBox">
                         <buttonsPanel/>
                         <groupBox id="parametersBox" caption="msg://defaultValues">
-                            <scrollBox height="100%">
+                            <scrollBox height="100%" spacing="true">
+                                <fieldGroup id="attachmentGroup"
+                                            datasource="attachedReportsDs"
+                                            width="100%"
+                                            visible="false">
+                                    <column width="100%">
+                                        <field property="name" description="msg://attachmentNameDescription"/>
+                                    </column>
+                                </fieldGroup>
                                 <vbox id="defaultValuesBox"/>
                             </scrollBox>
                         </groupBox>

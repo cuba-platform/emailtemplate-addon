@@ -8,11 +8,11 @@ create table EMAILTEMPLATES_EMAIL_TEMPLATE (
     UPDATED_BY varchar(50),
     DELETE_TS timestamp,
     DELETED_BY varchar(50),
+    DTYPE varchar(100),
     --
     NAME varchar(255) not null,
     GROUP_ID varchar(36),
-    DTYPE varchar(50) not null,
-    TYPE varchar(50) not null,
+    TYPE_ varchar(50) not null,
     CODE varchar(255) not null,
     FROM_ varchar(255),
     TO_ longvarchar,
@@ -87,6 +87,7 @@ create table EMAILTEMPLATES_TEMPLATE_REPORT (
     DELETE_TS timestamp,
     DELETED_BY varchar(50),
     --
+    NAME varchar(255),
     REPORT_ID varchar(36) not null,
     EMAIL_TEMPLATE_ID varchar(36),
     --
