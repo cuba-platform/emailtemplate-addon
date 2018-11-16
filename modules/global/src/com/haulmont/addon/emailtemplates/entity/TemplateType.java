@@ -7,8 +7,8 @@ import javax.annotation.Nullable;
 
 public enum TemplateType implements EnumClass<String> {
 
-    JSON("emailtemplates$JsonEmailTemplate"),
-    REPORT("emailtemplates$ReportEmailTemplate");
+    JSON("json"),
+    REPORT("report");
 
     private String id;
 

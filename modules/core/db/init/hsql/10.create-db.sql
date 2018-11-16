@@ -12,6 +12,7 @@ create table EMAILTEMPLATES_EMAIL_TEMPLATE (
     NAME varchar(255) not null,
     GROUP_ID varchar(36),
     DTYPE varchar(50) not null,
+    TYPE varchar(50) not null,
     CODE varchar(255) not null,
     FROM_ varchar(255),
     TO_ longvarchar,

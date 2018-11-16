@@ -31,7 +31,7 @@ public abstract class EmailTemplate extends StandardEntity {
     protected TemplateGroup group;
 
     @NotNull
-    @Column(name = "DTYPE", nullable = false)
+    @Column(name = "TYPE", nullable = false)
     protected String type;
 
     @NotNull
