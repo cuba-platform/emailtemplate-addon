@@ -151,11 +151,13 @@ public class EmailTemplates implements EmailTemplatesAPI {
         LoadContext<EmailTemplate> loadContext = LoadContext.create(EmailTemplate.class)
                 .setQuery(LoadContext.createQuery("select e from emailtemplates$EmailTemplate e where e.code = :code")
                         .setParameter("code", emailTemplateCode));
-        EmailTemplate emailTemplate = dataManager.reload(dataManager.load(loadContext), "emailTemplate-view");
+        EmailTemplate emailTemplate = dataManager.load(loadContext);
 
         if (emailTemplate == null) {
             throw new TemplateNotFoundException(messages.formatMessage(EmailTemplates.class, "notFoundTemplate", emailTemplateCode));
         }
+        emailTemplate = dataManager.reload(emailTemplate, "emailTemplate-view");
+
         return emailTemplate;
     }
 
