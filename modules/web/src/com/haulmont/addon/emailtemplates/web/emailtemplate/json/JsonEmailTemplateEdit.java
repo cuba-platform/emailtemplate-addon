@@ -111,6 +111,8 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
             createParameters();
         });
 
+        subjectField.addValueChangeListener(e -> createParameters());
+
         fileUpload.addFileUploadSucceedListener(fileUploadSucceedEvent -> {
             UUID fileID = fileUpload.getFileId();
             File file = fileUploadingApi.getFile(fileID);
@@ -144,31 +146,31 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
 
     private List<ReportInputParameter> createSimpleParameters() {
         List<ReportInputParameter> newParameters = new ArrayList<>();
-        Matcher m = SIMPLE_FIELD_PATTERN.matcher(getItem().getJsonBody());
-        while (m.find()) {
-            String field = m.group(1);
-            ReportInputParameter parameter = getParameter(field);
-            if (parameter == null) {
-                parameter = initNewParameter(field);
-                parameter.setType(ParameterType.TEXT);
-                newParameters.add(parameter);
+        extractParams(newParameters, getItem().getJsonBody());
+        extractParams(newParameters, getItem().getSubject());
+        return newParameters;
+    }
+
+    private void extractParams(List<ReportInputParameter> newParameters, String parameterSource) {
+        if (StringUtils.isNotBlank(parameterSource)) {
+            Matcher m = SIMPLE_FIELD_PATTERN.matcher(parameterSource);
+            while (m.find()) {
+                String field = m.group(1);
+                ReportInputParameter parameter = getParameter(field);
+                if (parameter == null) {
+                    parameter = initNewParameter(field);
+                    parameter.setType(ParameterType.TEXT);
+                    newParameters.add(parameter);
+                }
             }
         }
-        return newParameters;
     }
 
     private List<ReportInputParameter> createEntityParameters() {
         List<ReportInputParameter> newParameters = new ArrayList<>();
         Map<String, List<String>> entityWithProperties = new HashMap<>();
-        Matcher m = ENTITY_FIELD_PATTERN.matcher(getItem().getJsonBody());
-        while (m.find()) {
-            String entityAlias = m.group(1);
-            String field = m.group(2);
-            if (!entityWithProperties.containsKey(entityAlias)) {
-                entityWithProperties.put(entityAlias, new ArrayList<>());
-            }
-            entityWithProperties.get(entityAlias).add(field);
-        }
+        extractEntityParams(entityWithProperties, getItem().getJsonBody());
+        extractEntityParams(entityWithProperties, getItem().getSubject());
         for (String entityAlias : entityWithProperties.keySet()) {
             ReportInputParameter parameter = getParameter(entityAlias);
             if (parameter == null) {
@@ -185,6 +187,20 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
             }
         }
         return newParameters;
+    }
+
+    private void extractEntityParams(Map<String, List<String>> entityWithProperties, String parameterSource) {
+        if (StringUtils.isNotBlank(parameterSource)) {
+            Matcher m = ENTITY_FIELD_PATTERN.matcher(parameterSource);
+            while (m.find()) {
+                String entityAlias = m.group(1);
+                String field = m.group(2);
+                if (!entityWithProperties.containsKey(entityAlias)) {
+                    entityWithProperties.put(entityAlias, new ArrayList<>());
+                }
+                entityWithProperties.get(entityAlias).add(field);
+            }
+        }
     }
 
     private ReportInputParameter initNewParameter(String entityAlias) {
@@ -450,7 +466,7 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
             subject = subject.replaceAll("\\$\\{([a-zA-Z0-9]*).([a-zA-Z0-9.]*)}", "\"+params[\"$1\"].$2+\"");
             dataSet.setText("return [[\"__REPORT_FILE_NAME\": \"" + subject + "\"]]");
         } else {
-            dataSet.setText(null);
+            dataSet.setText("");
         }
     }
 
