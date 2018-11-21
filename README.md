@@ -1,26 +1,159 @@
-# YARG email template component
+[![license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0)
 
+# 1. Introduction
 This component provide ability to create outbound email based on generating by YARG reporting templates.
 
-## Email template
+# 2. Installation
 
-This functionality of the component allows to create templates of outbound emails.
+The complete add-ons installation guide see in [CUBA Platform documentation](https://doc.cuba-platform.com/manual-latest/app_components_usage.html).
 
-![](img/templates_browse.png)
+## 2.1. Add the Repository and the Component in CUBA Studio
 
-User may set report as email body. But template may contain one or more reports as attachments.
-Also user may set default parameter values to all included reports. User have to use only HTML report templates.
+1. Edit **Project properties** and on the **App components** panel click the **plus** button next to **Custom components**.
 
-![](img/templates_edit.png)
+2. Paste the add-on coordinates in the coordinates field as follows: `group:name:version`. For example:
 
-## Outbound email
+    com.haulmont.addon.emailtemplates:yet-global:0.2-SNAPSHOT
 
-By the outbound email editor user may set sender and recipient addresses and fill parameters of all reports.
-If email template does not contain any reports user will see exception message.
+Select the add-on version compatible with the CUBA platform version used in your project:
 
-![](img/outbound_email.png)
+| Platform Version  | Component Version |
+|-------------------|-------------------|
+| 6.10.X            | 0.2.+             |
 
-Before sending is displayed preview screen.
+3. Click **OK** in the dialog. Studio will try to find the add-on binaries in the repository currently selected for the project. If it is found, the dialog will close and the add-on will appear in the list of custom components.
+
+4. Save the project properties by clicking **OK**.
+
+## 2.2. Add the Repository and the Component in build.gradle
+
+1. Edit `build.gradle` and specify the add-on coordinates in the root `dependencies` section:
+
+```groovy
+dependencies {
+    appComponent("com.haulmont.cuba:cuba-global:$cubaVersion")
+    // your add-ons go here
+    appComponent("com.haulmont.addon.emailtemplates:yet-global:0.2-SNAPSHOT")
+}
+```
+
+2. Execute `gradlew idea` in the command line to include add-on in your project’s development environment.
+
+3. Edit `web.xml` files of the **core** and **web** modules and add the add-on identifier (which is equal to Maven `groupId`) to the space-separated list of application components in the `appComponents` context parameter:
+
+```xml
+<context-param>
+    <param-name>appComponents</param-name>
+    <param-value>com.haulmont.cuba com.haulmont.addon.emailtemplates</param-value>
+</context-param>
+```
+
+# 3. Screens
+
+## 3.1. Email Template Browser
+
+This screen allows creating, editing and removing email templates. This screen is available from the application menu.
+
+![email-template-menu](img/email-template-menu.png)
+
+![email-template-browser](img/email-template-browser.png)
+
+## 3.2. Email Template Editor
+
+There are two ways to create email template: from report and from designer.
+
+## 3.2.1. Email Template Editor From Report
+
+![email-template-editor-modes](img/email-template-editor-modes.png)
+
+The screen to create template from report allows editing parameters:
+
+- the **Name** field;
+- the **Code** field;
+- the **Group** drop-down;
+- the **Email body report** lookup field;
+- the **Use subject from report** checkbox;
+- the **Subject** field;
+- the **From** field;
+- the **To** field;
+- the **Cc** field;
+- the **Bcc** field.
+
+![email-template-editor](img/email-template-editor.png)
+
+## 3.2.2. Email Template Editor From Designer
+
+The screen to create template from designer consists of the following elements:
+
+- the **Name** field;
+- the **Code** field;
+- the **Group** drop-down;
+- the **Subject** field;
+- the **From** field;
+- the **To** field;
+- the **Cc** field;
+- the **Bcc** field;
+- the **Import JSON** button;
+- the **Export JSON** button;
+- the **Export HTML** button;
+- the **View HTML** button;
+- the **Export Report** button.
+
+User can design template with elements:
+
+- **Button**
+- **Divider**
+- **HTML**
+- **Image**
+- **Text**
+
+![email-template-editor](img/email-template-editor.png)
+
+User can add parameters and value formats on the **Parameters and Formats** tab.
+
+![email-template-editor-designer-parameters-formats](img/email-template-editor-designer-parameters-formats.png)
+
+The complete parameter description see in [CUBA Platform. Report Generator](https://doc.cuba-platform.com/reporting-6.10/parameters.html).
+
+The complete value format description see in [CUBA Platform. Report Generator](https://doc.cuba-platform.com/reporting-6.10/formatters.html).
+
+## 3.2.3. Attachment tab
+
+User can add or remove attachments on the Attachment tab for both types of templates (from report and from designer). User can attach a report or a file.
+
+![email-template-editor-attachment](img/email-template-editor-attachment.png)
+
+User can set for a report attachment parameters:
+
+- **File name** - name of report attachment for addressee;
+- entity or entities for report if it is report for entity/ entities;
+- parameters from report;
+
+![email-template-editor-attachment-report-parameters](img/email-template-editor-attachment-report-parameters.png)
+
+## 3.3. Group Editor
+
+The screen to create, edit or remove email template groups.
+
+![email-template-group-browser](img/email-template-group-browser.png)
+
+## 3.4. Email Sender
+
+The screen to send email with a email template. User can fill parameters
+
+- **Subject**;
+- **From**;
+- **To**;
+- **Cc**;
+- **Bcc**.
+
+The "To" field is obligatory to set. User can select entity or entities for report/-s and set report parameter.
+
+![email-template-sending](img/email-template-sending.png)
+
+# YARG email template component
+
+The component provide ability to create outbound email based on generating by YARG reporting templates.
 
 ## Email templates API
 
