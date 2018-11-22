@@ -19,6 +19,7 @@ public abstract class AbstractTemplateEditor<T extends EmailTemplate> extends Ab
     @Override
     protected boolean preCommit() {
         entitiesToRemove = new ArrayList<>();
+        entitiesToUpdate = new ArrayList<>();
         if (!PersistenceHelper.isNew(getItem())) {
             EmailTemplate original = getDsContext().getDataSupplier().reload(getItem(), "emailTemplate-view");
             EmailTemplate current = getItem();
@@ -26,7 +27,6 @@ public abstract class AbstractTemplateEditor<T extends EmailTemplate> extends Ab
                     .filter(e -> !current.getAttachedTemplateReports().contains(e))
                     .collect(Collectors.toList());
             entitiesToRemove.addAll(obsoleteTemplateReports);
-
         }
         return true;
     }
@@ -36,6 +36,7 @@ public abstract class AbstractTemplateEditor<T extends EmailTemplate> extends Ab
         if (committed) {
             CommitContext commitContext = new CommitContext();
             entitiesToRemove.forEach(commitContext::addInstanceToRemove);
+            entitiesToUpdate.forEach(commitContext::addInstanceToCommit);
             getDsContext().getDataSupplier().commit(commitContext);
         }
         return super.postCommit(committed, close);

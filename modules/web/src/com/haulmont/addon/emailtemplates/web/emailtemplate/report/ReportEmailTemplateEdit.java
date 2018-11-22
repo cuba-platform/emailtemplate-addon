@@ -1,5 +1,6 @@
 package com.haulmont.addon.emailtemplates.web.emailtemplate.report;
 
+import com.haulmont.addon.emailtemplates.entity.ParameterValue;
 import com.haulmont.addon.emailtemplates.entity.ReportEmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.TemplateReport;
 import com.haulmont.addon.emailtemplates.web.emailtemplate.AbstractTemplateEditor;
@@ -12,6 +13,7 @@ import com.haulmont.cuba.gui.components.LookupPickerField;
 import com.haulmont.cuba.gui.components.TextField;
 import com.haulmont.cuba.gui.components.VBoxLayout;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
+import com.haulmont.cuba.gui.data.impl.CollectionPropertyDatasourceImpl;
 import com.haulmont.reports.entity.Report;
 import com.haulmont.reports.entity.ReportOutputType;
 import org.apache.commons.lang.BooleanUtils;
@@ -20,6 +22,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.UUID;
 
 public class ReportEmailTemplateEdit extends AbstractTemplateEditor<ReportEmailTemplate> {
 
@@ -37,6 +40,9 @@ public class ReportEmailTemplateEdit extends AbstractTemplateEditor<ReportEmailT
 
     @Inject
     protected VBoxLayout defaultValuesBox;
+
+    @Inject
+    private CollectionPropertyDatasourceImpl<ParameterValue, UUID> bodyParameterValuesDs;
 
     protected EmailTemplateParametersFrame parametersFrame;
     protected TemplateReport templateReport;
@@ -71,7 +77,6 @@ public class ReportEmailTemplateEdit extends AbstractTemplateEditor<ReportEmailT
             if (value != null) {
                 Report report = getDsContext().getDataSupplier().reload(value, "emailTemplate-view");
                 if (ReportOutputType.HTML == report.getDefaultTemplate().getReportOutputType()) {
-                    removeTemplateReportIfRequired(report);
                     templateReport = metadata.create(TemplateReport.class);
                     templateReport.setParameterValues(new ArrayList<>());
                     templateReport.setReport(report);
@@ -86,7 +91,6 @@ public class ReportEmailTemplateEdit extends AbstractTemplateEditor<ReportEmailT
                     showNotification(getMessage("notification.reportIsNotHtml"), NotificationType.ERROR);
                 }
             } else {
-                removeTemplateReportIfRequired(value);
                 getItem().setEmailBodyReport(null);
                 parametersFrame.setTemplateReport(getItem().getEmailBodyReport());
                 parametersFrame.clearComponents();
@@ -105,20 +109,26 @@ public class ReportEmailTemplateEdit extends AbstractTemplateEditor<ReportEmailT
         setSubjectVisibilty();
     }
 
-    private void removeTemplateReportIfRequired(Report report) {
-        if (!PersistenceHelper.isNew(getItem())) {
-            TemplateReport templateReport = getItem().getEmailBodyReport();
-            if (templateReport != null) {
-                if (!templateReport.getReport().equals(report)) {
-                    getItem().setEmailBodyReport(null);
-                    getDsContext().getDataSupplier().remove(templateReport);
-                }
-            }
-        }
-    }
-
     public void setSubjectVisibilty() {
         subjectField.setVisible(BooleanUtils.isNotTrue(getItem().getUseReportSubject()));
+    }
+
+    @Override
+    protected boolean preCommit() {
+        super.preCommit();
+        if (!PersistenceHelper.isNew(getItem())) {
+            ReportEmailTemplate original = getDsContext().getDataSupplier().reload(getItem(), "emailTemplate-view");
+            ReportEmailTemplate current = getItem();
+            TemplateReport originalEmailBodyReport = original.getEmailBodyReport();
+            if (originalEmailBodyReport != null && !originalEmailBodyReport.equals(current.getEmailBodyReport())) {
+                entitiesToRemove.addAll(originalEmailBodyReport.getParameterValues());
+                entitiesToRemove.add(originalEmailBodyReport);
+            }
+            if (current.getEmailBodyReport() != null) {
+                bodyParameterValuesDs.setModified(true);
+            }
+        }
+        return true;
     }
 
     public void runReport() {

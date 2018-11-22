@@ -235,7 +235,7 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
         if (field instanceof TokenList) {
             TokenList tokenList = (TokenList) field;
             tokenList.getDatasource().addCollectionChangeListener(e -> {
-                List items = e.getItems();
+                Collection items = e.getDs().getItems();
                 updateDefaultValue(parameter, items);
             });
         }
