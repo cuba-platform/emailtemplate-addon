@@ -52,7 +52,7 @@ dependencies {
 
 ## 3.1. Email Template Browser
 
-This screen allows creating, editing and removing email templates. This screen is available from the application menu.
+This screen to create, edite, and/or remove email templates, open group browser. This screen is available from the application menu.
 
 ![email-template-menu](img/email-template-menu.png)
 
@@ -133,19 +133,25 @@ User can add or remove attachments on the Attachment tab for both types of templ
 
 User can set for a report attachment parameters:
 
-- **File name** - name of report attachment for addressee;
+- **File name** - report attachment name for an addressee;
 - entity or entities for report;
 - parameters from report.
 
 ![email-template-editor-attachment-report-parameters](img/email-template-editor-attachment-report-parameters.png)
 
-## 3.3. Group Editor
+## 3.3. Group Browser
 
 The screen to create, edit or remove email template groups.
 
 ![email-template-group-browser](img/email-template-group-browser.png)
 
-## 3.4. Email Sender
+## 3.4. Group Editor
+
+The screen to create, edit or remove email template groups.
+
+![email-template-group-editor](img/email-template-group-editor.png)
+
+## 3.5. Email Sender
 
 The screen to send email with a email template. User can fill parameters
 
