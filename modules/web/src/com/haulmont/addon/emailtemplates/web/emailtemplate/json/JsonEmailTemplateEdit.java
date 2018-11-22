@@ -121,6 +121,7 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
                 fileUploadingApi.deleteFile(fileID);
                 getItem().setJsonBody(new String(bytes, StandardCharsets.UTF_8));
                 templateEditor.setJson(getItem().getJsonBody());
+                createParameters();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
