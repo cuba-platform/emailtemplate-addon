@@ -52,7 +52,7 @@ dependencies {
 
 ## 3.1. Email Template Browser
 
-This screen allows creating, editing and removing email templates. This screen is available from the application menu.
+This screen to create, edite, and/or remove email templates, open group browser. This screen is available from the application menu.
 
 ![email-template-menu](img/email-template-menu.png)
 
@@ -62,24 +62,32 @@ This screen allows creating, editing and removing email templates. This screen i
 
 There are two ways to create email template: from report and from designer.
 
-## 3.2.1. Email Template Editor From Report
-
 ![email-template-editor-modes](img/email-template-editor-modes.png)
+
+## 3.2.1. Email Template Editor From Report
 
 The screen to create template from report allows editing parameters:
 
 - the **Name** field;
 - the **Code** field;
 - the **Group** drop-down;
-- the **Email body report** lookup field;
 - the **Use subject from report** checkbox;
-- the **Subject** field;
+- the **Subject** field (if **Use subject from report** unchecked);
 - the **From** field;
 - the **To** field;
 - the **Cc** field;
-- the **Bcc** field.
+- the **Bcc** field;
+- the **Email body report** lookup field.
 
 ![email-template-editor](img/email-template-editor.png)
+
+If the report type is report with entity user can set entity for template. User can set report parameters as well.
+
+![email-template-editor-entity](img/email-template-editor-entity.png)
+
+If the report type is report with entities user can set entities for template. User can set report parameters as well.
+
+![email-template-editor-entities](img/email-template-editor-entities.png)
 
 ## 3.2.2. Email Template Editor From Designer
 
@@ -107,15 +115,15 @@ User can design template with elements:
 - **Image**
 - **Text**
 
-![email-template-editor](img/email-template-editor.png)
+![email-template-editor-designer](img/email-template-editor-designer.png)
 
 User can add parameters and value formats on the **Parameters and Formats** tab.
 
 ![email-template-editor-designer-parameters-formats](img/email-template-editor-designer-parameters-formats.png)
 
-The complete parameter description see in [CUBA Platform. Report Generator](https://doc.cuba-platform.com/reporting-6.10/parameters.html).
+The complete parameter guide see in [CUBA Platform. Report Generator | External Report Parameters](https://doc.cuba-platform.com/reporting-6.10/parameters.html).
 
-The complete value format description see in [CUBA Platform. Report Generator](https://doc.cuba-platform.com/reporting-6.10/formatters.html).
+The complete value format guide see in [CUBA Platform. Report Generator | Field Value Formats](https://doc.cuba-platform.com/reporting-6.10/formatters.html).
 
 ## 3.2.3. Attachment tab
 
@@ -125,19 +133,25 @@ User can add or remove attachments on the Attachment tab for both types of templ
 
 User can set for a report attachment parameters:
 
-- **File name** - name of report attachment for addressee;
-- entity or entities for report if it is report for entity/ entities;
-- parameters from report;
+- **File name** - report attachment name for an addressee;
+- entity or entities for report;
+- parameters from report.
 
 ![email-template-editor-attachment-report-parameters](img/email-template-editor-attachment-report-parameters.png)
 
-## 3.3. Group Editor
+## 3.3. Group Browser
 
 The screen to create, edit or remove email template groups.
 
 ![email-template-group-browser](img/email-template-group-browser.png)
 
-## 3.4. Email Sender
+## 3.4. Group Editor
+
+The screen to create, edit or remove email template groups.
+
+![email-template-group-editor](img/email-template-group-editor.png)
+
+## 3.5. Email Sender
 
 The screen to send email with a email template. User can fill parameters
 
@@ -151,11 +165,7 @@ The "To" field is obligatory to set. User can select entity or entities for repo
 
 ![email-template-sending](img/email-template-sending.png)
 
-# YARG email template component
-
-The component provide ability to create outbound email based on generating by YARG reporting templates.
-
-## Email templates API
+## 4. Email templates API
 
 Developer can use the next methods from EmailTemplatesAPI:
 1. To create EmailInfo from template that may contain the same reports with different parameter values
