@@ -182,22 +182,26 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
     @Override
     public EmailTemplateBuilder setBodyParameter(String key, Object value) {
         TemplateReport emailBodyReport = emailTemplate.getEmailBodyReport();
-        emailBodyReport.getParameterValues().stream()
-                .filter(v -> v.getAlias().equals(key))
-                .forEach(v -> {
-                    ReportInputParameter inputParameter = emailBodyReport.getReport().getInputParameters().stream()
-                            .filter(r -> r.getAlias().equals(key))
-                            .findFirst()
-                            .orElse(null);
-                    if (inputParameter != null) {
-                        if (!ParameterType.ENTITY_LIST.equals(inputParameter.getType())) {
-                            Class parameterClass = extractorService.resolveClass(inputParameter);
-                            String stringValue = reportService.convertToString(parameterClass, value);
-                            v.setDefaultValue(stringValue);
-                        }
-                        v.setParameterType(inputParameter.getType());
-                    }
-                });
+        ReportInputParameter inputParam = emailBodyReport.getReport().getInputParameters().stream()
+                .filter(i -> i.getAlias().equals(key))
+                .findFirst()
+                .orElse(null);
+        if (inputParam != null) {
+            ParameterValue parameterValue = emailBodyReport.getParameterValues().stream()
+                    .filter(v -> v.getAlias().equals(key))
+                    .findFirst()
+                    .orElse(null);
+            if (parameterValue != null) {
+                if (!ParameterType.ENTITY_LIST.equals(inputParam.getType())) {
+                    Class parameterClass = extractorService.resolveClass(inputParam);
+                    String stringValue = reportService.convertToString(parameterClass, value);
+                    parameterValue.setDefaultValue(stringValue);
+                }
+                parameterValue.setParameterType(inputParam.getType());
+            } else {
+                emailBodyReport.getParameterValues().add(createParameterValue(emailBodyReport.getReport(), key, value));
+            }
+        }
         return this;
     }
 
