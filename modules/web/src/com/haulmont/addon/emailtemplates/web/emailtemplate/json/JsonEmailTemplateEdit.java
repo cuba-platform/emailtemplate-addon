@@ -405,6 +405,7 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
         if (html != null) {
             getItem().setHtml(html);
         }
+        getItem().setReport(report);
         report = templateConverterService.convertToReport(getItem());
         reportDs.setItem(report);
         getItem().setReport(report);
@@ -427,6 +428,7 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
 
 
     public void exportReport() {
+        getItem().setReport(report);
         Report report = templateConverterService.convertToReport(getItem());
         AbstractEditor reportEditor = openEditor(report, WindowManager.OpenType.NEW_TAB);
         report = templateConverterService.convertToReport(getItem());

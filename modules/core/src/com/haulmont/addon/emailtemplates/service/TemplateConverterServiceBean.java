@@ -33,6 +33,8 @@ public class TemplateConverterServiceBean implements TemplateConverterService {
         } else {
             report = initReport(template);
         }
+        report.setName(template.getName());
+        report.setCode(template.getCode());
         updateReportOutputName(report, template);
         report.getDefaultTemplate().setContent(getHtmlReportTemplate(template).getBytes());
         report.setIsTmp(true);
