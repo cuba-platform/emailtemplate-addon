@@ -195,7 +195,7 @@ public class EmailTemplateSender extends AbstractWindow {
             return;
         }
         if (subjectField.getValue() == null) {
-            showNotification(getMessage("emptySubject"), NotificationType.HUMANIZED);
+            showNotification(getMessage("emptySubject"), NotificationType.WARNING);
             return;
         }
         EmailInfo emailInfo = getEmailInfo();
