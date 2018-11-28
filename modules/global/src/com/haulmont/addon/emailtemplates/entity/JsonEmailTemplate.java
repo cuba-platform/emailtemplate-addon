@@ -1,7 +1,6 @@
 package com.haulmont.addon.emailtemplates.entity;
 
 import com.haulmont.addon.emailtemplates.service.TemplateConverterService;
-import com.haulmont.chile.core.annotations.MetaProperty;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.reports.app.service.ReportService;
@@ -54,6 +53,7 @@ public class JsonEmailTemplate extends EmailTemplate {
 
     public JsonEmailTemplate() {
         setType(TemplateType.JSON);
+        setUseReportSubject(true);
     }
 
     public String getJsonBody() {
@@ -89,11 +89,5 @@ public class JsonEmailTemplate extends EmailTemplate {
             templateReport.setParameterValues(new ArrayList<>());
         }
         return templateReport;
-    }
-
-    @Override
-    @MetaProperty
-    public Boolean getUseReportSubject() {
-        return true;
     }
 }

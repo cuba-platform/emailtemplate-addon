@@ -15,10 +15,7 @@ import com.haulmont.cuba.core.global.EmailException;
 import com.haulmont.cuba.core.global.EmailInfo;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.WindowParam;
-import com.haulmont.cuba.gui.components.AbstractWindow;
-import com.haulmont.cuba.gui.components.GroupBoxLayout;
-import com.haulmont.cuba.gui.components.VBoxLayout;
-import com.haulmont.cuba.gui.components.Window;
+import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.export.ByteArrayDataProvider;
 import com.haulmont.cuba.gui.export.ExportDisplay;
@@ -32,9 +29,11 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class EmailTemplateSender extends AbstractWindow {
 
@@ -77,6 +76,9 @@ public class EmailTemplateSender extends AbstractWindow {
     @Inject
     protected ParameterClassResolver classResolver;
 
+    @Named("defaultGroup.subject")
+    private TextField subjectField;
+
     @Override
     public void init(Map<String, Object> params) {
         super.init(params);
@@ -99,6 +101,12 @@ public class EmailTemplateSender extends AbstractWindow {
         } else {
             attachmentGroupBox.setVisible(false);
         }
+
+        subjectField.addValueChangeListener(e -> {
+            if (!Objects.equals(e.getPrevValue(), e.getValue())) {
+                emailTemplate.setUseReportSubject(false);
+            }
+        });
     }
 
     private void updateDefaultTemplateParameters(Map<String, Object> params) {

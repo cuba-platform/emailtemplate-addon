@@ -21,6 +21,9 @@ public abstract class EmailTemplate extends StandardEntity {
 
     private static final long serialVersionUID = -6290882811419921297L;
 
+    @Column(name = "USE_REPORT_SUBJECT")
+    protected Boolean useReportSubject;
+
     @NotNull
     @Column(name = "NAME", nullable = false)
     protected String name;
@@ -163,5 +166,11 @@ public abstract class EmailTemplate extends StandardEntity {
 
     public abstract TemplateReport getEmailBodyReport();
 
-    public abstract Boolean getUseReportSubject();
+    public Boolean getUseReportSubject() {
+        return useReportSubject;
+    }
+
+    public void setUseReportSubject(Boolean useReportSubject) {
+        this.useReportSubject = useReportSubject;
+    }
 }

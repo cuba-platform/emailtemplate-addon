@@ -104,6 +104,9 @@ public class ReportEmailTemplateEdit extends AbstractTemplateEditor<ReportEmailT
 
         useReportSubject.addValueChangeListener(e -> {
             setSubjectVisibilty();
+            if (BooleanUtils.isTrue((Boolean) e.getValue())) {
+                getItem().setSubject(null);
+            }
         });
 
         setSubjectVisibilty();

@@ -5,14 +5,14 @@ import com.haulmont.cuba.core.entity.annotation.OnDelete;
 import com.haulmont.cuba.core.global.DeletePolicy;
 import com.haulmont.reports.entity.Report;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 
 @Entity(name = "emailtemplates$ReportEmailTemplate")
 public class ReportEmailTemplate extends EmailTemplate {
     private static final long serialVersionUID = -8316169275125957265L;
-
-    @Column(name = "USE_REPORT_SUBJECT")
-    protected Boolean useReportSubject;
 
     @Composition
     @OnDelete(DeletePolicy.CASCADE)
@@ -31,14 +31,6 @@ public class ReportEmailTemplate extends EmailTemplate {
 
     public ReportEmailTemplate() {
         setType(TemplateType.REPORT);
-    }
-
-    public Boolean getUseReportSubject() {
-        return useReportSubject;
-    }
-
-    public void setUseReportSubject(Boolean useReportSubject) {
-        this.useReportSubject = useReportSubject;
     }
 
     @Override
