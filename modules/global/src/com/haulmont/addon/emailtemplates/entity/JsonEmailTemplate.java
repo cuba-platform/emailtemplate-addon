@@ -1,5 +1,6 @@
 package com.haulmont.addon.emailtemplates.entity;
 
+import com.haulmont.addon.emailtemplates.service.TemplateConverterService;
 import com.haulmont.chile.core.annotations.MetaProperty;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Metadata;
@@ -45,7 +46,6 @@ public class JsonEmailTemplate extends EmailTemplate {
 
     public void setReportXml(String reportXml) {
         this.reportXml = reportXml;
-        initReport();
     }
 
     public String getReportXml() {
@@ -72,13 +72,13 @@ public class JsonEmailTemplate extends EmailTemplate {
         return report;
     }
 
-    private void initReport() {
-        report = AppBeans.get(ReportService.class).convertToReport(getReportXml());
-        report.setXml(getReportXml());
-        String html = getHtml();
-        html = html.replaceAll("\\$\\{([a-zA-Z0-9.]*[^}]*)}", "\\$\\{Root.fields.$1\\}");
-        report.getDefaultTemplate().setContent(html.getBytes());
-        report.setIsTmp(true);
+    public void setReport(Report report) {
+        this.report = report;
+        setReportXml(AppBeans.get(ReportService.class).convertToString(report));
+    }
+
+    public void initReport() {
+        report = AppBeans.get(TemplateConverterService.class).convertToReport(this);
     }
 
     @Override

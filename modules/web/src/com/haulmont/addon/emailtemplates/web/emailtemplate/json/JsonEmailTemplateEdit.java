@@ -1,15 +1,14 @@
 package com.haulmont.addon.emailtemplates.web.emailtemplate.json;
 
 import com.haulmont.addon.emailtemplates.entity.JsonEmailTemplate;
+import com.haulmont.addon.emailtemplates.service.TemplateConverterService;
 import com.haulmont.addon.emailtemplates.web.emailtemplate.AbstractTemplateEditor;
 import com.haulmont.addon.emailtemplates.web.gui.components.UnlayerTemplateEditor;
 import com.haulmont.bali.util.ParamsMap;
 import com.haulmont.chile.core.model.MetaClass;
 import com.haulmont.chile.core.model.MetaPropertyPath;
 import com.haulmont.chile.core.model.MetadataObject;
-import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Metadata;
-import com.haulmont.cuba.core.global.PersistenceHelper;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.actions.BaseAction;
@@ -22,8 +21,9 @@ import com.haulmont.cuba.gui.data.impl.DatasourceImplementation;
 import com.haulmont.cuba.gui.export.ByteArrayDataProvider;
 import com.haulmont.cuba.gui.export.ExportDisplay;
 import com.haulmont.cuba.gui.upload.FileUploadingAPI;
-import com.haulmont.reports.app.service.ReportService;
-import com.haulmont.reports.entity.*;
+import com.haulmont.reports.entity.ParameterType;
+import com.haulmont.reports.entity.Report;
+import com.haulmont.reports.entity.ReportInputParameter;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -54,7 +54,7 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
     private ExportDisplay exportDisplay;
 
     @Inject
-    private ReportService reportService;
+    private TemplateConverterService templateConverterService;
 
     private Report report;
 
@@ -93,11 +93,7 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
     protected void postInit() {
         super.postInit();
 
-        if (PersistenceHelper.isNew(getItem())) {
-            report = createReport();
-        } else {
-            report = getItem().getReport();
-        }
+        report = templateConverterService.convertToReport(getItem());
 
         reportDs.setItem(report);
 
@@ -107,7 +103,6 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
             getItem().setJsonBody(json.toJson());
             String html = templateEditor.getHTML();
             getItem().setHtml(html);
-            report.getDefaultTemplate().setContent(html.getBytes());
             createParameters();
         });
 
@@ -126,8 +121,6 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
                 throw new RuntimeException(e);
             }
         });
-
-        subjectField.addValueChangeListener(e -> updateReportOutputName());
     }
 
     private void createParameters() {
@@ -207,7 +200,7 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
     private ReportInputParameter initNewParameter(String entityAlias) {
         ReportInputParameter parameter;
         parameter = metadata.create(ReportInputParameter.class);
-        parameter.setName(entityAlias);
+        parameter.setName(splitCamelCase(entityAlias));
         parameter.setAlias(entityAlias);
         parameter.setReport(report);
         parameter.setPosition(0);
@@ -226,6 +219,12 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
         return null;
     }
 
+    protected String splitCamelCase(String s) {
+        return StringUtils.capitalize(StringUtils.join(
+                StringUtils.splitByCharacterTypeCamelCase(s), ' '
+        ));
+    }
+
     private boolean parameterExists(String alias) {
         return report.getInputParameters().stream()
                 .anyMatch(p -> alias.equals(p.getAlias()));
@@ -236,47 +235,6 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
                 .filter(p -> alias.equals(p.getAlias()))
                 .findFirst()
                 .orElse(null);
-    }
-
-    private Report createReport() {
-        Metadata metadata = AppBeans.get(Metadata.class);
-        Report report = metadata.create(Report.class);
-
-        ReportTemplate template = metadata.create(ReportTemplate.class);
-        template.setCode(ReportTemplate.DEFAULT_TEMPLATE_CODE);
-        template.setReportOutputType(ReportOutputType.HTML);
-        template.setReport(report);
-        template.setName("template.html");
-        String html = templateEditor.getHTML();
-        if (html != null) {
-            template.setContent(html.getBytes());
-        }
-        report.setTemplates(Collections.singletonList(template));
-        report.setDefaultTemplate(template);
-
-        BandDefinition rootDefinition = metadata.create(BandDefinition.class);
-        rootDefinition.setReport(report);
-        rootDefinition.setName("Root");
-        rootDefinition.setPosition(0);
-        rootDefinition.setDataSets(new ArrayList<>());
-        report.setBands(new HashSet<>());
-        report.getBands().add(rootDefinition);
-
-        DataSet dataSet = metadata.create(DataSet.class);
-        dataSet.setBandDefinition(rootDefinition);
-        dataSet.setType(DataSetType.GROOVY);
-        dataSet.setName("Root");
-        rootDefinition.getDataSets().add(dataSet);
-
-        rootDefinition.setReport(report);
-
-
-        report.setName(getItem().getName());
-        report.setReportType(ReportType.SIMPLE);
-        report.setIsTmp(true);
-
-        report.setXml(AppBeans.get(ReportService.class).convertToString(report));
-        return report;
     }
 
     protected void initValuesFormats() {
@@ -437,38 +395,19 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
 
     @Override
     protected boolean preCommit() {
-        getItem().setJsonBody(templateEditor.getJson().toString());
-        String html = templateEditor.getHTML();
-        updateReportOutputName();
-        if (html != null) {
-            getItem().setHtml(html);
-            report.getDefaultTemplate().setContent(html.getBytes());
-        }
-        report.setName(getItem().getName());
-        getItem().setReportXml(reportService.convertToString(report));
+        initTemplateReport();
         return super.preCommit();
     }
 
-    public void updateReportOutputName() {
-        DataSet dataSet = report.getRootBandDefinition().getDataSets().stream()
-                .filter(e -> "Root".equals(e.getName()))
-                .findFirst()
-                .orElse(null);
-        if (dataSet == null) {
-            dataSet = metadata.create(DataSet.class);
-            dataSet.setBandDefinition(report.getRootBandDefinition());
-            dataSet.setType(DataSetType.GROOVY);
-            dataSet.setName("Root");
-            report.getRootBandDefinition().getDataSets().add(dataSet);
+    private void initTemplateReport() {
+        getItem().setJsonBody(templateEditor.getJson().toString());
+        String html = templateEditor.getHTML();
+        if (html != null) {
+            getItem().setHtml(html);
         }
-        String subject = getItem().getSubject();
-        if (StringUtils.isNotBlank(subject)) {
-            subject = subject.replaceAll("\\$\\{([a-zA-Z0-9]*)}", "\"+params[\"$1\"]+\"");
-            subject = subject.replaceAll("\\$\\{([a-zA-Z0-9]*).([a-zA-Z0-9.]*)}", "\"+params[\"$1\"].$2+\"");
-            dataSet.setText("return [[\"__REPORT_FILE_NAME\": \"" + subject + "\"]]");
-        } else {
-            dataSet.setText("");
-        }
+        report = templateConverterService.convertToReport(getItem());
+        reportDs.setItem(report);
+        getItem().setReport(report);
     }
 
     public void exportJson() {
@@ -488,8 +427,9 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
 
 
     public void exportReport() {
-        getItem().setReportXml(reportService.convertToString(report));
-        AbstractEditor reportEditor = openEditor(getItem().getReport(), WindowManager.OpenType.NEW_TAB);
-        reportEditor.getDsContext().get("reportDs").setItem(getItem().getReport());
+        Report report = templateConverterService.convertToReport(getItem());
+        AbstractEditor reportEditor = openEditor(report, WindowManager.OpenType.NEW_TAB);
+        report = templateConverterService.convertToReport(getItem());
+        reportEditor.getDsContext().get("reportDs").setItem(report);
     }
 }
