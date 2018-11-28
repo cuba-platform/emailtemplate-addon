@@ -40,7 +40,11 @@ public class TemplateConverterServiceBean implements TemplateConverterService {
     }
 
     public String getHtmlReportTemplate(JsonEmailTemplate template) {
-        return template.getHtml().replaceAll("\\$\\{([a-zA-Z0-9.]*[^}]*)}", "\\$\\{Root.fields.$1\\}");
+        String html = template.getHtml();
+        if (html == null) {
+            html = "";
+        }
+        return html.replaceAll("\\$\\{([a-zA-Z0-9.]*[^}]*)}", "\\$\\{Root.fields.$1\\}");
     }
 
     private Report initReport(JsonEmailTemplate jsonTemplate) {
