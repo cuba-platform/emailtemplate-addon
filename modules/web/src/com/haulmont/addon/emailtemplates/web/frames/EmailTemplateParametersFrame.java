@@ -56,6 +56,9 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
     @Inject
     private TemplateParametersExtractorService templateParametersExtractorService;
 
+    @Inject
+    protected ParameterClassResolver parameterClassResolver;
+
     @WindowParam
     private List<TemplateReport> templateReports = new ArrayList<>();
 
@@ -65,8 +68,6 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
     protected List<ReportWithParamField> parameterComponents = new ArrayList<>();
 
     protected ParameterFieldCreator parameterFieldCreator = new ParameterFieldCreator(this);
-
-    protected ParameterClassResolver parameterClassResolver = new ParameterClassResolver();
 
     @Override
     public void init(Map<String, Object> params) {
