@@ -194,7 +194,7 @@ public class EmailTemplateSender extends AbstractWindow {
         if (!validateAll()) {
             return;
         }
-        if (subjectField.getValue() == null) {
+        if (BooleanUtils.isNotTrue(emailTemplate.getUseReportSubject()) && subjectField.getValue() == null) {
             showNotification(getMessage("emptySubject"), NotificationType.WARNING);
             return;
         }
