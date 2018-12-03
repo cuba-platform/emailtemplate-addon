@@ -77,7 +77,20 @@ public interface EmailTemplatesAPI {
     void checkParameterTypeChanged(ReportInputParameter inputParameter, ParameterValue parameterValue)
             throws ReportParameterTypeChangedException;
 
+    /**
+     * That method provides {@link EmailTemplateBuilder} fluent builder API for email template.
+     *
+     * @param emailTemplate {@link EmailTemplate} entity containing body and attachments reports
+     * @return {@link EmailTemplateBuilder} fluent template builder API
+     */
     EmailTemplateBuilder buildFromTemplate(EmailTemplate emailTemplate);
 
+    /**
+     * That method provides {@link EmailTemplateBuilder} fluent builder API by template with unique string code.
+     *
+     * @param code unique string code of email template*
+     * @return {@link EmailTemplateBuilder} fluent template builder API
+     * @throws TemplateNotFoundException If emailTemplate does not contain reports or null
+     */
     EmailTemplateBuilder buildFromTemplate(String code) throws TemplateNotFoundException;
 }
