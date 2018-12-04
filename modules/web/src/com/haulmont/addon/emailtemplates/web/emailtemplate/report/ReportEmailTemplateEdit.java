@@ -76,19 +76,23 @@ public class ReportEmailTemplateEdit extends AbstractTemplateEditor<ReportEmailT
             Report value = (Report) e.getValue();
             if (value != null) {
                 Report report = getDsContext().getDataSupplier().reload(value, "emailTemplate-view");
-                if (ReportOutputType.HTML == report.getDefaultTemplate().getReportOutputType()) {
-                    templateReport = metadata.create(TemplateReport.class);
-                    templateReport.setParameterValues(new ArrayList<>());
-                    templateReport.setReport(report);
+                if (report.getDefaultTemplate() != null) {
+                    if (ReportOutputType.HTML == report.getDefaultTemplate().getReportOutputType()) {
+                        templateReport = metadata.create(TemplateReport.class);
+                        templateReport.setParameterValues(new ArrayList<>());
+                        templateReport.setReport(report);
 
-                    getItem().setEmailBodyReport(templateReport);
-                    parametersFrame.setTemplateReport(getItem().getEmailBodyReport());
-                    parametersFrame.createComponents();
+                        getItem().setEmailBodyReport(templateReport);
+                        parametersFrame.setTemplateReport(getItem().getEmailBodyReport());
+                        parametersFrame.createComponents();
+                    } else {
+                        getItem().setEmailBodyReport(null);
+                        parametersFrame.setTemplateReport(getItem().getEmailBodyReport());
+                        parametersFrame.clearComponents();
+                        showNotification(getMessage("notification.reportIsNotHtml"), NotificationType.ERROR);
+                    }
                 } else {
-                    getItem().setEmailBodyReport(null);
-                    parametersFrame.setTemplateReport(getItem().getEmailBodyReport());
-                    parametersFrame.clearComponents();
-                    showNotification(getMessage("notification.reportIsNotHtml"), NotificationType.ERROR);
+                    showNotification(getMessage("notification.reportHasNoDefaultTemplate"), NotificationType.ERROR);
                 }
             } else {
                 getItem().setEmailBodyReport(null);
