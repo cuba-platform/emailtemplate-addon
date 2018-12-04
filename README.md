@@ -50,7 +50,7 @@ dependencies {
 
 # 3. Screens
 
-## 3.1. Email Template Browser
+## 3.1. Email templates
 
 This screen to create, edite, and/or remove email templates, open group browser. This screen is available from the application menu.
 
