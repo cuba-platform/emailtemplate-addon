@@ -13,8 +13,10 @@
                 <collectionDatasource id="parameterValuesDs"
                                       property="parameterValues"/>
             </collectionDatasource>
-            <datasource id="emailBodyReportDs" property="emailBodyReport">
-                <collectionDatasource id="bodyParameterValuesDs" property="parameterValues"/>
+            <datasource id="emailBodyReportDs"
+                        property="emailBodyReport">
+                <collectionDatasource id="bodyParameterValuesDs"
+                                      property="parameterValues"/>
             </datasource>
             <collectionDatasource id="attachedFilesDs"
                                   property="attachedFiles"/>
@@ -66,13 +68,6 @@
                             <groupBox caption="msg://defaultValues"
                                       collapsable="true"
                                       collapsed="true">
-                                <fieldGroup id="useReportSubjectGroup"
-                                            datasource="emailTemplateDs"
-                                            width="100%">
-                                    <column width="100%">
-                                        <field property="useReportSubject"/>
-                                    </column>
-                                </fieldGroup>
                                 <fieldGroup id="defaultGroup"
                                             captionAlignment="TOP"
                                             datasource="emailTemplateDs"
@@ -98,6 +93,13 @@
                                       caption="msg://content"
                                       collapsable="true"
                                       spacing="true">
+                                <fieldGroup id="useReportSubjectGroup"
+                                            datasource="emailTemplateDs"
+                                            width="100%">
+                                    <column width="100%">
+                                        <field property="useReportSubject"/>
+                                    </column>
+                                </fieldGroup>
                                 <hbox expand="emailBody"
                                       spacing="true"
                                       width="100%">
