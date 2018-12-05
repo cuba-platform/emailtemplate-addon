@@ -69,7 +69,6 @@
                                 <upload id="fileUpload"
                                         description="msg://importJson"
                                         dropZone="dropZone"
-                                        uploadButtonCaption=""
                                         uploadButtonIcon="DOWNLOAD"/>
                                 <button id="exportJson"
                                         description="msg://exportJson"
@@ -116,13 +115,13 @@
                                         <field property="from"/>
                                         <field contextHelpText="msg://separatedAddresses"
                                                property="to"
-                                               rows="3"/>
+                                               rows="2"/>
                                         <field contextHelpText="msg://separatedAddresses"
                                                property="cc"
-                                               rows="3"/>
+                                               rows="2"/>
                                         <field contextHelpText="msg://separatedAddresses"
                                                property="bcc"
-                                               rows="3"/>
+                                               rows="2"/>
                                     </column>
                                 </fieldGroup>
                             </groupBox>
