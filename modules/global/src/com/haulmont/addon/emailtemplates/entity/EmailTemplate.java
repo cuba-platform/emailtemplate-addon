@@ -13,6 +13,7 @@ import com.haulmont.reports.entity.Report;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import org.hibernate.validator.constraints.Email;
 
 @NamePattern("%s (%s)|name,code")
 @Table(name = "EMAILTEMPLATES_EMAIL_TEMPLATE")
@@ -41,6 +42,7 @@ public abstract class EmailTemplate extends StandardEntity {
     @Column(name = "CODE", nullable = false, unique = true)
     protected String code;
 
+    @Email
     @Column(name = "FROM_")
     protected String from;
 

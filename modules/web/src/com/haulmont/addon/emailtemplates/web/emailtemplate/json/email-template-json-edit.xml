@@ -114,13 +114,19 @@
                                         <field property="from"/>
                                         <field contextHelpText="msg://separatedAddresses"
                                                property="to"
-                                               rows="2"/>
+                                               rows="2">
+                                            <validator class="com.haulmont.cuba.gui.components.validators.EmailValidator"/>
+                                        </field>
                                         <field contextHelpText="msg://separatedAddresses"
                                                property="cc"
-                                               rows="2"/>
+                                               rows="2">
+                                            <validator class="com.haulmont.cuba.gui.components.validators.EmailValidator"/>
+                                        </field>
                                         <field contextHelpText="msg://separatedAddresses"
                                                property="bcc"
-                                               rows="2"/>
+                                               rows="2">
+                                            <validator class="com.haulmont.cuba.gui.components.validators.EmailValidator"/>
+                                        </field>
                                     </column>
                                 </fieldGroup>
                             </groupBox>
