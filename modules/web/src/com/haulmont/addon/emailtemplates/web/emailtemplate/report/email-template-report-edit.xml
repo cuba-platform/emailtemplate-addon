@@ -66,8 +66,7 @@
                                 </fieldGroup>
                             </groupBox>
                             <groupBox caption="msg://defaultValues"
-                                      collapsable="true"
-                                      collapsed="true">
+                                      collapsable="true">
                                 <fieldGroup id="defaultGroup"
                                             captionAlignment="TOP"
                                             datasource="emailTemplateDs"
