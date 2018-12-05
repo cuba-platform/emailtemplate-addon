@@ -8,10 +8,7 @@ import com.haulmont.addon.emailtemplates.web.frames.EmailTemplateParametersFrame
 import com.haulmont.bali.util.ParamsMap;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.global.PersistenceHelper;
-import com.haulmont.cuba.gui.components.CheckBox;
-import com.haulmont.cuba.gui.components.LookupPickerField;
-import com.haulmont.cuba.gui.components.TextField;
-import com.haulmont.cuba.gui.components.VBoxLayout;
+import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.impl.CollectionPropertyDatasourceImpl;
 import com.haulmont.reports.entity.Report;
@@ -89,9 +86,14 @@ public class ReportEmailTemplateEdit extends AbstractTemplateEditor<ReportEmailT
                         getItem().setEmailBodyReport(null);
                         parametersFrame.setTemplateReport(getItem().getEmailBodyReport());
                         parametersFrame.clearComponents();
+                        emailBody.setValue(null);
                         showNotification(getMessage("notification.reportIsNotHtml"), NotificationType.ERROR);
                     }
                 } else {
+                    getItem().setEmailBodyReport(null);
+                    parametersFrame.setTemplateReport(getItem().getEmailBodyReport());
+                    parametersFrame.clearComponents();
+                    emailBody.setValue(null);
                     showNotification(getMessage("notification.reportHasNoDefaultTemplate"), NotificationType.ERROR);
                 }
             } else {
