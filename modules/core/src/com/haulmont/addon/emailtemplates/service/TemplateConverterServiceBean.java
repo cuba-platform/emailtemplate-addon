@@ -1,6 +1,7 @@
 package com.haulmont.addon.emailtemplates.service;
 
 import com.haulmont.addon.emailtemplates.entity.JsonEmailTemplate;
+import com.haulmont.addon.emailtemplates.utils.HtmlTemplateUtils;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.reports.ReportingApi;
 import com.haulmont.reports.entity.*;
@@ -45,6 +46,8 @@ public class TemplateConverterServiceBean implements TemplateConverterService {
         String html = template.getHtml();
         if (html == null) {
             html = "";
+        } else {
+            html = HtmlTemplateUtils.prettyPrintHTML(html);
         }
         return html.replaceAll("\\$\\{([a-zA-Z0-9.]*[^}]*)}", "\\$\\{Root.fields.$1\\}");
     }

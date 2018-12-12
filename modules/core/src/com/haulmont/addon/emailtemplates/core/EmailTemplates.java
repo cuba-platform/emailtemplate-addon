@@ -50,9 +50,6 @@ public class EmailTemplates implements EmailTemplatesAPI {
         if (emailTemplate == null) {
             throw new TemplateNotFoundException(messages.getMessage(EmailTemplates.class, "nullTemplate"));
         }
-        if (bodyAndAttachmentsIsEmpty(emailTemplate)) {
-            throw new TemplateNotFoundException(messages.getMessage(EmailTemplates.class, "voidTemplate"));
-        }
         List<ReportWithParams> parameters = new ArrayList<>(params);
 
         TemplateReport bodyReport = emailTemplate.getEmailBodyReport();
@@ -119,9 +116,6 @@ public class EmailTemplates implements EmailTemplatesAPI {
             throws TemplateNotFoundException, ReportParameterTypeChangedException {
         if (emailTemplate == null) {
             throw new TemplateNotFoundException(messages.getMessage(EmailTemplates.class, "nullTemplate"));
-        }
-        if (bodyAndAttachmentsIsEmpty(emailTemplate)) {
-            throw new TemplateNotFoundException(messages.getMessage(EmailTemplates.class, "voidTemplate"));
         }
 
         List<ReportWithParams> paramList = new ArrayList<>();
@@ -231,11 +225,5 @@ public class EmailTemplates implements EmailTemplatesAPI {
             reportWithParams.setParams(paramsMap);
         }
         return reportWithParams;
-    }
-
-    protected boolean bodyAndAttachmentsIsEmpty(EmailTemplate emailTemplate) {
-        Report body = emailTemplate.getReport();
-        List<TemplateReport> attachments = emailTemplate.getAttachedTemplateReports();
-        return body == null && attachments.isEmpty();
     }
 }

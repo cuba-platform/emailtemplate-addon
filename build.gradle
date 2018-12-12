@@ -47,12 +47,15 @@ cuba {
     tomcat {
         dir = "$project.rootDir/deploy/tomcat"
     }
+    ide {
+        vcs = 'Git'
+    }
 }
 
 dependencies {
     appComponent("com.haulmont.cuba:cuba-global:$cubaVersion")
     appComponent("com.haulmont.reports:reports-global:$cubaVersion")
-    appComponent("com.haulmont.addon.grapesjs:grapejs-global:0.1.3")
+    appComponent("com.haulmont.addon.grapesjs:grapejs-global:0.1-SNAPSHOT")
 
 }
 
@@ -69,6 +72,7 @@ configure([globalModule, coreModule, webModule]) {
     apply(plugin: 'checkstyle')
 
     dependencies {
+        compile('net.sf.jtidy:jtidy:r938')
         testCompile('junit:junit:4.12')
         testCompile('org.spockframework:spock-core:1.1-groovy-2.4')
     }
@@ -206,8 +210,6 @@ configure(webModule) {
     dependencies {
         provided(servletApi)
         compile(globalModule)
-        compile('net.sf.jtidy:jtidy:r938')
-
     }
     
     task webArchive(type: Zip) {

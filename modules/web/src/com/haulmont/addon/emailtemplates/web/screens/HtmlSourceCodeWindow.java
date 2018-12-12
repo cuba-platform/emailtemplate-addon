@@ -1,5 +1,6 @@
 package com.haulmont.addon.emailtemplates.web.screens;
 
+import com.haulmont.addon.emailtemplates.utils.HtmlTemplateUtils;
 import com.haulmont.cuba.gui.WindowParam;
 import com.haulmont.cuba.gui.components.AbstractWindow;
 import com.haulmont.cuba.gui.components.SourceCodeEditor;
@@ -18,6 +19,6 @@ public class HtmlSourceCodeWindow extends AbstractWindow {
     @Override
     public void init(Map<String, Object> params) {
         super.init(params);
-        sourceCode.setValue(html);
+        sourceCode.setValue(HtmlTemplateUtils.prettyPrintHTML(html));
     }
 }

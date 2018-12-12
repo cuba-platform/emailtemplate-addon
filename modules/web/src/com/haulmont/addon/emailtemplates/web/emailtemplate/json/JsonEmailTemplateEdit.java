@@ -26,15 +26,10 @@ import com.haulmont.reports.entity.Report;
 import com.haulmont.reports.entity.ReportInputParameter;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.w3c.dom.Document;
-import org.w3c.tidy.Tidy;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -106,7 +101,7 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
 
         templateEditor.addValueChangeListener(e -> {
             String value = (String) e.getValue();
-            getItem().setHtml(prettyPrintHTML(value));
+            getItem().setHtml(value);
             createParameters();
         });
 
@@ -127,22 +122,7 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
         });
     }
 
-    private String prettyPrintHTML(String rawHTML) {
-        Tidy tidy = new Tidy();
-        tidy.setXHTML(true);
-        tidy.setIndentContent(true);
-        tidy.setPrintBodyOnly(true);
-        tidy.setTidyMark(false);
 
-        // HTML to DOM
-        Document htmlDOM = tidy.parseDOM(new ByteArrayInputStream(rawHTML.getBytes()), null);
-
-        // Pretty Print
-        OutputStream out = new ByteArrayOutputStream();
-        tidy.pprint(htmlDOM, out);
-
-        return out.toString();
-    }
 
     private void createParameters() {
         List<ReportInputParameter> newParameters = new ArrayList<>();
