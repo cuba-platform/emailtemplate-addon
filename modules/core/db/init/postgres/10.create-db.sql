@@ -25,7 +25,6 @@ create table EMAILTEMPLATES_EMAIL_TEMPLATE (
     EMAIL_BODY_REPORT_ID uuid,
     --
     -- from emailtemplates$JsonEmailTemplate
-    JSON_TEMPLATE text,
     HTML text,
     REPORT_XML text,
     --

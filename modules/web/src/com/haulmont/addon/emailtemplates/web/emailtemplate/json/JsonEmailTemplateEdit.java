@@ -3,7 +3,7 @@ package com.haulmont.addon.emailtemplates.web.emailtemplate.json;
 import com.haulmont.addon.emailtemplates.entity.JsonEmailTemplate;
 import com.haulmont.addon.emailtemplates.service.TemplateConverterService;
 import com.haulmont.addon.emailtemplates.web.emailtemplate.AbstractTemplateEditor;
-import com.haulmont.addon.emailtemplates.web.gui.components.UnlayerTemplateEditor;
+import com.haulmont.addon.grapesjs.web.gui.components.GrapesJsHtmlEditor;
 import com.haulmont.bali.util.ParamsMap;
 import com.haulmont.chile.core.model.MetaClass;
 import com.haulmont.chile.core.model.MetaPropertyPath;
@@ -26,10 +26,15 @@ import com.haulmont.reports.entity.Report;
 import com.haulmont.reports.entity.ReportInputParameter;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.w3c.dom.Document;
+import org.w3c.tidy.Tidy;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -42,7 +47,7 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
     private static final Pattern ENTITY_FIELD_PATTERN = Pattern.compile("\\$\\{([a-zA-Z0-9]+)\\.([a-zA-Z0-9]*)[^}]*}");
 
     @Inject
-    private UnlayerTemplateEditor templateEditor;
+    private GrapesJsHtmlEditor templateEditor;
 
     @Inject
     protected FileUploadField fileUpload;
@@ -97,12 +102,11 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
 
         reportDs.setItem(report);
 
-        templateEditor.setJson(getItem().getJsonBody());
+        templateEditor.setValue(getItem().getHtml());
 
-        templateEditor.setListener(json -> {
-            getItem().setJsonBody(json.toJson());
-            String html = templateEditor.getHTML();
-            getItem().setHtml(html);
+        templateEditor.addValueChangeListener(e -> {
+            String value = (String) e.getValue();
+            getItem().setHtml(prettyPrintHTML(value));
             createParameters();
         });
 
@@ -114,13 +118,30 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
             try {
                 byte[] bytes = FileUtils.readFileToByteArray(file);
                 fileUploadingApi.deleteFile(fileID);
-                getItem().setJsonBody(new String(bytes, StandardCharsets.UTF_8));
-                templateEditor.setJson(getItem().getJsonBody());
+                getItem().setHtml(new String(bytes, StandardCharsets.UTF_8));
+                templateEditor.setValue(getItem().getHtml());
                 createParameters();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         });
+    }
+
+    private String prettyPrintHTML(String rawHTML) {
+        Tidy tidy = new Tidy();
+        tidy.setXHTML(true);
+        tidy.setIndentContent(true);
+        tidy.setPrintBodyOnly(true);
+        tidy.setTidyMark(false);
+
+        // HTML to DOM
+        Document htmlDOM = tidy.parseDOM(new ByteArrayInputStream(rawHTML.getBytes()), null);
+
+        // Pretty Print
+        OutputStream out = new ByteArrayOutputStream();
+        tidy.pprint(htmlDOM, out);
+
+        return out.toString();
     }
 
     private void createParameters() {
@@ -140,7 +161,7 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
 
     private List<ReportInputParameter> createSimpleParameters() {
         List<ReportInputParameter> newParameters = new ArrayList<>();
-        extractParams(newParameters, getItem().getJsonBody());
+        extractParams(newParameters, getItem().getHtml());
         extractParams(newParameters, getItem().getSubject());
         return newParameters;
     }
@@ -163,7 +184,7 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
     private List<ReportInputParameter> createEntityParameters() {
         List<ReportInputParameter> newParameters = new ArrayList<>();
         Map<String, List<String>> entityWithProperties = new HashMap<>();
-        extractEntityParams(entityWithProperties, getItem().getJsonBody());
+        extractEntityParams(entityWithProperties, getItem().getHtml());
         extractEntityParams(entityWithProperties, getItem().getSubject());
         for (String entityAlias : entityWithProperties.keySet()) {
             ReportInputParameter parameter = getParameter(entityAlias);
@@ -368,8 +389,8 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
     }
 
     private void refreshTemplateParameters() {
-        templateEditor.setParameters(parametersDs.getItems().stream()
-                .collect(Collectors.toMap(ReportInputParameter::getName, ReportInputParameter::getAlias)));
+//        templateEditor.setParameters(parametersDs.getItems().stream()
+//                .collect(Collectors.toMap(ReportInputParameter::getName, ReportInputParameter::getAlias)));
     }
 
     protected void orderParameters() {
@@ -400,30 +421,21 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
     }
 
     private void initTemplateReport() {
-        getItem().setJsonBody(templateEditor.getJson().toString());
-        String html = templateEditor.getHTML();
-        if (html != null) {
-            getItem().setHtml(html);
-        }
+        getItem().setHtml(templateEditor.getValue());
         getItem().setReport(report);
         report = templateConverterService.convertToReport(getItem());
         reportDs.setItem(report);
         getItem().setReport(report);
     }
 
-    public void exportJson() {
-        String name = getItem().getName() != null ? getItem().getName() : "template";
-        exportDisplay.show(new ByteArrayDataProvider(templateEditor.getJson().toString().getBytes()), name + ".json");
-
-    }
-
     public void exportHtml() {
-        openWindow("emailtemplates$htmlSourceCode", WindowManager.OpenType.DIALOG, ParamsMap.of("html", templateEditor.getHTML()));
+        openWindow("emailtemplates$htmlSourceCode", WindowManager.OpenType.DIALOG, ParamsMap.of("html", getItem().getHtml()));
     }
 
     public void viewHtml() {
         String name = getItem().getName() != null ? getItem().getName() : "template";
-        exportDisplay.show(new ByteArrayDataProvider(templateEditor.getHTML().getBytes()), name + ".html");
+        String html = getItem().getHtml() != null ? getItem().getHtml() : "";
+        exportDisplay.show(new ByteArrayDataProvider(html.getBytes()), name + ".html");
     }
 
 

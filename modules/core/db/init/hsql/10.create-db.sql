@@ -10,6 +10,7 @@ create table EMAILTEMPLATES_EMAIL_TEMPLATE (
     DELETED_BY varchar(50),
     DTYPE varchar(100),
     --
+    USE_REPORT_SUBJECT boolean,
     NAME varchar(255) not null,
     GROUP_ID varchar(36),
     TYPE_ varchar(50) not null,
@@ -21,11 +22,9 @@ create table EMAILTEMPLATES_EMAIL_TEMPLATE (
     SUBJECT varchar(255),
     --
     -- from emailtemplates$ReportEmailTemplate
-    USE_REPORT_SUBJECT boolean,
     EMAIL_BODY_REPORT_ID varchar(36),
     --
     -- from emailtemplates$JsonEmailTemplate
-    JSON_TEMPLATE longvarchar,
     HTML longvarchar,
     REPORT_XML longvarchar,
     --

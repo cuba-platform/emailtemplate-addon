@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <app-component xmlns="http://schemas.haulmont.com/cuba/app-component.xsd"
-               dependsOn="com.haulmont.reports, com.haulmont.cuba">
+               dependsOn="com.haulmont.reports, com.haulmont.cuba, com.haulmont.addon.grapesjs">
     <module blocks="*"
             name="global">
         <artifact appJar="true"
@@ -35,6 +35,8 @@
                   configuration="webcontent"
                   ext="zip"
                   name="yet-web"/>
+        <artifact configuration="themes"
+                  name="yet-web-themes"/>
         <property name="cuba.springContextConfig"
                   value="+com/haulmont/addon/emailtemplates/web-spring.xml"/>
         <property name="cuba.dispatcherSpringContextConfig"
@@ -47,5 +49,8 @@
                   value="+com/haulmont/addon/emailtemplates/web-permissions.xml"/>
         <property name="cuba.mainMessagePack"
                   value="+com.haulmont.addon.emailtemplates.web"/>
+    </module>
+    <module name="web-themes">
+        <artifact name="yet-web-themes"/>
     </module>
 </app-component>

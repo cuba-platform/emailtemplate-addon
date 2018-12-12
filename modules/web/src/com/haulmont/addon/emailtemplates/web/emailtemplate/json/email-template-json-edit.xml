@@ -4,7 +4,7 @@
         class="com.haulmont.addon.emailtemplates.web.emailtemplate.json.JsonEmailTemplateEdit"
         datasource="emailTemplateDs"
         messagesPack="com.haulmont.addon.emailtemplates.web.emailtemplate"
-        xmlns:et="http://schemas.haulmont.com/emailtemplates/0.1/ui-component.xsd">
+        xmlns:et="http://schemas.haulmont.com/grapesjs/0.1/ui-component.xsd">
     <dsContext>
         <datasource id="emailTemplateDs"
                     class="com.haulmont.addon.emailtemplates.entity.JsonEmailTemplate"
@@ -67,13 +67,10 @@
                                   stylename="c-edit-window-actions"
                                   width="100%">
                                 <upload id="fileUpload"
-                                        description="msg://importJson"
+                                        description="msg://importHtml"
                                         dropZone="dropZone"
+                                        uploadButtonCaption=""
                                         uploadButtonIcon="DOWNLOAD"/>
-                                <button id="exportJson"
-                                        description="msg://exportJson"
-                                        icon="UPLOAD"
-                                        invoke="exportJson"/>
                                 <button id="exportHtml"
                                         description="msg://exportHtml"
                                         icon="CODE"
@@ -132,14 +129,13 @@
                             </groupBox>
                         </vbox>
                     </scrollBox>
-                    <et:unlayerTemplateEditor id="templateEditor"
-                                              height="100%"/>
+                    <et:grapesJsHtmlEditor id="templateEditor"
+                                           height="100%"/>
                 </split>
             </tab>
             <tab id="parametersAndFormatsTab"
                  caption="msg://parametersAndFormatsTab">
                 <hbox height="100%"
-                      margin="false,true,true,true"
                       spacing="true"
                       width="100%">
                     <frame id="parametersFrame"

@@ -17,10 +17,6 @@ public class JsonEmailTemplate extends EmailTemplate {
     private static final long serialVersionUID = 4012242076593058570L;
 
     @Lob
-    @Column(name = "JSON_TEMPLATE")
-    protected String jsonBody;
-
-    @Lob
     @Column(name = "HTML")
     protected String html;
 
@@ -54,14 +50,6 @@ public class JsonEmailTemplate extends EmailTemplate {
     public JsonEmailTemplate() {
         setType(TemplateType.JSON);
         setUseReportSubject(true);
-    }
-
-    public String getJsonBody() {
-        return jsonBody;
-    }
-
-    public void setJsonBody(String jsonBody) {
-        this.jsonBody = jsonBody;
     }
 
     @Override

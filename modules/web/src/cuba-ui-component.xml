@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<components xmlns="http://schemas.haulmont.com/cuba/components.xsd">
-    <component>
-        <name>unlayerTemplateEditor</name>
-        <componentLoader>com.haulmont.addon.emailtemplates.web.gui.xml.layout.loaders.UnlayerTemplateEditorLoader</componentLoader>
-        <class>com.haulmont.addon.emailtemplates.web.gui.components.WebUnlayerTemplateEditor</class>
-    </component>
-</components>
