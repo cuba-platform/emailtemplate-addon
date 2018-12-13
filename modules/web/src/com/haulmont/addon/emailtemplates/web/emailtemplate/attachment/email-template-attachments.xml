@@ -30,8 +30,7 @@
                         </buttonsPanel>
                     </table>
                     <vbox spacing="true" width="500px" height="100%" expand="parametersBox">
-                        <buttonsPanel/>
-                        <groupBox id="parametersBox" caption="msg://defaultValues">
+                        <groupBox id="parametersBox" caption="msg://defaultParameters">
                             <scrollBox height="100%" spacing="true">
                                 <fieldGroup id="attachmentGroup"
                                             datasource="attachedReportsDs"
@@ -52,12 +51,15 @@
                 <table id="filesTable" width="100%"
                        multiselect="true">
                     <actions>
-                        <action id="create" openType="DIALOG"/>
+                        <action id="create" caption="msg://upload" openType="DIALOG"/>
                         <action id="edit" openType="DIALOG"/>
                         <action id="remove"/>
                     </actions>
                     <columns>
                         <column id="name"/>
+                        <column id="createDate"/>
+                        <column id="extension"/>
+                        <column id="size"/>
                     </columns>
                     <rows datasource="attachedFilesDs"/>
                     <rowsCount/>

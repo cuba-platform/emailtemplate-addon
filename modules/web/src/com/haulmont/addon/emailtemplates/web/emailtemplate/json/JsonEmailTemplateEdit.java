@@ -25,6 +25,7 @@ import com.haulmont.reports.entity.ParameterType;
 import com.haulmont.reports.entity.Report;
 import com.haulmont.reports.entity.ReportInputParameter;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 
 import javax.inject.Inject;
@@ -79,6 +80,9 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
     @Named("defaultGroup.subject")
     private TextField subjectField;
 
+    @Named("parametersFrame.validationScriptGroupBox")
+    protected GroupBoxLayout validationScriptGroupBox;
+
     @Inject
     protected CollectionDatasource.Sortable<ReportInputParameter, UUID> parametersDs;
 
@@ -120,6 +124,8 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
                 throw new RuntimeException(e);
             }
         });
+
+        initValidationScriptGroupBoxCaption();
     }
 
 
@@ -366,6 +372,26 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
         parametersDs.addCollectionChangeListener(e -> {
             refreshTemplateParameters();
         });
+    }
+
+    protected void initValidationScriptGroupBoxCaption() {
+        setValidationScriptGroupBoxCaption(report.getValidationOn());
+
+        reportDs.addItemPropertyChangeListener(e -> {
+            boolean validationOnChanged = e.getProperty().equalsIgnoreCase("validationOn");
+
+            if (validationOnChanged) {
+                setValidationScriptGroupBoxCaption(e.getItem().getValidationOn());
+            }
+        });
+    }
+
+    protected void setValidationScriptGroupBoxCaption(Boolean onOffFlag) {
+        if (BooleanUtils.isTrue(onOffFlag)) {
+            validationScriptGroupBox.setCaption(getMessage("report.validationScriptOn"));
+        } else {
+            validationScriptGroupBox.setCaption(getMessage("report.validationScriptOff"));
+        }
     }
 
     private void refreshTemplateParameters() {
