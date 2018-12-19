@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
         caption="msg://editorCaption"
-        class="com.haulmont.addon.emailtemplates.web.emailtemplate.json.JsonEmailTemplateEdit"
         datasource="emailTemplateDs"
         messagesPack="com.haulmont.addon.emailtemplates.web.emailtemplate"
         xmlns:et="http://schemas.haulmont.com/grapesjs/0.1/ui-component.xsd">

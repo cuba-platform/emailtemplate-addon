@@ -1,6 +1,10 @@
 package com.haulmont.addon.emailtemplates.web.templategroup;
 
-import com.haulmont.cuba.gui.components.AbstractLookup;
+import com.haulmont.cuba.gui.screen.*;
 
-public class TemplateGroupBrowse extends AbstractLookup {
+@UiController("emailtemplates$TemplateGroup.browse")
+@UiDescriptor("template-group-browse.xml")
+@LookupComponent("templateGroupsTable")
+@LoadDataBeforeShow
+public class TemplateGroupBrowse extends StandardLookup {
 }

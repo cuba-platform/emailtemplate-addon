@@ -2,13 +2,17 @@ package com.haulmont.addon.emailtemplates.web.screens;
 
 import com.haulmont.addon.emailtemplates.utils.HtmlTemplateUtils;
 import com.haulmont.cuba.gui.WindowParam;
-import com.haulmont.cuba.gui.components.AbstractWindow;
 import com.haulmont.cuba.gui.components.SourceCodeEditor;
+import com.haulmont.cuba.gui.screen.Screen;
+import com.haulmont.cuba.gui.screen.Subscribe;
+import com.haulmont.cuba.gui.screen.UiController;
+import com.haulmont.cuba.gui.screen.UiDescriptor;
 
 import javax.inject.Inject;
-import java.util.Map;
 
-public class HtmlSourceCodeWindow extends AbstractWindow {
+@UiController("emailtemplates$htmlSourceCode")
+@UiDescriptor("html-source-code-window.xml")
+public class HtmlSourceCodeWindow extends Screen {
 
     @WindowParam
     protected String html;
@@ -16,9 +20,8 @@ public class HtmlSourceCodeWindow extends AbstractWindow {
     @Inject
     private SourceCodeEditor sourceCode;
 
-    @Override
-    public void init(Map<String, Object> params) {
-        super.init(params);
+    @Subscribe
+    protected void onInit(InitEvent event) {
         sourceCode.setValue(HtmlTemplateUtils.prettyPrintHTML(html));
     }
 }

@@ -9,6 +9,9 @@ import com.haulmont.chile.core.model.MetaClass;
 import com.haulmont.chile.core.model.MetaPropertyPath;
 import com.haulmont.chile.core.model.MetadataObject;
 import com.haulmont.cuba.core.global.Metadata;
+import com.haulmont.cuba.gui.Notifications;
+import com.haulmont.cuba.gui.ScreenBuilders;
+import com.haulmont.cuba.gui.Screens;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.actions.BaseAction;
@@ -20,13 +23,15 @@ import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.impl.DatasourceImplementation;
 import com.haulmont.cuba.gui.export.ByteArrayDataProvider;
 import com.haulmont.cuba.gui.export.ExportDisplay;
+import com.haulmont.cuba.gui.model.DataContext;
+import com.haulmont.cuba.gui.screen.*;
 import com.haulmont.cuba.gui.upload.FileUploadingAPI;
 import com.haulmont.reports.entity.ParameterType;
 import com.haulmont.reports.entity.Report;
 import com.haulmont.reports.entity.ReportInputParameter;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -37,6 +42,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+@UiController("emailtemplates$JsonEmailTemplate.edit")
+@UiDescriptor("email-template-json-edit.xml")
+@EditedEntityContainer("emailTemplateDs")
+@LoadDataBeforeShow
 public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTemplate> {
 
     private static final Pattern SIMPLE_FIELD_PATTERN = Pattern.compile("\\$\\{([a-zA-Z0-9]+)[^}]*}");
@@ -65,6 +74,18 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
     @Inject
     private Metadata metadata;
 
+    @Inject
+    private Notifications notifications;
+
+    @Inject
+    private MessageBundle messageBundle;
+
+    @Inject
+    private Screens screens;
+
+    @Inject
+    private ScreenBuilders screenBuilders;
+
     @Named("parametersFrame.inputParametersTable")
     protected Table parametersTable;
 
@@ -86,26 +107,23 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
     @Inject
     protected CollectionDatasource.Sortable<ReportInputParameter, UUID> parametersDs;
 
-    @Override
-    public void init(Map<String, Object> params) {
-        super.init(params);
+    @Subscribe
+    protected void onInit(InitEvent event) {
         initParameters();
         initValuesFormats();
     }
 
-    @Override
-    protected void postInit() {
-        super.postInit();
-
-        report = templateConverterService.convertToReport(getItem());
+    @Subscribe
+    protected void onAfterInit(AfterInitEvent event) {
+        report = templateConverterService.convertToReport(getEditedEntity());
 
         reportDs.setItem(report);
 
-        templateEditor.setValue(getItem().getHtml());
+        templateEditor.setValue(getEditedEntity().getHtml());
 
         templateEditor.addValueChangeListener(e -> {
             String value = (String) e.getValue();
-            getItem().setHtml(value);
+            getEditedEntity().setHtml(value);
             createParameters();
         });
 
@@ -117,8 +135,8 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
             try {
                 byte[] bytes = FileUtils.readFileToByteArray(file);
                 fileUploadingApi.deleteFile(fileID);
-                getItem().setHtml(new String(bytes, StandardCharsets.UTF_8));
-                templateEditor.setValue(getItem().getHtml());
+                getEditedEntity().setHtml(new String(bytes, StandardCharsets.UTF_8));
+                templateEditor.setValue(getEditedEntity().getHtml());
                 createParameters();
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -128,7 +146,10 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
         initValidationScriptGroupBoxCaption();
     }
 
-
+    @Subscribe(target = Target.DATA_CONTEXT)
+    protected void onPreCommit1(DataContext.PreCommitEvent event) {
+        initTemplateReport();
+    }
 
     private void createParameters() {
         List<ReportInputParameter> newParameters = new ArrayList<>();
@@ -141,14 +162,16 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
             List<String> newParamNames = newParameters.stream()
                     .map(ReportInputParameter::getName)
                     .collect(Collectors.toList());
-            showNotification(formatMessage("newParametersCreated", StringUtils.join(newParamNames, ", ")), NotificationType.TRAY);
+            notifications.create(Notifications.NotificationType.TRAY)
+                    .withDescription(messageBundle.formatMessage("newParametersCreated", StringUtils.join(newParamNames, ", ")))
+                    .show();
         }
     }
 
     private List<ReportInputParameter> createSimpleParameters() {
         List<ReportInputParameter> newParameters = new ArrayList<>();
-        extractParams(newParameters, getItem().getHtml());
-        extractParams(newParameters, getItem().getSubject());
+        extractParams(newParameters, getEditedEntity().getHtml());
+        extractParams(newParameters, getEditedEntity().getSubject());
         return newParameters;
     }
 
@@ -170,8 +193,8 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
     private List<ReportInputParameter> createEntityParameters() {
         List<ReportInputParameter> newParameters = new ArrayList<>();
         Map<String, List<String>> entityWithProperties = new HashMap<>();
-        extractEntityParams(entityWithProperties, getItem().getHtml());
-        extractEntityParams(entityWithProperties, getItem().getSubject());
+        extractEntityParams(entityWithProperties, getEditedEntity().getHtml());
+        extractEntityParams(entityWithProperties, getEditedEntity().getSubject());
         for (String entityAlias : entityWithProperties.keySet()) {
             ReportInputParameter parameter = getParameter(entityAlias);
             if (parameter == null) {
@@ -286,7 +309,7 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
         paramUpButton.setAction(new BaseAction("generalFrame.up") {
             @Override
             public void actionPerform(Component component) {
-                ReportInputParameter parameter = (ReportInputParameter) target.getSingleSelected();
+                ReportInputParameter parameter = (ReportInputParameter) parametersTable.getSingleSelected();
                 if (parameter != null) {
                     List<ReportInputParameter> inputParameters = report.getInputParameters();
                     int index = parameter.getPosition();
@@ -310,8 +333,8 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
 
             @Override
             protected boolean isApplicable() {
-                if (target != null) {
-                    ReportInputParameter item = (ReportInputParameter) target.getSingleSelected();
+                if (getWindow().getFrame() != null) {
+                    ReportInputParameter item = (ReportInputParameter) parametersTable.getSingleSelected();
                     if (item != null && parametersDs.getItem() == item) {
                         return item.getPosition() > 0;
                     }
@@ -324,7 +347,7 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
         paramDownButton.setAction(new BaseAction("generalFrame.down") {
             @Override
             public void actionPerform(Component component) {
-                ReportInputParameter parameter = (ReportInputParameter) target.getSingleSelected();
+                ReportInputParameter parameter = (ReportInputParameter) parametersTable.getSingleSelected();
                 if (parameter != null) {
                     List<ReportInputParameter> inputParameters = report.getInputParameters();
                     int index = parameter.getPosition();
@@ -348,8 +371,8 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
 
             @Override
             protected boolean isApplicable() {
-                if (target != null) {
-                    ReportInputParameter item = (ReportInputParameter) target.getSingleSelected();
+                if (getWindow().getFrame() != null) {
+                    ReportInputParameter item = (ReportInputParameter) parametersTable.getSingleSelected();
                     if (item != null && parametersDs.getItem() == item) {
                         return item.getPosition() < parametersDs.size() - 1;
                     }
@@ -388,9 +411,9 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
 
     protected void setValidationScriptGroupBoxCaption(Boolean onOffFlag) {
         if (BooleanUtils.isTrue(onOffFlag)) {
-            validationScriptGroupBox.setCaption(getMessage("report.validationScriptOn"));
+            validationScriptGroupBox.setCaption(messageBundle.getMessage("report.validationScriptOn"));
         } else {
-            validationScriptGroupBox.setCaption(getMessage("report.validationScriptOff"));
+            validationScriptGroupBox.setCaption(messageBundle.getMessage("report.validationScriptOff"));
         }
     }
 
@@ -420,36 +443,34 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
         parametersDs.sort(new CollectionDatasource.Sortable.SortInfo[]{sortInfo});
     }
 
-    @Override
-    protected boolean preCommit() {
-        initTemplateReport();
-        return super.preCommit();
-    }
-
     private void initTemplateReport() {
-        getItem().setHtml(templateEditor.getValue());
-        getItem().setReport(report);
-        report = templateConverterService.convertToReport(getItem());
+        getEditedEntity().setHtml(templateEditor.getValue());
+        getEditedEntity().setReport(report);
+        report = templateConverterService.convertToReport(getEditedEntity());
         reportDs.setItem(report);
-        getItem().setReport(report);
+        getEditedEntity().setReport(report);
     }
 
     public void exportHtml() {
-        openWindow("emailtemplates$htmlSourceCode", WindowManager.OpenType.DIALOG, ParamsMap.of("html", getItem().getHtml()));
+        screens.create("emailtemplates$htmlSourceCode",
+                        OpenMode.DIALOG, new
+                        MapScreenOptions(ParamsMap.of("html", getEditedEntity().getHtml())))
+                .show();
     }
 
     public void viewHtml() {
-        String name = getItem().getName() != null ? getItem().getName() : "template";
-        String html = getItem().getHtml() != null ? getItem().getHtml() : "";
+        String name = getEditedEntity().getName() != null ? getEditedEntity().getName() : "template";
+        String html = getEditedEntity().getHtml() != null ? getEditedEntity().getHtml() : "";
         exportDisplay.show(new ByteArrayDataProvider(html.getBytes()), name + ".html");
     }
 
 
     public void exportReport() {
-        getItem().setReport(report);
-        Report report = templateConverterService.convertToReport(getItem());
+        getEditedEntity().setReport(report);
+        Report report = templateConverterService.convertToReport(getEditedEntity());
+        //todo
         AbstractEditor reportEditor = openEditor(report, WindowManager.OpenType.NEW_TAB);
-        report = templateConverterService.convertToReport(getItem());
+        report = templateConverterService.convertToReport(getEditedEntity());
         reportEditor.getDsContext().get("reportDs").setItem(report);
     }
 }

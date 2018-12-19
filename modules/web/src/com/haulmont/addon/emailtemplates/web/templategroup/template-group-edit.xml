@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
         caption="msg://editorCaption"
-        class="com.haulmont.addon.emailtemplates.web.templategroup.TemplateGroupEdit"
         datasource="templateGroupDs"
         focusComponent="fieldGroup"
         messagesPack="com.haulmont.addon.emailtemplates.web.templategroup">

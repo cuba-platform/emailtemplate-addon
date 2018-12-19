@@ -14,19 +14,25 @@ import com.haulmont.cuba.core.app.EmailService;
 import com.haulmont.cuba.core.global.EmailException;
 import com.haulmont.cuba.core.global.EmailInfo;
 import com.haulmont.cuba.core.global.Metadata;
+import com.haulmont.cuba.gui.Fragments;
+import com.haulmont.cuba.gui.Notifications;
 import com.haulmont.cuba.gui.WindowParam;
-import com.haulmont.cuba.gui.components.*;
+import com.haulmont.cuba.gui.components.GroupBoxLayout;
+import com.haulmont.cuba.gui.components.HasValue;
+import com.haulmont.cuba.gui.components.TextField;
+import com.haulmont.cuba.gui.components.VBoxLayout;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.export.ByteArrayDataProvider;
 import com.haulmont.cuba.gui.export.ExportDisplay;
+import com.haulmont.cuba.gui.screen.*;
 import com.haulmont.reports.app.service.ReportService;
 import com.haulmont.reports.entity.ParameterType;
 import com.haulmont.reports.entity.ReportInputParameter;
 import com.haulmont.reports.exception.ReportParametersValidationException;
 import com.haulmont.reports.gui.ReportParameterValidator;
 import com.haulmont.reports.gui.report.run.ParameterClassResolver;
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -34,8 +40,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 
-public class EmailTemplateSender extends AbstractWindow {
+@UiController("emailtemplates$EmailTemplate.send")
+@UiDescriptor("email-template-send.xml")
+public class EmailTemplateSender extends Screen {
 
     @WindowParam
     private EmailTemplate emailTemplate;
@@ -45,10 +54,12 @@ public class EmailTemplateSender extends AbstractWindow {
 
     @Inject
     private VBoxLayout defaultBodyParameters;
+
     protected EmailTemplateParametersFrame defaultBodyParametersFrame;
 
     @Inject
     private VBoxLayout attachmentParameters;
+
     protected EmailTemplateParametersFrame attachmentParametersFrame;
 
     @Inject
@@ -71,6 +82,15 @@ public class EmailTemplateSender extends AbstractWindow {
     private Metadata metadata;
 
     @Inject
+    private Fragments fragments;
+
+    @Inject
+    private Notifications notifications;
+
+    @Inject
+    private MessageBundle messageBundle;
+
+    @Inject
     protected ReportService reportService;
 
     @Inject
@@ -79,32 +99,38 @@ public class EmailTemplateSender extends AbstractWindow {
     @Named("defaultGroup.subject")
     private TextField subjectField;
 
-    @Override
-    public void init(Map<String, Object> params) {
-        super.init(params);
+    @Subscribe
+    protected void onInit(InitEvent event) {
         if (emailTemplate == null) {
             throw new IllegalStateException("'emailTemplate' parameter is required");
         }
         emailTemplateDs.setItem(emailTemplate);
 
-        updateDefaultTemplateParameters(params);
+        updateDefaultTemplateParameters(((MapScreenOptions) event.getOptions()).getParams());
 
-        defaultBodyParametersFrame = (EmailTemplateParametersFrame) openFrame(defaultBodyParameters, "emailtemplates$parametersFrame",
-                ParamsMap.of(EmailTemplateParametersFrame.TEMPLATE_REPORT, emailTemplate.getEmailBodyReport(),
-                        EmailTemplateParametersFrame.HIDE_REPORT_CAPTION, true));
-        defaultBodyParametersFrame.createComponents();
+        defaultBodyParametersFrame = (EmailTemplateParametersFrame) fragments.create(this,
+                "emailtemplates$parametersFrame",
+                new MapScreenOptions(ParamsMap.of(EmailTemplateParametersFrame.TEMPLATE_REPORT, emailTemplate.getEmailBodyReport(),
+                        EmailTemplateParametersFrame.HIDE_REPORT_CAPTION, true)))
+                .init();
+        defaultBodyParameters.add(defaultBodyParametersFrame.getFragment());
 
         if (!emailTemplate.getAttachedTemplateReports().isEmpty()) {
-            attachmentParametersFrame = (EmailTemplateParametersFrame) openFrame(attachmentParameters, "emailtemplates$parametersFrame",
-                    ParamsMap.of(EmailTemplateParametersFrame.TEMPLATE_REPORTS, emailTemplate.getAttachedTemplateReports()));
+            attachmentParametersFrame = (EmailTemplateParametersFrame) fragments.create(this,
+                    "emailtemplates$parametersFrame",
+                    new MapScreenOptions(ParamsMap.of(EmailTemplateParametersFrame.TEMPLATE_REPORTS, emailTemplate.getAttachedTemplateReports())))
+                    .init();
             attachmentParametersFrame.createComponents();
+            attachmentParameters.add(attachmentParametersFrame.getFragment());
         } else {
             attachmentGroupBox.setVisible(false);
         }
-
-        subjectField.addValueChangeListener(e -> {
-            if (!Objects.equals(e.getPrevValue(), e.getValue())) {
-                emailTemplate.setUseReportSubject(false);
+        subjectField.addValueChangeListener(new Consumer<HasValue.ValueChangeEvent>() {
+            @Override
+            public void accept(HasValue.ValueChangeEvent valueChangeEvent) {
+                if (!Objects.equals(valueChangeEvent.getPrevValue(), valueChangeEvent.getValue())) {
+                    emailTemplate.setUseReportSubject(false);
+                }
             }
         });
     }
@@ -140,10 +166,10 @@ public class EmailTemplateSender extends AbstractWindow {
                     }
                 }
             }
-
         }
     }
 
+    //todo
     @Override
     public boolean validateAll() {
         return super.validateAll() && crossValidateParameters();
@@ -168,8 +194,8 @@ public class EmailTemplateSender extends AbstractWindow {
                         reportParameterValidator.crossValidateParameters(reportWithParams.getReport(),
                                 reportWithParams.getParams());
                     } catch (ReportParametersValidationException e) {
-                        NotificationType notificationType = NotificationType.valueOf(clientConfig.getValidationNotificationType());
-                        showNotification(messages.getMainMessage("validationFail.caption"), e.getMessage(), notificationType);
+                        Notifications.NotificationType notificationType = Notifications.NotificationType.valueOf(clientConfig.getValidationNotificationType());
+                        notifications.create(notificationType).withCaption(messageBundle.getMessage("validationFail.caption")).withDescription(e.getMessage()).show();
                         isValid = false;
                     }
                 }
@@ -179,7 +205,7 @@ public class EmailTemplateSender extends AbstractWindow {
     }
 
     public void onCancelButtonClick() {
-        close(Window.CLOSE_ACTION_ID);
+        close(WINDOW_CLOSE_ACTION);
     }
 
     public void onTestButtonClick() throws TemplateNotFoundException, ReportParameterTypeChangedException {
@@ -195,18 +221,17 @@ public class EmailTemplateSender extends AbstractWindow {
             return;
         }
         if (BooleanUtils.isNotTrue(emailTemplate.getUseReportSubject()) && subjectField.getValue() == null) {
-            showNotification(getMessage("emptySubject"), NotificationType.WARNING);
+            notifications.create(Notifications.NotificationType.WARNING).withDescription(messageBundle.getMessage("emptySubject")).show();
             return;
         }
         EmailInfo emailInfo = getEmailInfo();
 
-
         try {
             emailService.sendEmail(emailInfo);
-            showNotification(getMessage("emailSent"), NotificationType.HUMANIZED);
-            close(COMMIT_ACTION_ID);
+            notifications.create(Notifications.NotificationType.HUMANIZED).withDescription(messageBundle.getMessage("emailSent")).show();
+            close(WINDOW_COMMIT_AND_CLOSE_ACTION);
         } catch (EmailException e) {
-            showNotification(StringUtils.join(e.getMessages(), "\n"), NotificationType.ERROR);
+            notifications.create(Notifications.NotificationType.ERROR).withDescription(StringUtils.join(e.getMessages(), "\n")).show();
         }
     }
 
