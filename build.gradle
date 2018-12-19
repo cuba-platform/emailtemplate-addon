@@ -1,6 +1,6 @@
 
 buildscript {
-    ext.cubaVersion = '6.10.4'
+    ext.cubaVersion = '7.0.0.BETA4'
     repositories {
         
         mavenLocal()
@@ -35,7 +35,6 @@ def webThemesModule = project(":${modulePrefix}-web-themes")
 def servletApi = 'javax.servlet:javax.servlet-api:3.1.0'
 
 
-apply(plugin: 'idea')
 apply(plugin: 'cuba')
 
 cuba {
@@ -55,7 +54,7 @@ cuba {
 dependencies {
     appComponent("com.haulmont.cuba:cuba-global:$cubaVersion")
     appComponent("com.haulmont.reports:reports-global:$cubaVersion")
-    appComponent("com.haulmont.addon.grapesjs:grapejs-global:0.1.4")
+    appComponent("com.haulmont.addon.grapesjs:grapejs-global:0.2-SNAPSHOT")
 
 }
 
@@ -67,7 +66,6 @@ def dbTestNameParam = 'emailtemplates-test'
 configure([globalModule, coreModule, webModule]) {
     apply(plugin: 'java')
     apply(plugin: 'maven')
-    apply(plugin: 'idea')
     apply(plugin: 'cuba')
     apply(plugin: 'checkstyle')
 
@@ -130,7 +128,7 @@ configure(coreModule) {
 
     dependencies {
         compile(globalModule)
-        provided(servletApi)
+        compileOnly(servletApi)
         jdbc(hsql)
         testRuntime(hsql)
 
@@ -208,7 +206,7 @@ configure(webModule) {
     }
 
     dependencies {
-        provided(servletApi)
+        compileOnly(servletApi)
         compile(globalModule)
     }
     
@@ -295,8 +293,5 @@ task restart(dependsOn: ['stop', ":${modulePrefix}-core:deploy", ":${modulePrefi
     }
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.3.1'
-}
 
 apply from: 'extra.gradle'
