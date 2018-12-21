@@ -1,15 +1,30 @@
 [![license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0)
-[TOC]
 
-# 1. Introduction
+- [1. Introduction](#introduction)
+- [2. Installation](#installation)  
+  - [2.1. Adding the Repository and the Component in CUBA Studio](#adding-cuba)  
+  - [2.2. Adding the Repository and the Component in build.gradle](#adding-build)  
+- [3. Using the component](#using-the-component)  
+  - [3.1. Creating Email Templates](#creating-email-templates)  
+    - [3.1.1. Creating Email Template From Report](#creating-from-report)  
+    - [3.1.2. Creating Email Template From Designer](#creating-from-designer)  
+    - [3.1.3. Setting attachments](#setting-attachments)  
+  - [3.2. Setting Groups](#setting-groups)  
+  - [3.3. Sending Emails](#sending-emails)  
+- [4. Email Templates API](#api)  
+  - [4.1 Email Templates Builder](#builder)
+
+
+
+# 1. Introduction <a name="introduction"></a>
 This component provides the ability to create outbound email based on generating by YARG reporting templates. Using the component, you can create, edit and delete templates, set groups for templates, and send emails.
 
-# 2. Installation
+# 2. Installation <a name="installation"></a>
 
 To install the component it is necessary to add repository and component in CUBA Studio or in a `build.gradle` file.
 The complete add-ons installation guide see in [CUBA Platform documentation](https://doc.cuba-platform.com/manual-latest/app_components_usage.html).
 
-## 2.1. Adding the Repository and the Component in CUBA Studio
+## 2.1. Adding the Repository and the Component in CUBA Studio <a name="adding-cuba"></a>
 
 1. Click **Edit** in the **Project properties** panel.
 
@@ -29,7 +44,7 @@ The complete add-ons installation guide see in [CUBA Platform documentation](htt
 
 5. Click **OK** to save the project properties.
 
-## 2.2. Adding the Repository and the Component in build.gradle
+## 2.2. Adding the Repository and the Component in build.gradle <a name="adding-build"></a>
 
 1. Edit `build.gradle` and specify the add-on coordinates in the root `dependencies` section:
 
@@ -52,11 +67,11 @@ dependencies {
 </context-param>
 ```
 
-# 3. Using the component
+# 3. Using the component <a name="using-the-component"></a>
 
 You can use the following component features.
 
-## 3.1. Creating email templates
+## 3.1. Creating email templates <a name="creating-email-templates"></a>
 
 The component enables you to create, edit and remove email templates.
 
@@ -68,7 +83,7 @@ There are two ways to create email template: from report and from designer.
 
 ![email-template-editor-modes](img/email-template-editor-modes.png)
 
-### 3.1.1. Creating Email Template From Report
+### 3.1.1. Creating Email Template From Report <a name="creating-from-report"></a>
 
 The following parameters are available for editing:
 
@@ -93,9 +108,7 @@ If the report type is a report with entities you can set entities for a template
 
 ![email-template-editor-entities](img/email-template-editor-entities.png)
 
-### 3.1.2. Creating Email Template From Designer
-
-The screen to create a template from designer consists of the following elements:
+### 3.1.2. Creating Email Template From Designer <a name="creating-from-designer"></a>
 
 The following parameters are available for editing:
 
@@ -116,7 +129,7 @@ The screen contains the following elements:
 - the **Export Report** button;
 - the **HTML Editor**.
 
-This type of creating template provides the ability to use HTML editor. You can design a template with different elements and set every element,  using the **Style Manager** tab and the **Trait Manager** tab.
+This type of creating template provides the ability to use HTML editor. You can design a template with different elements and set every element,  using **Setting** panel.
 
 See more information about using the editor in `README` [for GrapesJs HTML editor](https://git.haulmont.com/app-components/grapesjs-addon/blob/master/README.md).
 
@@ -130,7 +143,7 @@ See the complete parameter guide in [CUBA Platform. Report Generator | External 
 
 See the complete value format guide in [CUBA Platform. Report Generator | Field Value Formats](https://doc.cuba-platform.com/reporting-6.10/formatters.html).
 
-### 3.1.3. Setting attachments
+### 3.1.3. Setting attachments <a name="setting-attachments"></a>
 You can add or remove attachments on the **Attachments** tab for both types of templates: from report and from designer. You can attach a report or a file.
 
 ![email-template-editor-attachment](img/email-template-editor-attachment.png)
@@ -143,7 +156,7 @@ You can set the following parameters for a report attachment:
 
 ![email-template-editor-attachment-report-parameters](img/email-template-editor-attachment-report-parameters.png)
 
-## 3.3. Setting groups
+## 3.2. Setting Groups <a name="setting-groups"></a>
 
 To open group browser click **Groups** in the **Email templates** browser. The screen enables you to create, edit or remove email template groups.
 
@@ -155,7 +168,7 @@ To create or edit the group enter the name of the group.
 
 After setting groups, you can specify a group for a template.
 
-## 3.4. Sending Emails
+## 3.3. Sending Emails <a name="sending-emails"></a>
 
 To send an email select a template in the list and click **Send**.
 
@@ -173,7 +186,7 @@ The **To** field is required. You can select entity or entities for the report a
 
 ![email-template-sending](img/email-template-sending.png)
 
-# 4. Email templates API
+# 4. Email Templates API <a name="api"></a>
 
 A developer can use the following methods from EmailTemplatesAPI:
 
@@ -200,7 +213,7 @@ The ReportInputParameter is a class of Reporting component.
 
 The EmailInfo is a class of CUBA EmailService.
 
-## 4.1. Email templates builder
+## 4.1. Email Templates Builder <a name="builder"></a>
 
 Email templates API contains builder that can create and fill EmailTemplate entity.
 
