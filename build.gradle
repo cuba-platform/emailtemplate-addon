@@ -55,7 +55,7 @@ cuba {
 dependencies {
     appComponent("com.haulmont.cuba:cuba-global:$cubaVersion")
     appComponent("com.haulmont.reports:reports-global:$cubaVersion")
-    appComponent("com.haulmont.addon.grapesjs:grapejs-global:0.1.4")
+    appComponent("com.haulmont.addon.grapesjs:grapesjs-global:0.1.5")
 
 }
 
