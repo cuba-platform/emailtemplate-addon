@@ -51,7 +51,7 @@ public class EmailtemplatesTestContainer extends TestContainer {
         dbPassword = resourceElem.attributeValue("password");
     }
 
-    public static class Common extends EmailtemplatesTestContainer {
+    public static final class Common extends EmailtemplatesTestContainer {
 
         public static final EmailtemplatesTestContainer.Common INSTANCE = new EmailtemplatesTestContainer.Common();
 

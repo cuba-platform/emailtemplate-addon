@@ -17,10 +17,7 @@ import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.Fragments;
 import com.haulmont.cuba.gui.Notifications;
 import com.haulmont.cuba.gui.WindowParam;
-import com.haulmont.cuba.gui.components.GroupBoxLayout;
-import com.haulmont.cuba.gui.components.HasValue;
-import com.haulmont.cuba.gui.components.TextField;
-import com.haulmont.cuba.gui.components.VBoxLayout;
+import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.export.ByteArrayDataProvider;
 import com.haulmont.cuba.gui.export.ExportDisplay;
@@ -42,9 +39,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+import com.haulmont.cuba.gui.screen.StandardEditor;
+
 @UiController("emailtemplates$EmailTemplate.send")
 @UiDescriptor("email-template-send.xml")
-public class EmailTemplateSender extends Screen {
+public class EmailTemplateSender extends StandardEditor {
 
     @WindowParam
     private EmailTemplate emailTemplate;
@@ -169,24 +168,25 @@ public class EmailTemplateSender extends Screen {
         }
     }
 
-    //todo
     @Override
-    public boolean validateAll() {
-        return super.validateAll() && crossValidateParameters();
-    }
-
-    protected boolean crossValidateParameters() {
-        boolean isValid = true;
-        isValid = crossValidateParameters(defaultBodyParametersFrame);
-        if (isValid) {
-            isValid = crossValidateParameters(attachmentParametersFrame);
+    protected ValidationErrors validateScreen() {
+        ValidationErrors validationErrors = super.validateScreen();
+        for (String description: crossValidateParameters()) {
+            validationErrors.add(description);
         }
-
-        return isValid;
+        return validationErrors;
     }
 
-    private boolean crossValidateParameters(EmailTemplateParametersFrame parametersFrame) {
-        boolean isValid = true;
+    protected List<String> crossValidateParameters() {
+        List<String> descriptions = crossValidateParameters(defaultBodyParametersFrame);
+        if (descriptions.isEmpty()) {
+            descriptions.addAll(crossValidateParameters(attachmentParametersFrame));
+        }
+        return descriptions;
+    }
+
+    private List<String> crossValidateParameters(EmailTemplateParametersFrame parametersFrame) {
+        List<String> descriptions = new ArrayList<>();
         if (parametersFrame != null && parametersFrame.collectParameters() != null) {
             for (ReportWithParams reportWithParams : parametersFrame.collectParameters()) {
                 if (BooleanUtils.isTrue(reportWithParams.getReport().getValidationOn())) {
@@ -194,14 +194,12 @@ public class EmailTemplateSender extends Screen {
                         reportParameterValidator.crossValidateParameters(reportWithParams.getReport(),
                                 reportWithParams.getParams());
                     } catch (ReportParametersValidationException e) {
-                        Notifications.NotificationType notificationType = Notifications.NotificationType.valueOf(clientConfig.getValidationNotificationType());
-                        notifications.create(notificationType).withCaption(messageBundle.getMessage("validationFail.caption")).withDescription(e.getMessage()).show();
-                        isValid = false;
+                        descriptions.add(e.getMessage());
                     }
                 }
             }
         }
-        return isValid;
+        return descriptions;
     }
 
     public void onCancelButtonClick() {
@@ -209,7 +207,7 @@ public class EmailTemplateSender extends Screen {
     }
 
     public void onTestButtonClick() throws TemplateNotFoundException, ReportParameterTypeChangedException {
-        if (!validateAll()) {
+        if (!validateScreen().isEmpty()) {
             return;
         }
         EmailInfo emailInfo = getEmailInfo();
@@ -217,7 +215,7 @@ public class EmailTemplateSender extends Screen {
     }
 
     public void onSendButtonClick() throws TemplateNotFoundException, ReportParameterTypeChangedException {
-        if (!validateAll()) {
+        if (!validateScreen().isEmpty()) {
             return;
         }
         if (BooleanUtils.isNotTrue(emailTemplate.getUseReportSubject()) && subjectField.getValue() == null) {

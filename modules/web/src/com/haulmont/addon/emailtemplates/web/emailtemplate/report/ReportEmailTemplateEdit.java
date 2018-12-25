@@ -3,7 +3,7 @@ package com.haulmont.addon.emailtemplates.web.emailtemplate.report;
 import com.haulmont.addon.emailtemplates.entity.ParameterValue;
 import com.haulmont.addon.emailtemplates.entity.ReportEmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.TemplateReport;
-import com.haulmont.addon.emailtemplates.web.emailtemplate.AbstractTemplateEditor;
+import com.haulmont.addon.emailtemplates.web.emailtemplate.StandardTemplateEditor;
 import com.haulmont.addon.emailtemplates.web.frames.EmailTemplateParametersFrame;
 import com.haulmont.bali.util.ParamsMap;
 import com.haulmont.cuba.core.global.Metadata;
@@ -29,13 +29,16 @@ import java.util.function.Consumer;
 @UiDescriptor("email-template-report-edit.xml")
 @EditedEntityContainer("emailTemplateDs")
 @LoadDataBeforeShow
-public class ReportEmailTemplateEdit extends AbstractTemplateEditor<ReportEmailTemplate> {
+public class ReportEmailTemplateEdit extends StandardTemplateEditor<ReportEmailTemplate> {
 
     @Named("defaultGroup.subject")
     private TextField subjectField;
 
     @Inject
     private LookupPickerField emailBody;
+
+    @Inject
+    private CollectionDatasource emailBodiesDs;
 
     @Named("useReportSubjectGroup.useReportSubject")
     private CheckBox useReportSubject;
@@ -81,7 +84,8 @@ public class ReportEmailTemplateEdit extends AbstractTemplateEditor<ReportEmailT
         }
 
         //todo
-        emailBody.setOptionsDatasource((CollectionDatasource) dataContext.get("emailBodiesDs"));
+
+        emailBody.setOptionsDatasource(emailBodiesDs);
         emailBody.addLookupAction();
         emailBody.addClearAction();
         emailBody.addOpenAction();
