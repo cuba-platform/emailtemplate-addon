@@ -19,6 +19,7 @@ import com.haulmont.reports.entity.ParameterType;
 import com.haulmont.reports.entity.Report;
 import com.haulmont.reports.entity.ReportInputParameter;
 import org.springframework.beans.BeanUtils;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -54,7 +55,10 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
 
     @Override
     public EmailTemplateBuilder addTo(String to) {
-        String toAddresses = emailTemplate.getTo() + ", " + to;
+        String toAddresses = to;
+        if (StringUtils.isNotBlank(emailTemplate.getTo())) {
+            toAddresses = emailTemplate.getTo() + ", " + to;
+        }
         emailTemplate.setTo(toAddresses);
         return this;
     }
@@ -67,7 +71,10 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
 
     @Override
     public EmailTemplateBuilder addCc(String cc) {
-        String ccAddresses = emailTemplate.getCc() + ", " + cc;
+        String ccAddresses = cc;
+        if (StringUtils.isNotBlank(emailTemplate.getCc())) {
+            ccAddresses = emailTemplate.getCc() + ", " + cc;
+        }
         emailTemplate.setCc(ccAddresses);
         return this;
     }
@@ -80,9 +87,12 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
 
     @Override
     public EmailTemplateBuilder addBcc(String bcc) {
-        String bccAddresses = emailTemplate.getBcc() + ", " + bcc;
+        String bccAddresses = bcc;
+        if (StringUtils.isNotBlank(emailTemplate.getBcc())) {
+            bccAddresses = emailTemplate.getBcc() + ", " + bcc;
+        }
         emailTemplate.setBcc(bccAddresses);
-        return null;
+        return this;
     }
 
     @Override
