@@ -2,13 +2,14 @@ package com.haulmont.addon.emailtemplates.builder;
 
 import com.haulmont.addon.emailtemplates.bean.TemplateParametersExtractor;
 import com.haulmont.addon.emailtemplates.core.EmailTemplatesAPI;
+import com.haulmont.addon.emailtemplates.dto.ExtendedEmailInfo;
 import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
+import com.haulmont.addon.emailtemplates.emailer.EmailerAPI;
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.ParameterValue;
 import com.haulmont.addon.emailtemplates.entity.TemplateReport;
 import com.haulmont.addon.emailtemplates.exceptions.ReportParameterTypeChangedException;
 import com.haulmont.addon.emailtemplates.exceptions.TemplateNotFoundException;
-import com.haulmont.cuba.core.app.EmailerAPI;
 import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.EmailException;
@@ -301,7 +302,10 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
 
     @Override
     public void sendEmail() throws TemplateNotFoundException, ReportParameterTypeChangedException, EmailException {
-        emailer.sendEmail(generateEmail());
+        EmailInfo emailInfo = generateEmail();
+        if (emailInfo instanceof ExtendedEmailInfo) {
+            emailer.sendEmail((ExtendedEmailInfo) emailInfo);
+        }
     }
 
     @Override
@@ -315,6 +319,9 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
 
     @Override
     public void sendEmailAsync() throws TemplateNotFoundException, ReportParameterTypeChangedException {
-        emailer.sendEmailAsync(generateEmail());
+        EmailInfo emailInfo = generateEmail();
+        if (emailInfo instanceof ExtendedEmailInfo) {
+            emailer.sendEmailAsync((ExtendedEmailInfo) emailInfo);
+        }
     }
 }

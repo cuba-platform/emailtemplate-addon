@@ -4,6 +4,7 @@ import com.google.common.io.Files;
 import com.haulmont.addon.emailtemplates.bean.TemplateParametersExtractor;
 import com.haulmont.addon.emailtemplates.builder.EmailTemplateBuilder;
 import com.haulmont.addon.emailtemplates.builder.EmailTemplateBuilderImpl;
+import com.haulmont.addon.emailtemplates.dto.ExtendedEmailInfo;
 import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.ParameterValue;
@@ -60,7 +61,7 @@ public class EmailTemplates implements EmailTemplatesAPI {
             ReportWithParams reportWithParams = getReportWithParams(templateReport, parameters);
             attachmentsWithParams.put(templateReport, reportWithParams);
         }
-        EmailInfo emailInfo = generateEmailInfoWithoutAttachments(bodyReportWithParams);
+        ExtendedEmailInfo emailInfo = generateEmailInfoWithoutAttachments(bodyReportWithParams);
         List<EmailAttachment> templateAttachments = new ArrayList<>();
         templateAttachments.addAll(createReportAttachments(attachmentsWithParams));
         templateAttachments.addAll(createFilesAttachments(emailTemplate.getAttachedFiles()));
@@ -69,8 +70,11 @@ public class EmailTemplates implements EmailTemplatesAPI {
         emailInfo.setCaption(Boolean.TRUE.equals(emailTemplate.getUseReportSubject()) ?
                 emailInfo.getCaption() : emailTemplate.getSubject());
         emailInfo.setAddresses(emailTemplate.getTo());
+        emailInfo.setCc(emailTemplate.getCc());
+        emailInfo.setBcc(emailTemplate.getBcc());
         emailInfo.setFrom(emailTemplate.getFrom());
         emailInfo.setAttachments(emailAttachments);
+        emailInfo.setSendInOneMessage(true);
         return emailInfo;
     }
 
@@ -175,7 +179,7 @@ public class EmailTemplates implements EmailTemplatesAPI {
         return new EmailTemplateBuilderImpl(getEmailTemplateByCode(code));
     }
 
-    protected EmailInfo generateEmailInfoWithoutAttachments(ReportWithParams reportWithParams) {
+    protected ExtendedEmailInfo generateEmailInfoWithoutAttachments(ReportWithParams reportWithParams) {
         String body = "";
         String caption = "";
         if (reportWithParams != null && reportWithParams.getReport() != null) {
@@ -185,7 +189,7 @@ public class EmailTemplates implements EmailTemplatesAPI {
             body = new String(outputDocument.getContent());
             caption = outputDocument.getDocumentName();
         }
-        return new EmailInfo(null, caption, body, EmailInfo.HTML_CONTENT_TYPE);
+        return new ExtendedEmailInfo(null, caption, body, EmailInfo.HTML_CONTENT_TYPE);
     }
 
     protected List<EmailAttachment> createReportAttachments(Map<TemplateReport, ReportWithParams> reportsWithParams) {

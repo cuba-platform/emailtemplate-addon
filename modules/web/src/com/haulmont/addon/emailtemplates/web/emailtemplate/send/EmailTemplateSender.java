@@ -1,16 +1,17 @@
 package com.haulmont.addon.emailtemplates.web.emailtemplate.send;
 
+import com.haulmont.addon.emailtemplates.dto.ExtendedEmailInfo;
 import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.ParameterValue;
 import com.haulmont.addon.emailtemplates.entity.TemplateReport;
 import com.haulmont.addon.emailtemplates.exceptions.ReportParameterTypeChangedException;
 import com.haulmont.addon.emailtemplates.exceptions.TemplateNotFoundException;
+import com.haulmont.addon.emailtemplates.service.EmailService;
 import com.haulmont.addon.emailtemplates.service.EmailTemplatesService;
 import com.haulmont.addon.emailtemplates.web.frames.EmailTemplateParametersFrame;
 import com.haulmont.bali.util.ParamsMap;
 import com.haulmont.cuba.client.ClientConfig;
-import com.haulmont.cuba.core.app.EmailService;
 import com.haulmont.cuba.core.global.EmailException;
 import com.haulmont.cuba.core.global.EmailInfo;
 import com.haulmont.cuba.core.global.Metadata;
@@ -65,7 +66,7 @@ public class EmailTemplateSender extends AbstractWindow {
     private ExportDisplay exportDisplay;
 
     @Inject
-    private EmailService emailService;
+    protected EmailService emailService;
 
     @Inject
     private Metadata metadata;
@@ -200,9 +201,8 @@ public class EmailTemplateSender extends AbstractWindow {
         }
         EmailInfo emailInfo = getEmailInfo();
 
-
         try {
-            emailService.sendEmail(emailInfo);
+            emailService.sendEmail((ExtendedEmailInfo) emailInfo);
             showNotification(getMessage("emailSent"), NotificationType.HUMANIZED);
             close(COMMIT_ACTION_ID);
         } catch (EmailException e) {
