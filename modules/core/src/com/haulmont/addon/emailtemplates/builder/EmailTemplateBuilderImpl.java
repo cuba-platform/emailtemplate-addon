@@ -13,14 +13,13 @@ import com.haulmont.addon.emailtemplates.exceptions.TemplateNotFoundException;
 import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.EmailException;
-import com.haulmont.cuba.core.global.EmailInfo;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.reports.app.service.ReportService;
 import com.haulmont.reports.entity.ParameterType;
 import com.haulmont.reports.entity.Report;
 import com.haulmont.reports.entity.ReportInputParameter;
-import org.springframework.beans.BeanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.BeanUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -278,7 +277,7 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
 
 
     @Override
-    public EmailInfo generateEmail() throws ReportParameterTypeChangedException, TemplateNotFoundException {
+    public ExtendedEmailInfo generateEmail() throws ReportParameterTypeChangedException, TemplateNotFoundException {
         return emailTemplates.generateEmail(emailTemplate, extractorService.getTemplateDefaultValues(emailTemplate));
     }
 
@@ -291,7 +290,7 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
         EmailTemplate clonedTemplate = metadata.create(emailTemplate.getClass());
         BeanUtils.copyProperties(emailTemplate, clonedTemplate);
         List<TemplateReport> attachedTemplateReports = new ArrayList<>();
-        for (TemplateReport templateReport: emailTemplate.getAttachedTemplateReports()) {
+        for (TemplateReport templateReport : emailTemplate.getAttachedTemplateReports()) {
             TemplateReport newTemplateReport = metadata.create(templateReport.getClass());
             BeanUtils.copyProperties(templateReport, newTemplateReport);
             attachedTemplateReports.add(newTemplateReport);
@@ -302,10 +301,7 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
 
     @Override
     public void sendEmail() throws TemplateNotFoundException, ReportParameterTypeChangedException, EmailException {
-        EmailInfo emailInfo = generateEmail();
-        if (emailInfo instanceof ExtendedEmailInfo) {
-            emailer.sendEmail((ExtendedEmailInfo) emailInfo);
-        }
+        emailer.sendEmail(generateEmail());
     }
 
     @Override
@@ -319,9 +315,6 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
 
     @Override
     public void sendEmailAsync() throws TemplateNotFoundException, ReportParameterTypeChangedException {
-        EmailInfo emailInfo = generateEmail();
-        if (emailInfo instanceof ExtendedEmailInfo) {
-            emailer.sendEmailAsync((ExtendedEmailInfo) emailInfo);
-        }
+        emailer.sendEmailAsync(generateEmail());
     }
 }

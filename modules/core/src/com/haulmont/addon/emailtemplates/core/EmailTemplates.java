@@ -46,7 +46,7 @@ public class EmailTemplates implements EmailTemplatesAPI {
     private TemplateParametersExtractor parametersExtractor;
 
     @Override
-    public EmailInfo generateEmail(EmailTemplate emailTemplate, Collection<ReportWithParams> params)
+    public ExtendedEmailInfo generateEmail(EmailTemplate emailTemplate, Collection<ReportWithParams> params)
             throws TemplateNotFoundException, ReportParameterTypeChangedException {
         if (emailTemplate == null) {
             throw new TemplateNotFoundException(messages.getMessage(EmailTemplates.class, "nullTemplate"));
@@ -74,6 +74,8 @@ public class EmailTemplates implements EmailTemplatesAPI {
         emailInfo.setBcc(emailTemplate.getBcc());
         emailInfo.setFrom(emailTemplate.getFrom());
         emailInfo.setAttachments(emailAttachments);
+        // If sendInOneMessage contains true then one message will be sent for all recipients and it will include CC and BCC.
+        // Otherwise CC and BCC will be ignored.
         emailInfo.setSendInOneMessage(true);
         return emailInfo;
     }
@@ -116,7 +118,7 @@ public class EmailTemplates implements EmailTemplatesAPI {
     }
 
     @Override
-    public EmailInfo generateEmail(EmailTemplate emailTemplate, Map<String, Object> params)
+    public ExtendedEmailInfo generateEmail(EmailTemplate emailTemplate, Map<String, Object> params)
             throws TemplateNotFoundException, ReportParameterTypeChangedException {
         if (emailTemplate == null) {
             throw new TemplateNotFoundException(messages.getMessage(EmailTemplates.class, "nullTemplate"));
@@ -132,14 +134,14 @@ public class EmailTemplates implements EmailTemplatesAPI {
     }
 
     @Override
-    public EmailInfo generateEmail(String emailTemplateCode, Map<String, Object> params)
+    public ExtendedEmailInfo generateEmail(String emailTemplateCode, Map<String, Object> params)
             throws TemplateNotFoundException, ReportParameterTypeChangedException {
         EmailTemplate emailTemplate = getEmailTemplateByCode(emailTemplateCode);
         return generateEmail(emailTemplate, params);
     }
 
     @Override
-    public EmailInfo generateEmail(String emailTemplateCode, Collection<ReportWithParams> params)
+    public ExtendedEmailInfo generateEmail(String emailTemplateCode, Collection<ReportWithParams> params)
             throws TemplateNotFoundException, ReportParameterTypeChangedException {
         EmailTemplate emailTemplate = getEmailTemplateByCode(emailTemplateCode);
         return generateEmail(emailTemplate, params);

@@ -1,12 +1,12 @@
 package com.haulmont.addon.emailtemplates.service;
 
 import com.haulmont.addon.emailtemplates.core.EmailTemplatesAPI;
+import com.haulmont.addon.emailtemplates.dto.ExtendedEmailInfo;
 import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.ParameterValue;
 import com.haulmont.addon.emailtemplates.exceptions.ReportParameterTypeChangedException;
 import com.haulmont.addon.emailtemplates.exceptions.TemplateNotFoundException;
-import com.haulmont.cuba.core.global.EmailInfo;
 import com.haulmont.reports.entity.ReportInputParameter;
 import org.springframework.stereotype.Service;
 
@@ -22,25 +22,25 @@ public class EmailTemplatesServiceBean implements EmailTemplatesService {
 
 
     @Override
-    public EmailInfo generateEmail(EmailTemplate emailTemplate, Map<String, Object> params)
+    public ExtendedEmailInfo generateEmail(EmailTemplate emailTemplate, Map<String, Object> params)
             throws TemplateNotFoundException, ReportParameterTypeChangedException {
         return emailTemplatesAPI.generateEmail(emailTemplate, params);
     }
 
     @Override
-    public EmailInfo generateEmail(EmailTemplate emailTemplate, Collection<ReportWithParams> params)
+    public ExtendedEmailInfo generateEmail(EmailTemplate emailTemplate, Collection<ReportWithParams> params)
             throws TemplateNotFoundException, ReportParameterTypeChangedException {
         return emailTemplatesAPI.generateEmail(emailTemplate, params);
     }
 
     @Override
-    public EmailInfo generateEmail(String emailTemplateCode, Map<String, Object> params)
+    public ExtendedEmailInfo generateEmail(String emailTemplateCode, Map<String, Object> params)
             throws TemplateNotFoundException, ReportParameterTypeChangedException {
         return emailTemplatesAPI.generateEmail(emailTemplateCode, params);
     }
 
     @Override
-    public EmailInfo generateEmail(String emailTemplateCode, Collection<ReportWithParams> params)
+    public ExtendedEmailInfo generateEmail(String emailTemplateCode, Collection<ReportWithParams> params)
             throws TemplateNotFoundException, ReportParameterTypeChangedException {
         return emailTemplatesAPI.generateEmail(emailTemplateCode, params);
     }

@@ -1,6 +1,7 @@
 package com.haulmont.addon.emailtemplates.core;
 
 import com.haulmont.addon.emailtemplates.builder.EmailTemplateBuilder;
+import com.haulmont.addon.emailtemplates.dto.ExtendedEmailInfo;
 import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.ParameterValue;
@@ -31,7 +32,7 @@ public interface EmailTemplatesAPI {
      * @return {@link EmailInfo} from cuba emailer
      * @throws TemplateNotFoundException If emailTemplate do not contain reports or null
      */
-    EmailInfo generateEmail(EmailTemplate emailTemplate, Map<String, Object> params)
+    ExtendedEmailInfo generateEmail(EmailTemplate emailTemplate, Map<String, Object> params)
             throws TemplateNotFoundException, ReportParameterTypeChangedException;
 
     /**
@@ -42,7 +43,7 @@ public interface EmailTemplatesAPI {
      * @return {@link EmailInfo} from cuba emailer
      * @throws TemplateNotFoundException If emailTemplate does not contain reports or null
      */
-    EmailInfo generateEmail(EmailTemplate emailTemplate, Collection<ReportWithParams> params)
+    ExtendedEmailInfo generateEmail(EmailTemplate emailTemplate, Collection<ReportWithParams> params)
             throws TemplateNotFoundException, ReportParameterTypeChangedException;
 
     /**
@@ -53,7 +54,7 @@ public interface EmailTemplatesAPI {
      * @return {@link EmailInfo} from cuba emailer
      * @throws TemplateNotFoundException If emailTemplate does not contain reports or null
      */
-    EmailInfo generateEmail(String emailTemplateCode, Map<String, Object> params)
+    ExtendedEmailInfo generateEmail(String emailTemplateCode, Map<String, Object> params)
             throws TemplateNotFoundException, ReportParameterTypeChangedException;
 
     /**
@@ -64,7 +65,7 @@ public interface EmailTemplatesAPI {
      * @return {@link EmailInfo} from cuba emailer
      * @throws TemplateNotFoundException If emailTemplate does not contain reports or null
      */
-    EmailInfo generateEmail(String emailTemplateCode, Collection<ReportWithParams> params)
+    ExtendedEmailInfo generateEmail(String emailTemplateCode, Collection<ReportWithParams> params)
             throws TemplateNotFoundException, ReportParameterTypeChangedException;
 
     /**

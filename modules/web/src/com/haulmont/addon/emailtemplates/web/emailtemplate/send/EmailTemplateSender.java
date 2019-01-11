@@ -13,7 +13,6 @@ import com.haulmont.addon.emailtemplates.web.frames.EmailTemplateParametersFrame
 import com.haulmont.bali.util.ParamsMap;
 import com.haulmont.cuba.client.ClientConfig;
 import com.haulmont.cuba.core.global.EmailException;
-import com.haulmont.cuba.core.global.EmailInfo;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.WindowParam;
 import com.haulmont.cuba.gui.components.*;
@@ -187,7 +186,7 @@ public class EmailTemplateSender extends AbstractWindow {
         if (!validateAll()) {
             return;
         }
-        EmailInfo emailInfo = getEmailInfo();
+        ExtendedEmailInfo emailInfo = getEmailInfo();
         exportDisplay.show(new ByteArrayDataProvider(emailInfo.getBody().getBytes()), emailInfo.getCaption() + ".html");
     }
 
@@ -199,10 +198,10 @@ public class EmailTemplateSender extends AbstractWindow {
             showNotification(getMessage("emptySubject"), NotificationType.WARNING);
             return;
         }
-        EmailInfo emailInfo = getEmailInfo();
+        ExtendedEmailInfo emailInfo = getEmailInfo();
 
         try {
-            emailService.sendEmail((ExtendedEmailInfo) emailInfo);
+            emailService.sendEmail(emailInfo);
             showNotification(getMessage("emailSent"), NotificationType.HUMANIZED);
             close(COMMIT_ACTION_ID);
         } catch (EmailException e) {
@@ -210,7 +209,7 @@ public class EmailTemplateSender extends AbstractWindow {
         }
     }
 
-    private EmailInfo getEmailInfo() throws ReportParameterTypeChangedException, TemplateNotFoundException {
+    private ExtendedEmailInfo getEmailInfo() throws ReportParameterTypeChangedException, TemplateNotFoundException {
         return emailTemplatesService.generateEmail(emailTemplate, new ArrayList<>());
     }
 }
