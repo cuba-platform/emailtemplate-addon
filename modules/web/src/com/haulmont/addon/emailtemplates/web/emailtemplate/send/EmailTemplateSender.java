@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Consumer;
 
 public class EmailTemplateSender extends AbstractWindow {
 
@@ -78,7 +77,7 @@ public class EmailTemplateSender extends AbstractWindow {
     protected ParameterClassResolver classResolver;
 
     @Named("defaultGroup.subject")
-    private TextField subjectField;
+    private TextField<String> subjectField;
 
     @Override
     public void init(Map<String, Object> params) {
@@ -103,12 +102,9 @@ public class EmailTemplateSender extends AbstractWindow {
             attachmentGroupBox.setVisible(false);
         }
 
-        subjectField.addValueChangeListener(new Consumer<HasValue.ValueChangeEvent>() {
-            @Override
-            public void accept(HasValue.ValueChangeEvent valueChangeEvent) {
-                if (!Objects.equals(valueChangeEvent.getPrevValue(), valueChangeEvent.getValue())) {
-                    emailTemplate.setUseReportSubject(false);
-                }
+        subjectField.addValueChangeListener(e -> {
+            if (!Objects.equals(e.getPrevValue(), e.getValue())) {
+                emailTemplate.setUseReportSubject(false);
             }
         });
     }

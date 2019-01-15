@@ -25,7 +25,6 @@ import org.apache.commons.lang3.BooleanUtils;
 
 import javax.inject.Inject;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class EmailTemplateParametersFrame extends AbstractFrame {
@@ -186,7 +185,7 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
     }
 
     protected Field createComponent(ReportInputParameter parameter, Map<String, Object> values, int currentGridRow) {
-        Field field = parameterFieldCreator.createField(parameter);
+        Field<Object> field = parameterFieldCreator.createField(parameter);
         if (BooleanUtils.isTrue(isDefaultValues)) {
             field.setRequired(false);
         }
@@ -229,12 +228,9 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
         parametersGrid.add(label, 0, currentGridRow);
         parametersGrid.add(field, 1, currentGridRow);
 
-        field.addValueChangeListener(new Consumer<HasValue.ValueChangeEvent>() {
-            @Override
-            public void accept(HasValue.ValueChangeEvent valueChangeEvent) {
-                Object fieldValue = valueChangeEvent.getValue();
-                updateDefaultValue(parameter, fieldValue);
-            }
+        field.addValueChangeListener(e -> {
+            Object fieldValue = e.getValue();
+            updateDefaultValue(parameter, fieldValue);
         });
 
         if (field instanceof TokenList) {
