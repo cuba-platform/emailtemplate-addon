@@ -2,7 +2,7 @@ package com.haulmont.addon.emailtemplates.web.emailtemplate.json;
 
 import com.haulmont.addon.emailtemplates.entity.JsonEmailTemplate;
 import com.haulmont.addon.emailtemplates.service.TemplateConverterService;
-import com.haulmont.addon.emailtemplates.web.emailtemplate.LegacyTemplateEditor;
+import com.haulmont.addon.emailtemplates.web.emailtemplate.AbstractTemplateEditor;
 import com.haulmont.addon.grapesjs.web.gui.components.GrapesJsHtmlEditor;
 import com.haulmont.bali.util.ParamsMap;
 import com.haulmont.chile.core.model.MetaClass;
@@ -37,7 +37,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class JsonEmailTemplateEdit extends LegacyTemplateEditor<JsonEmailTemplate> {
+public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTemplate> {
 
     private static final Pattern SIMPLE_FIELD_PATTERN = Pattern.compile("\\$\\{([a-zA-Z0-9]+)[^}]*}");
     private static final Pattern ENTITY_FIELD_PATTERN = Pattern.compile("\\$\\{([a-zA-Z0-9]+)\\.([a-zA-Z0-9]*)[^}]*}");

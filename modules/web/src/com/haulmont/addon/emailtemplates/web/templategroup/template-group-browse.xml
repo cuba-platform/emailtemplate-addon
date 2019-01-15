@@ -1,50 +1,49 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd"
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
         caption="msg://browseCaption"
+        class="com.haulmont.addon.emailtemplates.web.templategroup.TemplateGroupBrowse"
         focusComponent="templateGroupsTable"
+        lookupComponent="templateGroupsTable"
         messagesPack="com.haulmont.addon.emailtemplates.web.templategroup">
-    <data readOnly="true">
-        <collection id="templateGroupsDc"
-                    class="com.haulmont.addon.emailtemplates.entity.TemplateGroup"
-                    view="_local">
-            <loader id="templateGroupsDl">
-                <query>
-                    <![CDATA[select e from emailtemplates$TemplateGroup e]]>
-                </query>
-            </loader>
-        </collection>
-    </data>
+    <dsContext>
+        <groupDatasource id="templateGroupsDs"
+                         class="com.haulmont.addon.emailtemplates.entity.TemplateGroup"
+                         view="_local">
+            <query>
+                <![CDATA[select e from emailtemplates$TemplateGroup e]]>
+            </query>
+        </groupDatasource>
+    </dsContext>
     <dialogMode height="600"
                 width="800"/>
     <layout expand="templateGroupsTable"
             spacing="true">
         <filter id="filter"
                 applyTo="templateGroupsTable"
-                dataLoader="templateGroupsDl">
+                datasource="templateGroupsDs">
             <properties include=".*"/>
         </filter>
         <groupTable id="templateGroupsTable"
-                    width="100%"
-                    dataContainer="templateGroupsDc">
+                    width="100%">
             <actions>
-                <action id="create" type="create"/>
-                <action id="edit" type="edit"/>
-                <action id="remove" type="remove"/>
+                <action id="create"/>
+                <action id="edit"/>
+                <action id="remove"/>
             </actions>
             <columns>
                 <column id="name"/>
             </columns>
+            <rows datasource="templateGroupsDs"/>
             <rowsCount/>
             <buttonsPanel id="buttonsPanel"
                           alwaysVisible="true">
-                <button id="createBtn" action="templateGroupsTable.create"/>
-                <button id="editBtn" action="templateGroupsTable.edit"/>
-                <button id="removeBtn" action="templateGroupsTable.remove"/>
+                <button id="createBtn"
+                        action="templateGroupsTable.create"/>
+                <button id="editBtn"
+                        action="templateGroupsTable.edit"/>
+                <button id="removeBtn"
+                        action="templateGroupsTable.remove"/>
             </buttonsPanel>
         </groupTable>
-        <hbox id="lookupActions" spacing="true" visible="false">
-            <button action="lookupSelectAction"/>
-            <button action="lookupCancelAction"/>
-        </hbox>
     </layout>
 </window>

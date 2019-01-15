@@ -7,31 +7,19 @@ import com.haulmont.bali.util.ParamsMap;
 import com.haulmont.cuba.core.entity.Entity;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.Metadata;
-import com.haulmont.cuba.gui.Notifications;
-import com.haulmont.cuba.gui.Screens;
+import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.actions.CreateAction;
 import com.haulmont.cuba.gui.components.actions.EditAction;
 import com.haulmont.cuba.gui.components.actions.ItemTrackingAction;
-import com.haulmont.cuba.gui.screen.LookupComponent;
-import com.haulmont.cuba.gui.screen.*;
 
 import javax.inject.Inject;
+import java.util.Map;
 
-@UiController("emailtemplates$EmailTemplate.browse")
-@UiDescriptor("email-template-browse.xml")
-@LookupComponent("emailTemplatesTable")
-@LoadDataBeforeShow
-public class EmailTemplateBrowse extends StandardLookup<EmailTemplate> {
+public class EmailTemplateBrowse extends AbstractLookup {
 
     @Inject
     protected Metadata metadata;
-    @Inject
-    private Screens screens;
-    @Inject
-    private Notifications notifications;
-    @Inject
-    private MessageBundle messageBundle;
     @Inject
     protected DataManager dataManager;
     @Inject
@@ -39,25 +27,6 @@ public class EmailTemplateBrowse extends StandardLookup<EmailTemplate> {
 
     @Inject
     private PopupButton createBtn;
-
-    @Subscribe
-    protected void onInit(InitEvent event) {
-        Action sendAction = new ItemTrackingAction(emailTemplatesTable, "sendAction").
-                withHandler(actionPerformedEvent -> onSendEmailClick());
-        emailTemplatesTable.addAction(sendAction);
-
-        createBtn.addAction(new TemplateCreateAction(emailTemplatesTable, JsonEmailTemplate.class));
-        createBtn.addAction(new TemplateCreateAction(emailTemplatesTable, ReportEmailTemplate.class));
-
-        emailTemplatesTable.addAction(new EditAction(emailTemplatesTable) {
-
-            @Override
-            public String getWindowId() {
-                EmailTemplate template = emailTemplatesTable.getSingleSelected();
-                return template.getMetaClass().getName() + ".edit";
-            }
-        });
-    }
 
     protected class TemplateCreateAction<T extends Entity> extends CreateAction {
 
@@ -85,24 +54,40 @@ public class EmailTemplateBrowse extends StandardLookup<EmailTemplate> {
 
         @Override
         public String getCaption() {
-            return messageBundle.getMessage(getId());
+            return getMessage(getId());
         }
     }
 
+    @Override
+    public void init(Map<String, Object> params) {
+        super.init(params);
+
+        Action sendAction = new ItemTrackingAction(emailTemplatesTable, "sendAction").
+                withHandler(actionPerformedEvent -> onSendEmailClick());
+        emailTemplatesTable.addAction(sendAction);
+
+        createBtn.addAction(new TemplateCreateAction(emailTemplatesTable, JsonEmailTemplate.class));
+        createBtn.addAction(new TemplateCreateAction(emailTemplatesTable, ReportEmailTemplate.class));
+
+        emailTemplatesTable.addAction(new EditAction(emailTemplatesTable) {
+
+            @Override
+            public String getWindowId() {
+                EmailTemplate template = emailTemplatesTable.getSingleSelected();
+                return template.getMetaClass().getName() + ".edit";
+            }
+        });
+    }
 
     protected void onSendEmailClick() {
         EmailTemplate template = emailTemplatesTable.getSingleSelected();
         if (template != null) {
             template = dataManager.reload(template, "emailTemplate-view");
-            screens.create("emailtemplates$EmailTemplate.send",
-                        OpenMode.DIALOG,
-                        new MapScreenOptions(ParamsMap.of("emailTemplate", template)))
-                    .show();
+            openWindow("emailtemplates$EmailTemplate.send", WindowManager.OpenType.DIALOG, ParamsMap.of("emailTemplate", template));
         }
     }
 
     public void onGroupsButtonClick() {
-        screens.create("emailtemplates$TemplateGroup.browse", OpenMode.NEW_WINDOW)
-                .show();
+        openWindow("emailtemplates$TemplateGroup.browse", WindowManager.OpenType.NEW_WINDOW);
     }
 }

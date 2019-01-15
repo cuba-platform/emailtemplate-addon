@@ -3,18 +3,14 @@ package com.haulmont.addon.emailtemplates.web.emailtemplate.report;
 import com.haulmont.addon.emailtemplates.entity.ParameterValue;
 import com.haulmont.addon.emailtemplates.entity.ReportEmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.TemplateReport;
-import com.haulmont.addon.emailtemplates.web.emailtemplate.StandardTemplateEditor;
+import com.haulmont.addon.emailtemplates.web.emailtemplate.AbstractTemplateEditor;
 import com.haulmont.addon.emailtemplates.web.frames.EmailTemplateParametersFrame;
 import com.haulmont.bali.util.ParamsMap;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.global.PersistenceHelper;
-import com.haulmont.cuba.gui.Fragments;
-import com.haulmont.cuba.gui.Notifications;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.impl.CollectionPropertyDatasourceImpl;
-import com.haulmont.cuba.gui.model.DataContext;
-import com.haulmont.cuba.gui.screen.*;
 import com.haulmont.reports.entity.Report;
 import com.haulmont.reports.entity.ReportOutputType;
 import org.apache.commons.lang3.BooleanUtils;
@@ -22,14 +18,11 @@ import org.apache.commons.lang3.BooleanUtils;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-@UiController("emailtemplates$ReportEmailTemplate.edit")
-@UiDescriptor("email-template-report-edit.xml")
-@EditedEntityContainer("emailTemplateDs")
-@LoadDataBeforeShow
-public class ReportEmailTemplateEdit extends StandardTemplateEditor<ReportEmailTemplate> {
+public class ReportEmailTemplateEdit extends AbstractTemplateEditor<ReportEmailTemplate> {
 
     @Named("defaultGroup.subject")
     private TextField subjectField;
@@ -37,26 +30,11 @@ public class ReportEmailTemplateEdit extends StandardTemplateEditor<ReportEmailT
     @Inject
     private LookupPickerField emailBody;
 
-    @Inject
-    private CollectionDatasource emailBodiesDs;
-
     @Named("useReportSubjectGroup.useReportSubject")
     private CheckBox useReportSubject;
 
     @Inject
     private Metadata metadata;
-
-    @Inject
-    private Notifications notifications;
-
-    @Inject
-    private MessageBundle messageBundle;
-
-    @Inject
-    private DataContext dataContext;
-
-    @Inject
-    private Fragments fragments;
 
     @Inject
     protected VBoxLayout defaultValuesBox;
@@ -67,97 +45,93 @@ public class ReportEmailTemplateEdit extends StandardTemplateEditor<ReportEmailT
     protected EmailTemplateParametersFrame parametersFrame;
     protected TemplateReport templateReport;
 
-    @Subscribe
-    protected void onAfterInit(AfterInitEvent event) {
-        parametersFrame = (EmailTemplateParametersFrame) fragments.create(this,
-                "emailtemplates$parametersFrame",
-                new MapScreenOptions(ParamsMap.of(EmailTemplateParametersFrame.IS_DEFAULT_PARAM_VALUES, true,
-                        EmailTemplateParametersFrame.HIDE_REPORT_CAPTION, true)))
-                .init();
-        defaultValuesBox.add(parametersFrame.getFragment());
+    @Override
+    public void init(Map<String, Object> params) {
+        super.init(params);
+    }
 
-        parametersFrame.setTemplateReport(getEditedEntity().getEmailBodyReport());
-        if (getEditedEntity().getEmailBodyReport() != null) {
+    @Override
+    protected void postInit() {
+        parametersFrame = (EmailTemplateParametersFrame) openFrame(defaultValuesBox, "emailtemplates$parametersFrame",
+                ParamsMap.of(EmailTemplateParametersFrame.IS_DEFAULT_PARAM_VALUES, true,
+                        EmailTemplateParametersFrame.HIDE_REPORT_CAPTION, true));
+
+        parametersFrame.setTemplateReport(getItem().getEmailBodyReport());
+        if (getItem().getEmailBodyReport() != null) {
             parametersFrame.createComponents();
         } else {
             parametersFrame.clearComponents();
         }
 
-        //todo
-
-        emailBody.setOptionsDatasource(emailBodiesDs);
+        emailBody.setOptionsDatasource((CollectionDatasource) getDsContext().get("emailBodiesDs"));
         emailBody.addLookupAction();
         emailBody.addClearAction();
         emailBody.addOpenAction();
 
-        emailBody.setValue(getEditedEntity().getReport());
+        emailBody.setValue(getItem().getReport());
 
         emailBody.addValueChangeListener(new Consumer<HasValue.ValueChangeEvent>() {
             @Override
             public void accept(HasValue.ValueChangeEvent valueChangeEvent) {
                 Report value = (Report) valueChangeEvent.getValue();
                 if (value != null) {
-                    Report report = dataSupplier.reload(value, "emailTemplate-view");
+                    Report report = getDsContext().getDataSupplier().reload(value, "emailTemplate-view");
                     if (report.getDefaultTemplate() != null) {
                         if (ReportOutputType.HTML == report.getDefaultTemplate().getReportOutputType()) {
                             templateReport = metadata.create(TemplateReport.class);
                             templateReport.setParameterValues(new ArrayList<>());
                             templateReport.setReport(report);
 
-                            getEditedEntity().setEmailBodyReport(templateReport);
-                            parametersFrame.setTemplateReport(getEditedEntity().getEmailBodyReport());
+                            getItem().setEmailBodyReport(templateReport);
+                            parametersFrame.setTemplateReport(getItem().getEmailBodyReport());
                             parametersFrame.createComponents();
                         } else {
-                            getEditedEntity().setEmailBodyReport(null);
-                            parametersFrame.setTemplateReport(getEditedEntity().getEmailBodyReport());
+                            getItem().setEmailBodyReport(null);
+                            parametersFrame.setTemplateReport(getItem().getEmailBodyReport());
                             parametersFrame.clearComponents();
                             emailBody.setValue(null);
-                            notifications.create(Notifications.NotificationType.ERROR)
-                                    .withDescription(messageBundle.getMessage("notification.reportIsNotHtml"))
-                                    .show();
+                            showNotification(getMessage("notification.reportIsNotHtml"), NotificationType.ERROR);
                         }
                     } else {
-                        getEditedEntity().setEmailBodyReport(null);
-                        parametersFrame.setTemplateReport(getEditedEntity().getEmailBodyReport());
+                        getItem().setEmailBodyReport(null);
+                        parametersFrame.setTemplateReport(getItem().getEmailBodyReport());
                         parametersFrame.clearComponents();
                         emailBody.setValue(null);
-                        notifications.create(Notifications.NotificationType.ERROR)
-                                .withDescription(messageBundle.getMessage("notification.reportHasNoDefaultTemplate"))
-                                .show();
+                        showNotification(getMessage("notification.reportHasNoDefaultTemplate"), NotificationType.ERROR);
                     }
                 } else {
-                    getEditedEntity().setEmailBodyReport(null);
-                    parametersFrame.setTemplateReport(getEditedEntity().getEmailBodyReport());
+                    getItem().setEmailBodyReport(null);
+                    parametersFrame.setTemplateReport(getItem().getEmailBodyReport());
                     parametersFrame.clearComponents();
                 }
             }
         });
 
-        dataContext.addPreCommitListener(context -> {
+        getDsContext().addBeforeCommitListener(context -> {
             if (templateReport != null)
-                context.getModifiedInstances().add(templateReport);
+                context.getCommitInstances().add(templateReport);
         });
 
         useReportSubject.addValueChangeListener(e -> {
             setSubjectVisibilty();
             if (BooleanUtils.isTrue((Boolean) e.getValue())) {
-                getEditedEntity().setSubject(null);
+                getItem().setSubject(null);
             }
         });
 
         setSubjectVisibilty();
     }
 
-
     public void setSubjectVisibilty() {
-        subjectField.setVisible(BooleanUtils.isNotTrue(getEditedEntity().getUseReportSubject()));
+        subjectField.setVisible(BooleanUtils.isNotTrue(getItem().getUseReportSubject()));
     }
 
-    @Subscribe(target = Target.DATA_CONTEXT)
-    protected void onPreCommit(DataContext.PreCommitEvent event) {
-        if (!PersistenceHelper.isNew(getEditedEntity())) {
-            ReportEmailTemplate original = dataSupplier.reload(getEditedEntity(), "emailTemplate-view");
-            ReportEmailTemplate current = getEditedEntity();
+    @Override
+    protected boolean preCommit() {
+        super.preCommit();
+        if (!PersistenceHelper.isNew(getItem())) {
+            ReportEmailTemplate original = getDsContext().getDataSupplier().reload(getItem(), "emailTemplate-view");
+            ReportEmailTemplate current = getItem();
             TemplateReport originalEmailBodyReport = original.getEmailBodyReport();
             if (originalEmailBodyReport != null && !originalEmailBodyReport.equals(current.getEmailBodyReport())) {
                 entitiesToRemove.addAll(originalEmailBodyReport.getParameterValues());
@@ -167,6 +141,7 @@ public class ReportEmailTemplateEdit extends StandardTemplateEditor<ReportEmailT
                 bodyParameterValuesDs.setModified(true);
             }
         }
+        return true;
     }
 
     public void runReport() {

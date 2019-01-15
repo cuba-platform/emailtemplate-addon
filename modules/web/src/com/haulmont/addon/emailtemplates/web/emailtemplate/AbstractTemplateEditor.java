@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class LegacyTemplateEditor<T extends EmailTemplate> extends AbstractEditor<T> {
+public abstract class AbstractTemplateEditor<T extends EmailTemplate> extends AbstractEditor<T> {
 
     protected List<Entity> entitiesToRemove = new ArrayList<>();
     protected List<Entity> entitiesToUpdate = new ArrayList<>();

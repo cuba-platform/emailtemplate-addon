@@ -14,14 +14,11 @@ import com.haulmont.cuba.core.app.EmailService;
 import com.haulmont.cuba.core.global.EmailException;
 import com.haulmont.cuba.core.global.EmailInfo;
 import com.haulmont.cuba.core.global.Metadata;
-import com.haulmont.cuba.gui.Fragments;
-import com.haulmont.cuba.gui.Notifications;
 import com.haulmont.cuba.gui.WindowParam;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.export.ByteArrayDataProvider;
 import com.haulmont.cuba.gui.export.ExportDisplay;
-import com.haulmont.cuba.gui.screen.*;
 import com.haulmont.reports.app.service.ReportService;
 import com.haulmont.reports.entity.ParameterType;
 import com.haulmont.reports.entity.ReportInputParameter;
@@ -39,11 +36,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import com.haulmont.cuba.gui.screen.StandardEditor;
-
-@UiController("emailtemplates$EmailTemplate.send")
-@UiDescriptor("email-template-send.xml")
-public class EmailTemplateSender extends StandardEditor {
+public class EmailTemplateSender extends AbstractWindow {
 
     @WindowParam
     private EmailTemplate emailTemplate;
@@ -53,12 +46,10 @@ public class EmailTemplateSender extends StandardEditor {
 
     @Inject
     private VBoxLayout defaultBodyParameters;
-
     protected EmailTemplateParametersFrame defaultBodyParametersFrame;
 
     @Inject
     private VBoxLayout attachmentParameters;
-
     protected EmailTemplateParametersFrame attachmentParametersFrame;
 
     @Inject
@@ -81,15 +72,6 @@ public class EmailTemplateSender extends StandardEditor {
     private Metadata metadata;
 
     @Inject
-    private Fragments fragments;
-
-    @Inject
-    private Notifications notifications;
-
-    @Inject
-    private MessageBundle messageBundle;
-
-    @Inject
     protected ReportService reportService;
 
     @Inject
@@ -98,32 +80,29 @@ public class EmailTemplateSender extends StandardEditor {
     @Named("defaultGroup.subject")
     private TextField subjectField;
 
-    @Subscribe
-    protected void onInit(InitEvent event) {
+    @Override
+    public void init(Map<String, Object> params) {
+        super.init(params);
         if (emailTemplate == null) {
             throw new IllegalStateException("'emailTemplate' parameter is required");
         }
         emailTemplateDs.setItem(emailTemplate);
 
-        updateDefaultTemplateParameters(((MapScreenOptions) event.getOptions()).getParams());
+        updateDefaultTemplateParameters(params);
 
-        defaultBodyParametersFrame = (EmailTemplateParametersFrame) fragments.create(this,
-                "emailtemplates$parametersFrame",
-                new MapScreenOptions(ParamsMap.of(EmailTemplateParametersFrame.TEMPLATE_REPORT, emailTemplate.getEmailBodyReport(),
-                        EmailTemplateParametersFrame.HIDE_REPORT_CAPTION, true)))
-                .init();
-        defaultBodyParameters.add(defaultBodyParametersFrame.getFragment());
+        defaultBodyParametersFrame = (EmailTemplateParametersFrame) openFrame(defaultBodyParameters, "emailtemplates$parametersFrame",
+                ParamsMap.of(EmailTemplateParametersFrame.TEMPLATE_REPORT, emailTemplate.getEmailBodyReport(),
+                        EmailTemplateParametersFrame.HIDE_REPORT_CAPTION, true));
+        defaultBodyParametersFrame.createComponents();
 
         if (!emailTemplate.getAttachedTemplateReports().isEmpty()) {
-            attachmentParametersFrame = (EmailTemplateParametersFrame) fragments.create(this,
-                    "emailtemplates$parametersFrame",
-                    new MapScreenOptions(ParamsMap.of(EmailTemplateParametersFrame.TEMPLATE_REPORTS, emailTemplate.getAttachedTemplateReports())))
-                    .init();
+            attachmentParametersFrame = (EmailTemplateParametersFrame) openFrame(attachmentParameters, "emailtemplates$parametersFrame",
+                    ParamsMap.of(EmailTemplateParametersFrame.TEMPLATE_REPORTS, emailTemplate.getAttachedTemplateReports()));
             attachmentParametersFrame.createComponents();
-            attachmentParameters.add(attachmentParametersFrame.getFragment());
         } else {
             attachmentGroupBox.setVisible(false);
         }
+
         subjectField.addValueChangeListener(new Consumer<HasValue.ValueChangeEvent>() {
             @Override
             public void accept(HasValue.ValueChangeEvent valueChangeEvent) {
@@ -165,28 +144,27 @@ public class EmailTemplateSender extends StandardEditor {
                     }
                 }
             }
+
         }
     }
 
     @Override
-    protected ValidationErrors validateScreen() {
-        ValidationErrors validationErrors = super.validateScreen();
-        for (String description: crossValidateParameters()) {
-            validationErrors.add(description);
-        }
-        return validationErrors;
+    public boolean validateAll() {
+        return super.validateAll() && crossValidateParameters();
     }
 
-    protected List<String> crossValidateParameters() {
-        List<String> descriptions = crossValidateParameters(defaultBodyParametersFrame);
-        if (descriptions.isEmpty()) {
-            descriptions.addAll(crossValidateParameters(attachmentParametersFrame));
+    protected boolean crossValidateParameters() {
+        boolean isValid = true;
+        isValid = crossValidateParameters(defaultBodyParametersFrame);
+        if (isValid) {
+            isValid = crossValidateParameters(attachmentParametersFrame);
         }
-        return descriptions;
+
+        return isValid;
     }
 
-    private List<String> crossValidateParameters(EmailTemplateParametersFrame parametersFrame) {
-        List<String> descriptions = new ArrayList<>();
+    private boolean crossValidateParameters(EmailTemplateParametersFrame parametersFrame) {
+        boolean isValid = true;
         if (parametersFrame != null && parametersFrame.collectParameters() != null) {
             for (ReportWithParams reportWithParams : parametersFrame.collectParameters()) {
                 if (BooleanUtils.isTrue(reportWithParams.getReport().getValidationOn())) {
@@ -194,20 +172,22 @@ public class EmailTemplateSender extends StandardEditor {
                         reportParameterValidator.crossValidateParameters(reportWithParams.getReport(),
                                 reportWithParams.getParams());
                     } catch (ReportParametersValidationException e) {
-                        descriptions.add(e.getMessage());
+                        NotificationType notificationType = NotificationType.valueOf(clientConfig.getValidationNotificationType());
+                        showNotification(messages.getMainMessage("validationFail.caption"), e.getMessage(), notificationType);
+                        isValid = false;
                     }
                 }
             }
         }
-        return descriptions;
+        return isValid;
     }
 
     public void onCancelButtonClick() {
-        close(WINDOW_CLOSE_ACTION);
+        close(Window.CLOSE_ACTION_ID);
     }
 
     public void onTestButtonClick() throws TemplateNotFoundException, ReportParameterTypeChangedException {
-        if (!validateScreen().isEmpty()) {
+        if (!validateAll()) {
             return;
         }
         EmailInfo emailInfo = getEmailInfo();
@@ -215,21 +195,22 @@ public class EmailTemplateSender extends StandardEditor {
     }
 
     public void onSendButtonClick() throws TemplateNotFoundException, ReportParameterTypeChangedException {
-        if (!validateScreen().isEmpty()) {
+        if (!validateAll()) {
             return;
         }
         if (BooleanUtils.isNotTrue(emailTemplate.getUseReportSubject()) && subjectField.getValue() == null) {
-            notifications.create(Notifications.NotificationType.WARNING).withDescription(messageBundle.getMessage("emptySubject")).show();
+            showNotification(getMessage("emptySubject"), NotificationType.WARNING);
             return;
         }
         EmailInfo emailInfo = getEmailInfo();
 
+
         try {
             emailService.sendEmail(emailInfo);
-            notifications.create(Notifications.NotificationType.HUMANIZED).withDescription(messageBundle.getMessage("emailSent")).show();
-            close(WINDOW_COMMIT_AND_CLOSE_ACTION);
+            showNotification(getMessage("emailSent"), NotificationType.HUMANIZED);
+            close(COMMIT_ACTION_ID);
         } catch (EmailException e) {
-            notifications.create(Notifications.NotificationType.ERROR).withDescription(StringUtils.join(e.getMessages(), "\n")).show();
+            showNotification(StringUtils.join(e.getMessages(), "\n"), NotificationType.ERROR);
         }
     }
 

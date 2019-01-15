@@ -11,7 +11,7 @@ test-run
 /studio-settings.xml
 .ideaDataSources/*
 .shelf/
-.idea/*
+.idea/
 modules/core/build/
 modules/global/build/
 modules/web/build/

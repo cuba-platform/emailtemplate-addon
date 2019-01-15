@@ -8,15 +8,10 @@ import com.haulmont.addon.emailtemplates.exceptions.ReportParameterTypeChangedEx
 import com.haulmont.addon.emailtemplates.service.TemplateParametersExtractorService;
 import com.haulmont.cuba.core.entity.Entity;
 import com.haulmont.cuba.core.global.Metadata;
-import com.haulmont.cuba.gui.Notifications;
 import com.haulmont.cuba.gui.WindowParam;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.DataSupplier;
-import com.haulmont.cuba.gui.screen.ScreenFragment;
-import com.haulmont.cuba.gui.screen.Subscribe;
-import com.haulmont.cuba.gui.screen.UiController;
-import com.haulmont.cuba.gui.screen.UiDescriptor;
 import com.haulmont.cuba.gui.xml.layout.ComponentsFactory;
 import com.haulmont.reports.app.service.ReportService;
 import com.haulmont.reports.entity.Report;
@@ -33,9 +28,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-@UiController("emailtemplates$parametersFrame")
-@UiDescriptor("email-template-parameters-frame.xml")
-public class EmailTemplateParametersFrame extends ScreenFragment {
+public class EmailTemplateParametersFrame extends AbstractFrame {
     public static final String IS_DEFAULT_PARAM_VALUES = "isDefault";
     public static final String HIDE_REPORT_CAPTION = "hideReportCaption";
     public static final String TEMPLATE = "emailTemplate";
@@ -53,7 +46,7 @@ public class EmailTemplateParametersFrame extends ScreenFragment {
     @Inject
     protected Metadata metadata;
     @Inject
-    private Notifications notifications;
+    protected ReportService reportService;
     @Inject
     protected DataSupplier dataSupplier;
     @Inject
@@ -75,10 +68,11 @@ public class EmailTemplateParametersFrame extends ScreenFragment {
 
     protected List<ReportWithParamField> parameterComponents = new ArrayList<>();
 
-    protected ParameterFieldCreator parameterFieldCreator = new ParameterFieldCreator((AbstractFrame) getFragment());
+    protected ParameterFieldCreator parameterFieldCreator = new ParameterFieldCreator(this);
 
-    @Subscribe
-    protected void onInit(InitEvent event) {
+    @Override
+    public void init(Map<String, Object> params) {
+        super.init(params);
         if (templateReport != null) {
             setTemplateReport(templateReport);
         }
@@ -101,6 +95,7 @@ public class EmailTemplateParametersFrame extends ScreenFragment {
 
     public void createComponents() {
         clearComponents();
+
         try {
             List<ReportWithParams> parameters = getTemplateDefaultValues();
 
@@ -138,8 +133,9 @@ public class EmailTemplateParametersFrame extends ScreenFragment {
                     }
                 }
             }
+
         } catch (ReportParameterTypeChangedException e) {
-            notifications.create().withDescription(e.getMessage()).show();
+            showNotification(e.getMessage());
         }
     }
 
