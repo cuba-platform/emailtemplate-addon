@@ -14,6 +14,11 @@ public class HtmlTemplateUtils {
         tidy.setXHTML(true);
         tidy.setIndentContent(true);
         tidy.setPrintBodyOnly(true);
+        tidy.setInputEncoding("UTF-8");
+        tidy.setOutputEncoding("UTF-8");
+        tidy.setSmartIndent(true);
+        tidy.setShowWarnings(false); //to hide errors
+        tidy.setQuiet(true); //to hide warning
         tidy.setTidyMark(false);
 
         // HTML to DOM
