@@ -10,10 +10,10 @@ import javax.persistence.Entity;
 @Extends(SendingMessage.class)
 public class ExtendedSendingMessage extends SendingMessage {
 
-    @Column(name = "_CC")
+    @Column(name = "CC_")
     protected String cc;
 
-    @Column(name = "_BCC")
+    @Column(name = "BCC_")
     protected String bcc;
 
     public String getCc() {

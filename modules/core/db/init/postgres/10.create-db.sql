@@ -92,8 +92,8 @@ create table EMAILTEMPLATES_EMAIL_TEMPLATE_FILE_DESCRIPTOR_LINK (
 )^
 -- end EMAILTEMPLATES_EMAIL_TEMPLATE_FILE_DESCRIPTOR_LINK
 -- begin SYS_SENDING_MESSAGE
-alter table SYS_SENDING_MESSAGE add column _CC varchar(255) ^
-alter table SYS_SENDING_MESSAGE add column _BCC varchar(255) ^
+alter table SYS_SENDING_MESSAGE add column CC_ varchar(255) ^
+alter table SYS_SENDING_MESSAGE add column BCC_ varchar(255) ^
 alter table SYS_SENDING_MESSAGE add column DTYPE varchar(100) ^
 update SYS_SENDING_MESSAGE set DTYPE = 'emailtemplates$ExtendedSendingMessage' where DTYPE is null ^
 -- end SYS_SENDING_MESSAGE
