@@ -1,18 +1,18 @@
 package com.haulmont.addon.emailtemplates.web.emailtemplate.send;
 
+import com.haulmont.addon.emailtemplates.dto.ExtendedEmailInfo;
 import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.ParameterValue;
 import com.haulmont.addon.emailtemplates.entity.TemplateReport;
 import com.haulmont.addon.emailtemplates.exceptions.ReportParameterTypeChangedException;
 import com.haulmont.addon.emailtemplates.exceptions.TemplateNotFoundException;
+import com.haulmont.addon.emailtemplates.service.EmailService;
 import com.haulmont.addon.emailtemplates.service.EmailTemplatesService;
 import com.haulmont.addon.emailtemplates.web.frames.EmailTemplateParametersFrame;
 import com.haulmont.bali.util.ParamsMap;
 import com.haulmont.cuba.client.ClientConfig;
-import com.haulmont.cuba.core.app.EmailService;
 import com.haulmont.cuba.core.global.EmailException;
-import com.haulmont.cuba.core.global.EmailInfo;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.WindowParam;
 import com.haulmont.cuba.gui.components.*;
@@ -65,7 +65,7 @@ public class EmailTemplateSender extends AbstractWindow {
     private ExportDisplay exportDisplay;
 
     @Inject
-    private EmailService emailService;
+    protected EmailService emailService;
 
     @Inject
     private Metadata metadata;
@@ -186,7 +186,7 @@ public class EmailTemplateSender extends AbstractWindow {
         if (!validateAll()) {
             return;
         }
-        EmailInfo emailInfo = getEmailInfo();
+        ExtendedEmailInfo emailInfo = getEmailInfo();
         exportDisplay.show(new ByteArrayDataProvider(emailInfo.getBody().getBytes()), emailInfo.getCaption() + ".html");
     }
 
@@ -198,8 +198,7 @@ public class EmailTemplateSender extends AbstractWindow {
             showNotification(getMessage("emptySubject"), NotificationType.WARNING);
             return;
         }
-        EmailInfo emailInfo = getEmailInfo();
-
+        ExtendedEmailInfo emailInfo = getEmailInfo();
 
         try {
             emailService.sendEmail(emailInfo);
@@ -210,7 +209,7 @@ public class EmailTemplateSender extends AbstractWindow {
         }
     }
 
-    private EmailInfo getEmailInfo() throws ReportParameterTypeChangedException, TemplateNotFoundException {
+    private ExtendedEmailInfo getEmailInfo() throws ReportParameterTypeChangedException, TemplateNotFoundException {
         return emailTemplatesService.generateEmail(emailTemplate, new ArrayList<>());
     }
 }

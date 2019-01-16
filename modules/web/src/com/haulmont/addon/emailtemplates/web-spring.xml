@@ -16,6 +16,8 @@
                        value="com.haulmont.addon.emailtemplates.service.TemplateParametersExtractorService"/>
                 <entry key="emailtemplates_TemplateConverterService"
                        value="com.haulmont.addon.emailtemplates.service.TemplateConverterService"/>
+                <entry key="emailtemplates_EmailService"
+                       value="com.haulmont.addon.emailtemplates.service.EmailService"/>
             </map>
         </property>
     </bean>

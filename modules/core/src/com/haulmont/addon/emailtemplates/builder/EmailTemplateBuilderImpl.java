@@ -2,22 +2,23 @@ package com.haulmont.addon.emailtemplates.builder;
 
 import com.haulmont.addon.emailtemplates.bean.TemplateParametersExtractor;
 import com.haulmont.addon.emailtemplates.core.EmailTemplatesAPI;
+import com.haulmont.addon.emailtemplates.dto.ExtendedEmailInfo;
 import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
+import com.haulmont.addon.emailtemplates.emailer.EmailerAPI;
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.ParameterValue;
 import com.haulmont.addon.emailtemplates.entity.TemplateReport;
 import com.haulmont.addon.emailtemplates.exceptions.ReportParameterTypeChangedException;
 import com.haulmont.addon.emailtemplates.exceptions.TemplateNotFoundException;
-import com.haulmont.cuba.core.app.EmailerAPI;
 import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.EmailException;
-import com.haulmont.cuba.core.global.EmailInfo;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.reports.app.service.ReportService;
 import com.haulmont.reports.entity.ParameterType;
 import com.haulmont.reports.entity.Report;
 import com.haulmont.reports.entity.ReportInputParameter;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 
 import java.util.ArrayList;
@@ -54,7 +55,10 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
 
     @Override
     public EmailTemplateBuilder addTo(String to) {
-        String toAddresses = emailTemplate.getTo() + ", " + to;
+        String toAddresses = to;
+        if (StringUtils.isNotBlank(emailTemplate.getTo())) {
+            toAddresses = emailTemplate.getTo() + ", " + to;
+        }
         emailTemplate.setTo(toAddresses);
         return this;
     }
@@ -67,7 +71,10 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
 
     @Override
     public EmailTemplateBuilder addCc(String cc) {
-        String ccAddresses = emailTemplate.getCc() + ", " + cc;
+        String ccAddresses = cc;
+        if (StringUtils.isNotBlank(emailTemplate.getCc())) {
+            ccAddresses = emailTemplate.getCc() + ", " + cc;
+        }
         emailTemplate.setCc(ccAddresses);
         return this;
     }
@@ -80,9 +87,12 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
 
     @Override
     public EmailTemplateBuilder addBcc(String bcc) {
-        String bccAddresses = emailTemplate.getBcc() + ", " + bcc;
+        String bccAddresses = bcc;
+        if (StringUtils.isNotBlank(emailTemplate.getBcc())) {
+            bccAddresses = emailTemplate.getBcc() + ", " + bcc;
+        }
         emailTemplate.setBcc(bccAddresses);
-        return null;
+        return this;
     }
 
     @Override
@@ -267,7 +277,7 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
 
 
     @Override
-    public EmailInfo generateEmail() throws ReportParameterTypeChangedException, TemplateNotFoundException {
+    public ExtendedEmailInfo generateEmail() throws ReportParameterTypeChangedException, TemplateNotFoundException {
         return emailTemplates.generateEmail(emailTemplate, extractorService.getTemplateDefaultValues(emailTemplate));
     }
 
@@ -280,7 +290,7 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
         EmailTemplate clonedTemplate = metadata.create(emailTemplate.getClass());
         BeanUtils.copyProperties(emailTemplate, clonedTemplate);
         List<TemplateReport> attachedTemplateReports = new ArrayList<>();
-        for (TemplateReport templateReport: emailTemplate.getAttachedTemplateReports()) {
+        for (TemplateReport templateReport : emailTemplate.getAttachedTemplateReports()) {
             TemplateReport newTemplateReport = metadata.create(templateReport.getClass());
             BeanUtils.copyProperties(templateReport, newTemplateReport);
             attachedTemplateReports.add(newTemplateReport);
