@@ -17,7 +17,9 @@
 
 
 # 1. Introduction <a name="introduction"></a>
-This component provides the ability to create outbound email based on generating by YARG reporting templates. Using the component, you can create, edit and delete templates, set groups for templates, and send emails.
+This component provides the ability to create outbound email based on generating by YARG reporting templates. Using the component, you can create, edit and delete templates, set groups for templates, and send emails.  
+
+Sample application, using this component can be found here: https://git.haulmont.com/app-components/yarg-email-template-addon-demo.
 
 # 2. Installation <a name="installation"></a>
 
@@ -227,7 +229,7 @@ A copy of the specified EmailTemplate is created in the constructor. Every inter
         this.emailTemplate = cloneTemplate(emailTemplate);
     }
 ```
-The build() method creates the copy from the copy inside builder. It is necessary to save a state of the existed entity or builder.
+The `build()` method creates the copy from the copy inside builder. It is necessary to save a state of the existed entity or builder.
 
 Example of using the builder:
 ```
