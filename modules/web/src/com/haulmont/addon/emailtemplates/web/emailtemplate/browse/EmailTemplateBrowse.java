@@ -11,21 +11,16 @@ import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.actions.CreateAction;
 import com.haulmont.cuba.gui.components.actions.EditAction;
 import com.haulmont.cuba.gui.components.actions.ItemTrackingAction;
-import com.haulmont.cuba.gui.screen.LookupComponent;
-import com.haulmont.cuba.gui.screen.*;
+import com.haulmont.cuba.gui.screen.MapScreenOptions;
+import com.haulmont.cuba.gui.screen.OpenMode;
 
 import javax.inject.Inject;
+import java.util.Map;
 
-@UiController("emailtemplates$EmailTemplate.browse")
-@UiDescriptor("email-template-browse.xml")
-@LookupComponent("emailTemplatesTable")
-@LoadDataBeforeShow
-public class EmailTemplateBrowse extends StandardLookup<EmailTemplate> {
+public class EmailTemplateBrowse extends AbstractLookup {
 
     @Inject
     private Screens screens;
-    @Inject
-    private MessageBundle messageBundle;
     @Inject
     protected DataManager dataManager;
     @Inject
@@ -33,25 +28,6 @@ public class EmailTemplateBrowse extends StandardLookup<EmailTemplate> {
 
     @Inject
     private PopupButton createBtn;
-
-    @Subscribe
-    protected void onInit(InitEvent event) {
-        Action sendAction = new ItemTrackingAction(emailTemplatesTable, "sendAction").
-                withHandler(actionPerformedEvent -> onSendEmailClick());
-        emailTemplatesTable.addAction(sendAction);
-
-        createBtn.addAction(new TemplateCreateAction(emailTemplatesTable, JsonEmailTemplate.class));
-        createBtn.addAction(new TemplateCreateAction(emailTemplatesTable, ReportEmailTemplate.class));
-
-        emailTemplatesTable.addAction(new EditAction(emailTemplatesTable) {
-
-            @Override
-            public String getWindowId() {
-                EmailTemplate template = emailTemplatesTable.getSingleSelected();
-                return template.getMetaClass().getName() + ".edit";
-            }
-        });
-    }
 
     protected class TemplateCreateAction<T extends Entity> extends CreateAction {
 
@@ -79,10 +55,30 @@ public class EmailTemplateBrowse extends StandardLookup<EmailTemplate> {
 
         @Override
         public String getCaption() {
-            return messageBundle.getMessage(getId());
+            return getMessage(getId());
         }
     }
 
+    @Override
+    public void init(Map<String, Object> params) {
+        super.init(params);
+
+        Action sendAction = new ItemTrackingAction(emailTemplatesTable, "sendAction").
+                withHandler(actionPerformedEvent -> onSendEmailClick());
+        emailTemplatesTable.addAction(sendAction);
+
+        createBtn.addAction(new TemplateCreateAction(emailTemplatesTable, JsonEmailTemplate.class));
+        createBtn.addAction(new TemplateCreateAction(emailTemplatesTable, ReportEmailTemplate.class));
+
+        emailTemplatesTable.addAction(new EditAction(emailTemplatesTable) {
+
+            @Override
+            public String getWindowId() {
+                EmailTemplate template = emailTemplatesTable.getSingleSelected();
+                return template.getMetaClass().getName() + ".edit";
+            }
+        });
+    }
 
     protected void onSendEmailClick() {
         EmailTemplate template = emailTemplatesTable.getSingleSelected();
