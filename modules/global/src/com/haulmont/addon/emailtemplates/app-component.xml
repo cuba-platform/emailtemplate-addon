@@ -5,6 +5,7 @@
             name="global">
         <artifact appJar="true"
                   name="yet-global"/>
+        <artifact name="yet-core" classifier="db" ext="zip" configuration="dbscripts"/>
         <property name="cuba.persistenceConfig"
                   value="+com/haulmont/addon/emailtemplates/persistence.xml"/>
         <property name="cuba.metadataConfig"

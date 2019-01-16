@@ -70,6 +70,9 @@ public class EmailTemplates implements EmailTemplatesAPI {
                 emailInfo.getCaption() : emailTemplate.getSubject());
         emailInfo.setAddresses(emailTemplate.getTo());
         emailInfo.setFrom(emailTemplate.getFrom());
+        emailInfo.setSendInOneMessage(true);
+        emailInfo.setCc(emailTemplate.getCc());
+        emailInfo.setBcc(emailTemplate.getBcc());
         emailInfo.setAttachments(emailAttachments);
         return emailInfo;
     }

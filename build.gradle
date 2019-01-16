@@ -22,6 +22,7 @@ buildscript {
     }
     dependencies {
         classpath "com.haulmont.gradle:cuba-plugin:$cubaVersion"
+        classpath "com.haulmont.gradle:addon-gradle-plugin:1.0.3"
     }
 }
 
@@ -35,11 +36,12 @@ def servletApi = 'javax.servlet:javax.servlet-api:3.1.0'
 
 
 apply(plugin: 'cuba')
+apply(plugin: 'addon-gradle-plugin')
 
 cuba {
     artifact {
         group = 'com.haulmont.addon.emailtemplates'
-        version = "0.2"
+        version = "0.3"
         isSnapshot = true
     }
     tomcat {
@@ -66,7 +68,7 @@ configure([globalModule, coreModule, webModule]) {
     apply(plugin: 'java')
     apply(plugin: 'maven')
     apply(plugin: 'cuba')
-    apply(plugin: 'checkstyle')
+    apply(plugin: 'addon-gradle-plugin')
 
     dependencies {
         compile('net.sf.jtidy:jtidy:r938')
@@ -81,24 +83,6 @@ configure([globalModule, coreModule, webModule]) {
 
     artifacts {
         archives sourceJar
-    }
-
-    String checkstyleConfigDir = "${rootProject.projectDir}/config/checkstyle"
-    checkstyle {
-        toolVersion = "6.2"
-        configFile = new File("${checkstyleConfigDir}/checkstyle.xml".toString())
-        configProperties = [
-                'checkstyleConfigDir': checkstyleConfigDir
-        ]
-        reportsDir = new File("${buildDir}/checkstyle".toString())
-        ignoreFailures = false
-    }
-
-    checkstyleMain << {
-        def checkstyleDir = "${project.buildDir}/checkstyle".toString()
-        ant.xslt('in': "$checkstyleDir/main.xml",
-                out: "$checkstyleDir/$project.name-checkstyle.html",
-                style: "$checkstyleConfigDir/checkstyle.xsl")
     }
 
 }
