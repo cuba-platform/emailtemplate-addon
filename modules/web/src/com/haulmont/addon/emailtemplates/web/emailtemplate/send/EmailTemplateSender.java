@@ -14,11 +14,13 @@ import com.haulmont.cuba.core.app.EmailService;
 import com.haulmont.cuba.core.global.EmailException;
 import com.haulmont.cuba.core.global.EmailInfo;
 import com.haulmont.cuba.core.global.Metadata;
+import com.haulmont.cuba.gui.Notifications;
 import com.haulmont.cuba.gui.WindowParam;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.export.ByteArrayDataProvider;
 import com.haulmont.cuba.gui.export.ExportDisplay;
+import com.haulmont.cuba.gui.screen.MessageBundle;
 import com.haulmont.reports.app.service.ReportService;
 import com.haulmont.reports.entity.ParameterType;
 import com.haulmont.reports.entity.ReportInputParameter;
@@ -69,6 +71,12 @@ public class EmailTemplateSender extends AbstractWindow {
 
     @Inject
     private Metadata metadata;
+
+    @Inject
+    private Notifications notifications;
+
+    @Inject
+    private MessageBundle messageBundle;
 
     @Inject
     protected ReportService reportService;
@@ -168,8 +176,11 @@ public class EmailTemplateSender extends AbstractWindow {
                         reportParameterValidator.crossValidateParameters(reportWithParams.getReport(),
                                 reportWithParams.getParams());
                     } catch (ReportParametersValidationException e) {
-                        NotificationType notificationType = NotificationType.valueOf(clientConfig.getValidationNotificationType());
-                        showNotification(messages.getMainMessage("validationFail.caption"), e.getMessage(), notificationType);
+                        Notifications.NotificationType notificationType = Notifications.NotificationType.valueOf(clientConfig.getValidationNotificationType());
+                        notifications.create(notificationType)
+                                .withCaption(messageBundle.getMessage("validationFail.caption"))
+                                .withDescription(e.getMessage())
+                                .show();
                         isValid = false;
                     }
                 }
@@ -195,18 +206,23 @@ public class EmailTemplateSender extends AbstractWindow {
             return;
         }
         if (BooleanUtils.isNotTrue(emailTemplate.getUseReportSubject()) && subjectField.getValue() == null) {
-            showNotification(getMessage("emptySubject"), NotificationType.WARNING);
+            notifications.create(Notifications.NotificationType.WARNING)
+                    .withDescription(messageBundle.getMessage("emptySubject"))
+                    .show();
             return;
         }
         EmailInfo emailInfo = getEmailInfo();
 
-
         try {
             emailService.sendEmail(emailInfo);
-            showNotification(getMessage("emailSent"), NotificationType.HUMANIZED);
-            close(COMMIT_ACTION_ID);
+            notifications.create(Notifications.NotificationType.HUMANIZED)
+                    .withDescription(messageBundle.getMessage("emailSent"))
+                    .show();
+            close(WINDOW_COMMIT_AND_CLOSE_ACTION);
         } catch (EmailException e) {
-            showNotification(StringUtils.join(e.getMessages(), "\n"), NotificationType.ERROR);
+            notifications.create(Notifications.NotificationType.ERROR)
+                    .withDescription(StringUtils.join(e.getMessages(), "\n"))
+                    .show();
         }
     }
 

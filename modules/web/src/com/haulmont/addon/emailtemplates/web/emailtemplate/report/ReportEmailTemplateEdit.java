@@ -8,12 +8,15 @@ import com.haulmont.addon.emailtemplates.web.frames.EmailTemplateParametersFrame
 import com.haulmont.bali.util.ParamsMap;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.global.PersistenceHelper;
+import com.haulmont.cuba.gui.Notifications;
 import com.haulmont.cuba.gui.components.CheckBox;
 import com.haulmont.cuba.gui.components.LookupPickerField;
 import com.haulmont.cuba.gui.components.TextField;
 import com.haulmont.cuba.gui.components.VBoxLayout;
+import com.haulmont.cuba.gui.components.data.options.DatasourceOptions;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.impl.CollectionPropertyDatasourceImpl;
+import com.haulmont.cuba.gui.screen.MessageBundle;
 import com.haulmont.reports.entity.Report;
 import com.haulmont.reports.entity.ReportOutputType;
 import org.apache.commons.lang3.BooleanUtils;
@@ -37,6 +40,12 @@ public class ReportEmailTemplateEdit extends AbstractTemplateEditor<ReportEmailT
 
     @Inject
     private Metadata metadata;
+
+    @Inject
+    private Notifications notifications;
+
+    @Inject
+    private MessageBundle messageBundle;
 
     @Inject
     protected VBoxLayout defaultValuesBox;
@@ -65,10 +74,7 @@ public class ReportEmailTemplateEdit extends AbstractTemplateEditor<ReportEmailT
             parametersFrame.clearComponents();
         }
 
-        emailBody.setOptionsDatasource((CollectionDatasource) getDsContext().get("emailBodiesDs"));
-        emailBody.addLookupAction();
-        emailBody.addClearAction();
-        emailBody.addOpenAction();
+        emailBody.setOptions(new DatasourceOptions<>((CollectionDatasource) getDsContext().get("emailBodiesDs")));
 
         emailBody.setValue(getItem().getReport());
 
@@ -90,14 +96,18 @@ public class ReportEmailTemplateEdit extends AbstractTemplateEditor<ReportEmailT
                         parametersFrame.setTemplateReport(getItem().getEmailBodyReport());
                         parametersFrame.clearComponents();
                         emailBody.setValue(null);
-                        showNotification(getMessage("notification.reportIsNotHtml"), NotificationType.ERROR);
+                        notifications.create(Notifications.NotificationType.ERROR)
+                                .withDescription(messageBundle.getMessage("notification.reportIsNotHtml"))
+                                .show();
                     }
                 } else {
                     getItem().setEmailBodyReport(null);
                     parametersFrame.setTemplateReport(getItem().getEmailBodyReport());
                     parametersFrame.clearComponents();
                     emailBody.setValue(null);
-                    showNotification(getMessage("notification.reportHasNoDefaultTemplate"), NotificationType.ERROR);
+                    notifications.create(Notifications.NotificationType.ERROR)
+                            .withDescription(messageBundle.getMessage("notification.reportHasNoDefaultTemplate"))
+                            .show();
                 }
             } else {
                 getItem().setEmailBodyReport(null);

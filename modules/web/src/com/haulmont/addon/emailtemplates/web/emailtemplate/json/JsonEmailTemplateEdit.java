@@ -9,6 +9,7 @@ import com.haulmont.chile.core.model.MetaClass;
 import com.haulmont.chile.core.model.MetaPropertyPath;
 import com.haulmont.chile.core.model.MetadataObject;
 import com.haulmont.cuba.core.global.Metadata;
+import com.haulmont.cuba.gui.Screens;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.actions.BaseAction;
@@ -20,6 +21,8 @@ import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.impl.DatasourceImplementation;
 import com.haulmont.cuba.gui.export.ByteArrayDataProvider;
 import com.haulmont.cuba.gui.export.ExportDisplay;
+import com.haulmont.cuba.gui.screen.MapScreenOptions;
+import com.haulmont.cuba.gui.screen.OpenMode;
 import com.haulmont.cuba.gui.upload.FileUploadingAPI;
 import com.haulmont.reports.entity.ParameterType;
 import com.haulmont.reports.entity.Report;
@@ -42,6 +45,9 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
     private static final Pattern SIMPLE_FIELD_PATTERN = Pattern.compile("\\$\\{([a-zA-Z0-9]+)[^}]*}");
     private static final Pattern ENTITY_FIELD_PATTERN = Pattern.compile("\\$\\{([a-zA-Z0-9]+)\\.([a-zA-Z0-9]*)[^}]*}");
 
+
+    @Inject
+    private Screens screens;
     @Inject
     private GrapesJsHtmlEditor templateEditor;
 
@@ -435,7 +441,10 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
     }
 
     public void exportHtml() {
-        openWindow("emailtemplates$htmlSourceCode", WindowManager.OpenType.DIALOG, ParamsMap.of("html", getItem().getHtml()));
+        screens.create("emailtemplates$htmlSourceCode",
+                OpenMode.DIALOG,
+                new MapScreenOptions(ParamsMap.of("html", getItem().getHtml())))
+                .show();
     }
 
     public void viewHtml() {
