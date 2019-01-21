@@ -19,7 +19,7 @@
 # 1. Introduction <a name="introduction"></a>
 This component provides the ability to create outbound email based on generating by YARG reporting templates. Using the component, you can create, edit and delete templates, set groups for templates, and send emails.  
 
-Sample application, using this component can be found here: https://git.haulmont.com/app-components/yarg-email-template-addon-demo.
+Sample application, using this component can be found here: https://github.com/cuba-platform/emailtemplate-addon-demo.
 
 # 2. Installation <a name="installation"></a>
 
@@ -133,7 +133,7 @@ The screen contains the following elements:
 
 This type of creating template provides the ability to use HTML editor. You can design a template with different elements and set every element,  using **Setting** panel.
 
-See more information about using the editor in `README` [for GrapesJs HTML editor](https://git.haulmont.com/app-components/grapesjs-addon/blob/master/README.md).
+See more information about using the editor in `README` [for GrapesJs HTML editor](https://github.com/cuba-platform/grapesjs-addon/blob/master/README.md).
 
 ![email-template-editor-designer](img/email-template-editor-designer.png)
 
