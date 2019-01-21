@@ -130,7 +130,11 @@
                         </vbox>
                     </scrollBox>
                     <et:grapesJsHtmlEditor id="templateEditor"
-                                           height="100%"/>
+                                           height="100%">
+                        <et:disabledBlocks>
+                            map,tabs
+                        </et:disabledBlocks>
+                    </et:grapesJsHtmlEditor>
                 </split>
             </tab>
             <tab id="parametersAndFormatsTab"
