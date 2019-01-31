@@ -5,10 +5,7 @@
             name="global">
         <artifact appJar="true"
                   name="yet-global"/>
-        <artifact classifier="db"
-                  configuration="dbscripts"
-                  ext="zip"
-                  name="yet-core"/>
+        <artifact name="yet-core" classifier="db" ext="zip" configuration="dbscripts"/>
         <property name="cuba.persistenceConfig"
                   value="+com/haulmont/addon/emailtemplates/persistence.xml"/>
         <property name="cuba.metadataConfig"
@@ -40,7 +37,7 @@
                   ext="zip"
                   name="yet-web"/>
         <artifact configuration="themes"
-                  name="yet-web-themes"/>
+                  name="yet-web" ext="jar"/>
         <property name="cuba.springContextConfig"
                   value="+com/haulmont/addon/emailtemplates/web-spring.xml"/>
         <property name="cuba.dispatcherSpringContextConfig"
@@ -53,8 +50,5 @@
                   value="+com/haulmont/addon/emailtemplates/web-permissions.xml"/>
         <property name="cuba.mainMessagePack"
                   value="+com.haulmont.addon.emailtemplates.web"/>
-    </module>
-    <module name="web-themes">
-        <artifact name="yet-web-themes"/>
     </module>
 </app-component>

@@ -6,12 +6,13 @@ import com.haulmont.addon.emailtemplates.entity.ReportEmailTemplate;
 import com.haulmont.bali.util.ParamsMap;
 import com.haulmont.cuba.core.entity.Entity;
 import com.haulmont.cuba.core.global.DataManager;
-import com.haulmont.cuba.core.global.Metadata;
-import com.haulmont.cuba.gui.WindowManager;
+import com.haulmont.cuba.gui.Screens;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.actions.CreateAction;
 import com.haulmont.cuba.gui.components.actions.EditAction;
 import com.haulmont.cuba.gui.components.actions.ItemTrackingAction;
+import com.haulmont.cuba.gui.screen.MapScreenOptions;
+import com.haulmont.cuba.gui.screen.OpenMode;
 
 import javax.inject.Inject;
 import java.util.Map;
@@ -19,7 +20,7 @@ import java.util.Map;
 public class EmailTemplateBrowse extends AbstractLookup {
 
     @Inject
-    protected Metadata metadata;
+    private Screens screens;
     @Inject
     protected DataManager dataManager;
     @Inject
@@ -83,11 +84,15 @@ public class EmailTemplateBrowse extends AbstractLookup {
         EmailTemplate template = emailTemplatesTable.getSingleSelected();
         if (template != null) {
             template = dataManager.reload(template, "emailTemplate-view");
-            openWindow("emailtemplates$EmailTemplate.send", WindowManager.OpenType.DIALOG, ParamsMap.of("emailTemplate", template));
+            screens.create("emailtemplates$EmailTemplate.send",
+                    OpenMode.DIALOG,
+                    new MapScreenOptions(ParamsMap.of("emailTemplate", template)))
+                    .show();
         }
     }
 
     public void onGroupsButtonClick() {
-        openWindow("emailtemplates$TemplateGroup.browse", WindowManager.OpenType.NEW_WINDOW);
+        screens.create("emailtemplates$TemplateGroup.browse", OpenMode.NEW_WINDOW)
+                .show();
     }
 }

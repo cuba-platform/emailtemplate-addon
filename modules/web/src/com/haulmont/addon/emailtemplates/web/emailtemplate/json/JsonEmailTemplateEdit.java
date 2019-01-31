@@ -9,6 +9,7 @@ import com.haulmont.chile.core.model.MetaClass;
 import com.haulmont.chile.core.model.MetaPropertyPath;
 import com.haulmont.chile.core.model.MetadataObject;
 import com.haulmont.cuba.core.global.Metadata;
+import com.haulmont.cuba.gui.Screens;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.actions.BaseAction;
@@ -20,13 +21,15 @@ import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.impl.DatasourceImplementation;
 import com.haulmont.cuba.gui.export.ByteArrayDataProvider;
 import com.haulmont.cuba.gui.export.ExportDisplay;
+import com.haulmont.cuba.gui.screen.MapScreenOptions;
+import com.haulmont.cuba.gui.screen.OpenMode;
 import com.haulmont.cuba.gui.upload.FileUploadingAPI;
 import com.haulmont.reports.entity.ParameterType;
 import com.haulmont.reports.entity.Report;
 import com.haulmont.reports.entity.ReportInputParameter;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -42,6 +45,9 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
     private static final Pattern SIMPLE_FIELD_PATTERN = Pattern.compile("\\$\\{([a-zA-Z0-9]+)[^}]*}");
     private static final Pattern ENTITY_FIELD_PATTERN = Pattern.compile("\\$\\{([a-zA-Z0-9]+)\\.([a-zA-Z0-9]*)[^}]*}");
 
+
+    @Inject
+    private Screens screens;
     @Inject
     private GrapesJsHtmlEditor templateEditor;
 
@@ -286,7 +292,7 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
         paramUpButton.setAction(new BaseAction("generalFrame.up") {
             @Override
             public void actionPerform(Component component) {
-                ReportInputParameter parameter = (ReportInputParameter) target.getSingleSelected();
+                ReportInputParameter parameter = (ReportInputParameter) parametersTable.getSingleSelected();
                 if (parameter != null) {
                     List<ReportInputParameter> inputParameters = report.getInputParameters();
                     int index = parameter.getPosition();
@@ -310,8 +316,8 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
 
             @Override
             protected boolean isApplicable() {
-                if (target != null) {
-                    ReportInputParameter item = (ReportInputParameter) target.getSingleSelected();
+                if (parametersTable != null) {
+                    ReportInputParameter item = (ReportInputParameter) parametersTable.getSingleSelected();
                     if (item != null && parametersDs.getItem() == item) {
                         return item.getPosition() > 0;
                     }
@@ -324,7 +330,7 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
         paramDownButton.setAction(new BaseAction("generalFrame.down") {
             @Override
             public void actionPerform(Component component) {
-                ReportInputParameter parameter = (ReportInputParameter) target.getSingleSelected();
+                ReportInputParameter parameter = (ReportInputParameter) parametersTable.getSingleSelected();
                 if (parameter != null) {
                     List<ReportInputParameter> inputParameters = report.getInputParameters();
                     int index = parameter.getPosition();
@@ -348,8 +354,8 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
 
             @Override
             protected boolean isApplicable() {
-                if (target != null) {
-                    ReportInputParameter item = (ReportInputParameter) target.getSingleSelected();
+                if (parametersTable != null) {
+                    ReportInputParameter item = (ReportInputParameter) parametersTable.getSingleSelected();
                     if (item != null && parametersDs.getItem() == item) {
                         return item.getPosition() < parametersDs.size() - 1;
                     }
@@ -435,7 +441,10 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
     }
 
     public void exportHtml() {
-        openWindow("emailtemplates$htmlSourceCode", WindowManager.OpenType.DIALOG, ParamsMap.of("html", getItem().getHtml()));
+        screens.create("emailtemplates$htmlSourceCode",
+                OpenMode.DIALOG,
+                new MapScreenOptions(ParamsMap.of("html", getItem().getHtml())))
+                .show();
     }
 
     public void viewHtml() {

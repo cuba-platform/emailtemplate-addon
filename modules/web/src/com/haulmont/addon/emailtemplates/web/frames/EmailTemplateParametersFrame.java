@@ -21,7 +21,7 @@ import com.haulmont.reports.gui.report.run.ParameterFieldCreator;
 import com.haulmont.reports.gui.report.validators.ReportParamFieldValidator;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.BooleanUtils;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -185,7 +185,7 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
     }
 
     protected Field createComponent(ReportInputParameter parameter, Map<String, Object> values, int currentGridRow) {
-        Field field = parameterFieldCreator.createField(parameter);
+        Field<Object> field = parameterFieldCreator.createField(parameter);
         if (BooleanUtils.isTrue(isDefaultValues)) {
             field.setRequired(false);
         }
@@ -234,10 +234,9 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
         });
 
         if (field instanceof TokenList) {
-            TokenList tokenList = (TokenList) field;
-            tokenList.getDatasource().addCollectionChangeListener(e -> {
-                Collection items = e.getDs().getItems();
-                updateDefaultValue(parameter, items);
+            TokenList<Entity> tokenList = (TokenList) field;
+            tokenList.getValueSource().addValueChangeListener(e -> {
+                updateDefaultValue(parameter, e.getValue());
             });
         }
 

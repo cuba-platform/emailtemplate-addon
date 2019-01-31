@@ -2,23 +2,23 @@ package com.haulmont.addon.emailtemplates.builder;
 
 import com.haulmont.addon.emailtemplates.bean.TemplateParametersExtractor;
 import com.haulmont.addon.emailtemplates.core.EmailTemplatesAPI;
-import com.haulmont.addon.emailtemplates.dto.ExtendedEmailInfo;
 import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
-import com.haulmont.addon.emailtemplates.emailer.EmailerAPI;
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.ParameterValue;
 import com.haulmont.addon.emailtemplates.entity.TemplateReport;
 import com.haulmont.addon.emailtemplates.exceptions.ReportParameterTypeChangedException;
 import com.haulmont.addon.emailtemplates.exceptions.TemplateNotFoundException;
+import com.haulmont.cuba.core.app.EmailerAPI;
 import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.EmailException;
+import com.haulmont.cuba.core.global.EmailInfo;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.reports.app.service.ReportService;
 import com.haulmont.reports.entity.ParameterType;
 import com.haulmont.reports.entity.Report;
 import com.haulmont.reports.entity.ReportInputParameter;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 
 import java.util.ArrayList;
@@ -277,7 +277,7 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
 
 
     @Override
-    public ExtendedEmailInfo generateEmail() throws ReportParameterTypeChangedException, TemplateNotFoundException {
+    public EmailInfo generateEmail() throws ReportParameterTypeChangedException, TemplateNotFoundException {
         return emailTemplates.generateEmail(emailTemplate, extractorService.getTemplateDefaultValues(emailTemplate));
     }
 

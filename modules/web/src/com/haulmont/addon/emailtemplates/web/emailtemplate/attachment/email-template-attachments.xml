@@ -23,7 +23,6 @@
                             <column id="report.description"/>
                         </columns>
                         <rows datasource="attachedReportsDs"/>
-                        <rowsCount/>
                         <buttonsPanel>
                             <button action="reportsTable.add"/>
                             <button action="reportsTable.remove"/>
@@ -62,7 +61,6 @@
                         <column id="size"/>
                     </columns>
                     <rows datasource="attachedFilesDs"/>
-                    <rowsCount/>
                     <buttonsPanel alwaysVisible="true">
                         <button action="filesTable.create"/>
                         <button action="filesTable.edit"/>

@@ -9,6 +9,5 @@
         <class>com.haulmont.addon.emailtemplates.entity.ParameterValue</class>
         <class>com.haulmont.addon.emailtemplates.entity.ReportEmailTemplate</class>
         <class>com.haulmont.addon.emailtemplates.entity.JsonEmailTemplate</class>
-        <class>com.haulmont.addon.emailtemplates.entity.emailer.ExtendedSendingMessage</class>
     </persistence-unit>
 </persistence>

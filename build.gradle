@@ -1,6 +1,6 @@
 
 buildscript {
-    ext.cubaVersion = '6.10.7'
+    ext.cubaVersion = '7.0.0'
     repositories {
         
         mavenLocal()
@@ -22,6 +22,7 @@ buildscript {
     }
     dependencies {
         classpath "com.haulmont.gradle:cuba-plugin:$cubaVersion"
+        classpath "com.haulmont.gradle:addon-gradle-plugin:1.0.3"
     }
 }
 
@@ -30,18 +31,17 @@ def modulePrefix = 'yet'
 def globalModule = project(":${modulePrefix}-global")
 def coreModule = project(":${modulePrefix}-core")
 def webModule = project(":${modulePrefix}-web")
-def webThemesModule = project(":${modulePrefix}-web-themes")
 
 def servletApi = 'javax.servlet:javax.servlet-api:3.1.0'
 
 
-apply(plugin: 'idea')
 apply(plugin: 'cuba')
+apply(plugin: 'addon-gradle-plugin')
 
 cuba {
     artifact {
         group = 'com.haulmont.addon.emailtemplates'
-        version = "0.2"
+        version = "0.3"
         isSnapshot = true
     }
     tomcat {
@@ -55,7 +55,7 @@ cuba {
 dependencies {
     appComponent("com.haulmont.cuba:cuba-global:$cubaVersion")
     appComponent("com.haulmont.reports:reports-global:$cubaVersion")
-    appComponent("com.haulmont.addon.grapesjs:grapesjs-global:0.1.7")
+    appComponent("com.haulmont.addon.grapesjs:grapejs-global:0.2-SNAPSHOT")
 
 }
 
@@ -67,9 +67,8 @@ def dbTestNameParam = 'emailtemplates-test'
 configure([globalModule, coreModule, webModule]) {
     apply(plugin: 'java')
     apply(plugin: 'maven')
-    apply(plugin: 'idea')
     apply(plugin: 'cuba')
-    apply(plugin: 'checkstyle')
+    apply(plugin: 'addon-gradle-plugin')
 
     dependencies {
         compile('net.sf.jtidy:jtidy:r938')
@@ -86,27 +85,15 @@ configure([globalModule, coreModule, webModule]) {
         archives sourceJar
     }
 
-    String checkstyleConfigDir = "${rootProject.projectDir}/config/checkstyle"
-    checkstyle {
-        toolVersion = "6.2"
-        configFile = new File("${checkstyleConfigDir}/checkstyle.xml".toString())
-        configProperties = [
-                'checkstyleConfigDir': checkstyleConfigDir
-        ]
-        reportsDir = new File("${buildDir}/checkstyle".toString())
-        ignoreFailures = false
-    }
-
-    checkstyleMain << {
-        def checkstyleDir = "${project.buildDir}/checkstyle".toString()
-        ant.xslt('in': "$checkstyleDir/main.xml",
-                out: "$checkstyleDir/$project.name-checkstyle.html",
-                style: "$checkstyleConfigDir/checkstyle.xsl")
-    }
-
 }
 
 configure(globalModule) {
+    dependencies {
+        if (!JavaVersion.current().isJava8()) {
+            runtime('javax.xml.bind:jaxb-api:2.3.1')
+            runtime('org.glassfish.jaxb:jaxb-runtime:2.3.1')
+        }
+    }
     entitiesEnhancing {
         main { enabled = true }
     }
@@ -130,7 +117,7 @@ configure(coreModule) {
 
     dependencies {
         compile(globalModule)
-        provided(servletApi)
+        compileOnly(servletApi)
         jdbc(hsql)
         testRuntime(hsql)
 
@@ -169,37 +156,6 @@ configure(coreModule) {
         dbUser = 'sa'
         dbPassword = ''
     }
-
-    task startDb(description: 'Starts local HSQLDB server', type: CubaHsqlStart) {
-        dbName = dbNameParam
-    }
-
-    task stopDb(description: 'Stops local HSQLDB server', type: CubaHsqlStop) {
-        dbName = dbNameParam
-    }
-
-    task startTestDb(description: 'Starts local HSQLDB server', type: CubaHsqlStart) {
-        dbName = dbTestNameParam
-    }
-
-    task stopTestDb(description: 'Stops local HSQLDB server', type: CubaHsqlStop) {
-        dbName = dbTestNameParam
-    }
-
-    task removeDb(description: 'Removes local HSQL database', type: Delete) {
-        delete new File("$rootProject.projectDir/data")
-    }
-
-    task killDb(description: 'Kill local HSQLDB server process running on port 9001', type: CubaKillProcess) {
-        port = 9001
-    }
-
-    task createTestDb(dependsOn: assembleDbScripts, description: 'Creates local HSQL database', type: CubaDbCreation) {
-        dbms = 'hsql'
-        dbName = dbTestNameParam
-        dbUser = 'sa'
-        dbPassword = ''
-    }
 }
     
 configure(webModule) {
@@ -208,7 +164,7 @@ configure(webModule) {
     }
 
     dependencies {
-        provided(servletApi)
+        compileOnly(servletApi)
         compile(globalModule)
     }
     
@@ -253,30 +209,6 @@ configure(webModule) {
     assemble.dependsOn buildScssThemes
 }
 
-configure(webThemesModule) {
-    apply(plugin: 'java')
-    apply(plugin: 'maven')
-    apply(plugin: 'cuba')
-
-    appModuleType = 'web-themes'
-
-    buildDir = file('../build/scss-themes')
-
-    sourceSets {
-        main {
-            java {
-                srcDir '.'
-            }
-            resources {
-                srcDir '.'
-            }
-        }
-    }
-}
-
-
-
-
 
 task undeploy(type: Delete, dependsOn: ":${modulePrefix}-web:cleanConf") {
     delete("$cuba.tomcat.dir/shared")
@@ -295,8 +227,5 @@ task restart(dependsOn: ['stop', ":${modulePrefix}-core:deploy", ":${modulePrefi
     }
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.3.1'
-}
 
 apply from: 'extra.gradle'

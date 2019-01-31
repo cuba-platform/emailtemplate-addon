@@ -7,7 +7,7 @@ import com.haulmont.reports.ReportingApi;
 import com.haulmont.reports.entity.*;
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.collections4.Predicate;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
