@@ -63,7 +63,7 @@ public abstract class EmailTemplate extends StandardEntity {
 
 
     @Composition
-    @JoinTable(name = "EMAILTEMPLATES_EMAIL_TEMPLATE_FILE_DESCRIPTOR_LINK",
+    @JoinTable(name = "EMAILTEMPLATES_EMLTPTE_FDLINK",
             joinColumns = @JoinColumn(name = "EMAIL_TEMPLATE_ID"),
             inverseJoinColumns = @JoinColumn(name = "FILE_DESCRIPTOR_ID"))
     @ManyToMany
