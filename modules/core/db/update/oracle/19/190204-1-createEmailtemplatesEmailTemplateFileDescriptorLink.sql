@@ -1,0 +1,5 @@
+create table EMAILTEMPLATES_EMLTPTE_FDLINK (
+    EMAIL_TEMPLATE_ID varchar2(32),
+    FILE_DESCRIPTOR_ID varchar2(32),
+    primary key (EMAIL_TEMPLATE_ID, FILE_DESCRIPTOR_ID)
+)^
