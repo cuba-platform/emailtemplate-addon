@@ -22,7 +22,7 @@ buildscript {
     }
     dependencies {
         classpath "com.haulmont.gradle:cuba-plugin:$cubaVersion"
-        classpath "com.haulmont.gradle:addon-gradle-plugin:1.0.3"
+        classpath "com.haulmont.gradle:addon-gradle-plugin:1.0.4"
     }
 }
 
@@ -142,7 +142,7 @@ configure(coreModule) {
     task createDb(dependsOn: assembleDbScripts, description: 'Creates local database', type: CubaDbCreation) {
         dbName = 'emailtemplates'
         dbms = 'hsql'
-        host = 'localhost'
+        host = 'localhost:9010'
         dbName = dbNameParam
         dbUser = 'sa'
         dbPassword = ''
@@ -151,7 +151,7 @@ configure(coreModule) {
     task updateDb(dependsOn: assembleDbScripts, description: 'Updates local database', type: CubaDbUpdate) {
         dbName = 'emailtemplates'
         dbms = 'hsql'
-        host = 'localhost'
+        host = 'localhost:9010'
         dbName = dbNameParam
         dbUser = 'sa'
         dbPassword = ''
