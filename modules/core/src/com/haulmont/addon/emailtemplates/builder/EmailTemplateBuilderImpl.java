@@ -1,10 +1,8 @@
 package com.haulmont.addon.emailtemplates.builder;
 
-import com.haulmont.addon.emailtemplates.bean.TemplateParametersExtractor;
 import com.haulmont.addon.emailtemplates.core.EmailTemplatesAPI;
 import com.haulmont.addon.emailtemplates.dto.ReportWithParams;
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
-import com.haulmont.addon.emailtemplates.entity.ParameterValue;
 import com.haulmont.addon.emailtemplates.entity.TemplateReport;
 import com.haulmont.addon.emailtemplates.exceptions.ReportParameterTypeChangedException;
 import com.haulmont.addon.emailtemplates.exceptions.TemplateNotFoundException;
@@ -14,10 +12,7 @@ import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.EmailException;
 import com.haulmont.cuba.core.global.EmailInfo;
 import com.haulmont.cuba.core.global.Metadata;
-import com.haulmont.reports.app.service.ReportService;
-import com.haulmont.reports.entity.ParameterType;
 import com.haulmont.reports.entity.Report;
-import com.haulmont.reports.entity.ReportInputParameter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 
@@ -31,9 +26,9 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
 
     protected EmailTemplate emailTemplate;
 
+    protected List<ReportWithParams> reportParams = new ArrayList<>();
+
     protected Metadata metadata = AppBeans.get(Metadata.class);
-    protected TemplateParametersExtractor extractorService = AppBeans.get(TemplateParametersExtractor.class);
-    protected ReportService reportService = AppBeans.get(ReportService.class);
     protected EmailTemplatesAPI emailTemplates = AppBeans.get(EmailTemplatesAPI.class);
     protected EmailerAPI emailer = AppBeans.get(EmailerAPI.class);
 
@@ -135,49 +130,32 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
 
     @Override
     public EmailTemplateBuilder setAttachmentParameter(Report report, String key, Object value) {
-        List<TemplateReport> attachedTemplateReports = emailTemplate.getAttachedTemplateReports();
-        List<TemplateReport> templateReports = attachedTemplateReports.stream()
+        ReportWithParams reportWithParams = reportParams.stream()
                 .filter(e -> e.getReport().equals(report))
-                .collect(Collectors.toList());
-        attachedTemplateReports.removeAll(templateReports);
+                .findFirst()
+                .orElse(null);
 
-        TemplateReport templateReport = metadata.create(TemplateReport.class);
-        templateReport.setReport(report);
-        List<ParameterValue> values = new ArrayList<>();
-
-        ParameterValue parameterValue = createParameterValue(report, key, value);
-        if (parameterValue != null) {
-            parameterValue.setTemplateParameters(templateReport);
-            values.add(parameterValue);
+        if (reportWithParams == null) {
+            reportWithParams = new ReportWithParams(report);
+            reportParams.add(reportWithParams);
         }
-        templateReport.setParameterValues(values);
-        attachedTemplateReports.add(templateReport);
+
+        reportWithParams.put(key, value);
         return this;
     }
 
     @Override
     public EmailTemplateBuilder setAttachmentParameters(ReportWithParams reportWithParams) {
         Report report = reportWithParams.getReport();
-        List<TemplateReport> attachedTemplateReports = emailTemplate.getAttachedTemplateReports();
-
-        List<TemplateReport> templateReports = attachedTemplateReports.stream()
+        ReportWithParams existsParams = reportParams.stream()
                 .filter(e -> e.getReport().equals(report))
-                .collect(Collectors.toList());
-        attachedTemplateReports.removeAll(templateReports);
+                .findFirst()
+                .orElse(null);
 
-        TemplateReport templateReport = metadata.create(TemplateReport.class);
-        templateReport.setReport(report);
-        List<ParameterValue> values = new ArrayList<>();
-        Map<String, Object> reportParams = reportWithParams.getParams();
-        for (String alias : reportParams.keySet()) {
-            ParameterValue parameterValue = createParameterValue(report, alias, reportParams.get(alias));
-            if (parameterValue != null) {
-                parameterValue.setTemplateParameters(templateReport);
-                values.add(parameterValue);
-            }
+        if (existsParams != null) {
+            reportParams.remove(existsParams);
         }
-        templateReport.setParameterValues(values);
-        attachedTemplateReports.add(templateReport);
+        reportParams.add(reportWithParams);
         return this;
     }
 
@@ -192,26 +170,18 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
     @Override
     public EmailTemplateBuilder setBodyParameter(String key, Object value) {
         TemplateReport emailBodyReport = emailTemplate.getEmailBodyReport();
-        ReportInputParameter inputParam = emailBodyReport.getReport().getInputParameters().stream()
-                .filter(i -> i.getAlias().equals(key))
+        ReportWithParams reportWithParams = reportParams.stream()
+                .filter(e -> e.getReport().equals(emailBodyReport.getReport()))
                 .findFirst()
                 .orElse(null);
-        if (inputParam != null) {
-            ParameterValue parameterValue = emailBodyReport.getParameterValues().stream()
-                    .filter(v -> v.getAlias().equals(key))
-                    .findFirst()
-                    .orElse(null);
-            if (parameterValue != null) {
-                if (!ParameterType.ENTITY_LIST.equals(inputParam.getType())) {
-                    Class parameterClass = extractorService.resolveClass(inputParam);
-                    String stringValue = reportService.convertToString(parameterClass, value);
-                    parameterValue.setDefaultValue(stringValue);
-                }
-                parameterValue.setParameterType(inputParam.getType());
-            } else {
-                emailBodyReport.getParameterValues().add(createParameterValue(emailBodyReport.getReport(), key, value));
-            }
+
+        if (reportWithParams == null) {
+            reportWithParams = new ReportWithParams(emailBodyReport.getReport());
+            reportParams.add(reportWithParams);
         }
+
+        reportWithParams.put(key, value);
+
         return this;
     }
 
@@ -225,60 +195,23 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
 
     @Override
     public EmailTemplateBuilder setAttachmentParameters(Collection<ReportWithParams> reportsWithParams) {
-        List<TemplateReport> attachedTemplateReports = emailTemplate.getAttachedTemplateReports();
+        TemplateReport emailBodyReport = emailTemplate.getEmailBodyReport();
+        ReportWithParams reportWithParams = reportParams.stream()
+                .filter(e -> e.getReport().equals(emailBodyReport.getReport()))
+                .findFirst()
+                .orElse(null);
 
-        List<TemplateReport> templateReports = attachedTemplateReports.stream()
-                .filter(e -> reportsWithParams.stream()
-                        .anyMatch(r -> r.getReport().equals(e.getReport())))
-                .collect(Collectors.toList());
-        attachedTemplateReports.removeAll(templateReports);
-
-        List<TemplateReport> templateParameters = new ArrayList<>();
-
-        for (ReportWithParams reportWithParams : reportsWithParams) {
-            Report report = reportWithParams.getReport();
-            TemplateReport templateParameter = metadata.create(TemplateReport.class);
-            templateParameter.setReport(report);
-            List<ParameterValue> values = new ArrayList<>();
-            Map<String, Object> paramValues = reportWithParams.getParams();
-            for (String alias : paramValues.keySet()) {
-                ParameterValue parameterValue = createParameterValue(report, alias, paramValues.get(alias));
-                if (parameterValue != null) {
-                    parameterValue.setTemplateParameters(templateParameter);
-                    values.add(parameterValue);
-                }
-            }
-            templateParameter.setParameterValues(values);
-            templateParameters.add(templateParameter);
+        reportParams.clear();
+        if (reportWithParams!=null){
+            reportParams.add(reportWithParams);
         }
-        attachedTemplateReports.addAll(templateParameters);
+        reportParams.addAll(reportsWithParams);
         return this;
     }
 
-    protected ParameterValue createParameterValue(Report report, String key, Object value) {
-        ParameterValue parameterValue = null;
-
-        ReportInputParameter inputParameter = report.getInputParameters().stream()
-                .filter(e -> e.getAlias().equals(key))
-                .findFirst()
-                .orElse(null);
-        if (inputParameter != null) {
-            parameterValue = metadata.create(ParameterValue.class);
-            parameterValue.setAlias(key);
-            parameterValue.setParameterType(inputParameter.getType());
-            if (!ParameterType.ENTITY_LIST.equals(inputParameter.getType())) {
-                Class parameterClass = extractorService.resolveClass(inputParameter);
-                String stringValue = reportService.convertToString(parameterClass, value);
-                parameterValue.setDefaultValue(stringValue);
-            }
-        }
-        return parameterValue;
-    }
-
-
     @Override
     public EmailInfo generateEmail() throws ReportParameterTypeChangedException, TemplateNotFoundException {
-        return emailTemplates.generateEmail(emailTemplate, extractorService.getTemplateDefaultValues(emailTemplate));
+        return emailTemplates.generateEmail(emailTemplate, reportParams);
     }
 
     @Override
