@@ -28,9 +28,9 @@ The complete add-ons installation guide see in [CUBA Platform documentation](htt
 
 ## 2.1. Adding the Repository and the Component in CUBA Studio <a name="adding-cuba"></a>
 
-1. Click **Edit** in the **Project properties** panel.
+1. Click *Edit* in the *Project properties* panel.
 
-2. On the **App components** panel click the **Plus** button next to **Custom components**.
+2. On the *App components* panel click the *Plus* button next to *Custom components*.
 
 3. Paste the add-on coordinates in the coordinates field as follows: `group:name:version`. For example:
 
@@ -42,9 +42,9 @@ The complete add-ons installation guide see in [CUBA Platform documentation](htt
 |-------------------|-------------------|
 | 6.10.X            | 1.0.0             |
 
-4. Click **OK** in the dialog. Studio will try to find the add-on binaries in the repository currently selected for the project. In case they are found, the dialog will be closed and the add-on will appear in the list of custom components.
+4. Click *OK* in the dialog. Studio will try to find the add-on binaries in the repository currently selected for the project. In case they are found, the dialog will be closed and the add-on will appear in the list of custom components.
 
-5. Click **OK** to save the project properties.
+5. Click *OK* to save the project properties.
 
 ## 2.2. Adding the Repository and the Component in build.gradle <a name="adding-build"></a>
 
@@ -77,7 +77,7 @@ You can use the following component features.
 
 The component enables you to create, edit and remove email templates.
 
-To open **Email template browser** press **Email templates** in the **Administration** menu.
+To open *Email template browser* press *Email templates* in the *Administration* menu.
 
 ![email-template-menu](img/email-template-menu.png)
 
@@ -89,16 +89,16 @@ There are two ways to create email template: from report and from designer.
 
 The following parameters are available for editing:
 
-- the **Name** field;
-- the **Code** field;
-- the **Group** drop-down;
-- the **Use subject from report** checkbox;
-- the **Subject** field (if **Use subject from report** unchecked);
-- the **From** field;
-- the **To** field;
-- the **Cc** field;
-- the **Bcc** field;
-- the **Report template to generate body** lookup field.
+- the *Name* field;
+- the *Code* field;
+- the *Group* drop-down;
+- the *Use subject from report* checkbox;
+- the *Subject* field (if *Use subject from report* unchecked);
+- the *From* field;
+- the *To* field;
+- the *Cc* field;
+- the *Bcc* field;
+- the *Report template to generate body* lookup field.
 
 ![email-template-editor](img/email-template-editor.png)
 
@@ -114,30 +114,30 @@ If the report type is a report with entities you can set entities for a template
 
 The following parameters are available for editing:
 
-- the **Name** field;
-- the **Code** field;
-- the **Group** drop-down;
-- the **Subject** field;
-- the **From** field;
-- the **To** field;
-- the **Cc** field;
-- the **Bcc** field.
+- the *Name* field;
+- the *Code* field;
+- the *Group* drop-down;
+- the *Subject* field;
+- the *From* field;
+- the *To* field;
+- the *Cc* field;
+- the *Bcc* field.
 
 The screen contains the following elements:
 
-- the **Import HTML** button;
-- the **HTML code** button;
-- the **View HTML** button;
-- the **Export Report** button;
-- the **HTML Editor**.
+- the *Import HTML* button;
+- the *HTML code* button;
+- the *View HTML* button;
+- the *Export Report* button;
+- the *HTML Editor*.
 
-This type of creating template provides the ability to use HTML editor. You can design a template with different elements and set every element,  using **Setting** panel.
+This type of creating template provides the ability to use HTML editor. You can design a template with different elements and set every element,  using *Setting* panel.
 
 See more information about using the editor in `README` [for GrapesJs HTML editor](https://github.com/cuba-platform/grapesjs-addon/blob/master/README.md).
 
 ![email-template-editor-designer](img/email-template-editor-designer.png)
 
-To add parameters and value formats go to the **Parameters and Formats** tab.
+To add parameters and value formats go to the *Parameters and Formats* tab.
 
 ![email-template-editor-designer-parameters-formats](img/email-template-editor-designer-parameters-formats.png)
 
@@ -146,13 +146,13 @@ See the complete parameter guide in [CUBA Platform. Report Generator | External 
 See the complete value format guide in [CUBA Platform. Report Generator | Field Value Formats](https://doc.cuba-platform.com/reporting-6.10/formatters.html).
 
 ### 3.1.3. Setting attachments <a name="setting-attachments"></a>
-You can add or remove attachments on the **Attachments** tab for both types of templates: from report and from designer. You can attach a report or a file.
+You can add or remove attachments on the *Attachments* tab for both types of templates: from report and from designer. You can attach a report or a file.
 
 ![email-template-editor-attachment](img/email-template-editor-attachment.png)
 
 You can set the following parameters for a report attachment:
 
-- **File name** - a report attachment name for an addressee;
+- *File name* - a report attachment name for an addressee;
 - an entity or entities for a report;
 - parameters from a report.
 
@@ -160,7 +160,7 @@ You can set the following parameters for a report attachment:
 
 ## 3.2. Setting Groups <a name="setting-groups"></a>
 
-To open group browser click **Groups** in the **Email templates** browser. The screen enables you to create, edit or remove email template groups.
+To open group browser click *Groups* in the *Email templates* browser. The screen enables you to create, edit or remove email template groups.
 
 ![email-template-group-browser](img/email-template-group-browser.png)
 
@@ -172,19 +172,19 @@ After setting groups, you can specify a group for a template.
 
 ## 3.3. Sending Emails <a name="sending-emails"></a>
 
-To send an email select a template in the list and click **Send**.
+To send an email select a template in the list and click *Send*.
 
 ![email-template-list](img/email-template-list.png)
 
 The following parameters are available for editing:
 
-- the **Subject** field;
-- the **From** field;
-- the **To** field;
-- the **Cc** field;
-- the **Bcc** field.
+- the *Subject* field;
+- the *From* field;
+- the *To* field;
+- the *Cc* field;
+- the *Bcc* field.
 
-The **To** field is required. You can select entity or entities for the report and set report parameter.
+The *To* field is required. You can select entity or entities for the report and set report parameter.
 
 ![email-template-sending](img/email-template-sending.png)
 
@@ -193,38 +193,38 @@ The **To** field is required. You can select entity or entities for the report a
 A developer can use the following methods from EmailTemplatesAPI:
 
 1. To create EmailInfo from a template that may contain the same reports with different parameter values:
-```
+```java
     EmailInfo generateEmail(EmailTemplate emailTemplate, List<ReportWithParams> params)
 ```
 2. To create EmailInfo by parameters map for all included reports:
-```
+```java
     EmailInfo generateEmail(EmailTemplate emailTemplate, Map<String, Object> params)
 ```
 3. To check that the report input parameter did not change its parameter type:
-```
+```java
     void checkParameterTypeChanged(ReportInputParameter inputParameter, ParameterValue parameterValue)
 ```
 
-The EmailTemplate entity contains subject, body, and attachments. It also contains from, to, cc, bcc addresses.
+The `EmailTemplate` entity contains subject, body, and attachments. It also contains from, to, cc, bcc addresses.
 
-The ReportWithParams is a wrapper class that represents a report and a map of parameters for that report.
+The `ReportWithParams` is a wrapper class that represents a report and a map of parameters for that report.
 
-The ParameterValue is a class that provides a string representation of the parameter with alias and type.
+The `ParameterValue` is a class that provides a string representation of the parameter with alias and type.
 
-The ReportInputParameter is a class of Reporting component.
+The `ReportInputParameter` is a class of Reporting component.
 
-The EmailInfo is a class of CUBA EmailService.
+The `EmailInfo` is a class of CUBA `EmailService`.
 
 ## 4.1. Email Templates Builder <a name="builder"></a>
 
-Email templates API contains builder that can create and fill EmailTemplate entity.
+Email templates API contains builder that can create and fill `EmailTemplate` entity.
 
-EmailTemplateBuilderImpl is an implementation of EmailTemplateBuilder that provides intermediate methods for
-setting and adding email template properties. It also contains terminal methods that can build EmailTemplate,
-generate or send EmailInfo.
+`EmailTemplateBuilderImpl` is an implementation of `EmailTemplateBuilder` that provides intermediate methods for
+setting and adding email template properties. It also contains terminal methods that can build `EmailTemplate`,
+generate or send `EmailInfo`.
 
-A copy of the specified EmailTemplate is created in the constructor. Every intermediate method fills the created copy.
-```
+A copy of the specified `EmailTemplate` is created in the constructor. Every intermediate method fills the created copy.
+```java
     public EmailTemplateBuilderImpl(EmailTemplate emailTemplate) {
         this.emailTemplate = cloneTemplate(emailTemplate);
     }
@@ -232,7 +232,7 @@ A copy of the specified EmailTemplate is created in the constructor. Every inter
 The `build()` method creates the copy from the copy inside builder. It is necessary to save a state of the existed entity or builder.
 
 Example of using the builder:
-```
+```java
     EmailTemplate newTemplate = emailTemplatesAPI.buildFromTemplate(emailTemplate)
             .setSubject("Test subject")
             .setTo("address@haulmont.com")
