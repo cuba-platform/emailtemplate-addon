@@ -8,6 +8,7 @@ import com.haulmont.addon.emailtemplates.exceptions.ReportParameterTypeChangedEx
 import com.haulmont.addon.emailtemplates.service.TemplateParametersExtractorService;
 import com.haulmont.cuba.core.entity.Entity;
 import com.haulmont.cuba.core.global.Metadata;
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.WindowParam;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
@@ -49,7 +50,7 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
     @Inject
     protected DataSupplier dataSupplier;
     @Inject
-    private ComponentsFactory componentsFactory;
+    private UiComponents componentsFactory;
     @Inject
     protected ParameterClassResolver classResolver;
 
@@ -178,7 +179,7 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
     }
 
     protected void createReportNameLabel(Report report, int currentGridRow) {
-        Label label = componentsFactory.createComponent(Label.class);
+        Label label = componentsFactory.create(Label.class);
         label.setWidth(Component.AUTO_SIZE);
         label.setValue(report.getName());
         parametersGrid.add(label, 0, currentGridRow, 1, currentGridRow);
@@ -188,6 +189,18 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
         Field<Object> field = parameterFieldCreator.createField(parameter);
         if (BooleanUtils.isTrue(isDefaultValues)) {
             field.setRequired(false);
+        }
+
+        if (field instanceof PickerField) {
+            PickerField pickerField = (PickerField) field;
+            PickerField.ClearAction clearAction = new PickerField.ClearAction(pickerField) {
+                @Override
+                public void actionPerform(Component component) {
+                    pickerField.clear();
+
+                }
+            };
+            pickerField.addAction(clearAction);
         }
 
         Object value = null;
