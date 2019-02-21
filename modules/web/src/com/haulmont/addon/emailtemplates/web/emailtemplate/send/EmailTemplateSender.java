@@ -32,12 +32,16 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 public class EmailTemplateSender extends AbstractWindow {
+
+    private final Charset PREVIEW_CHARSET = StandardCharsets.UTF_16;
 
     @WindowParam
     private EmailTemplate emailTemplate;
@@ -200,7 +204,7 @@ public class EmailTemplateSender extends AbstractWindow {
             return;
         }
         EmailInfo emailInfo = getEmailInfo();
-        exportDisplay.show(new ByteArrayDataProvider(emailInfo.getBody().getBytes()), emailInfo.getCaption() + ".html");
+        exportDisplay.show(new ByteArrayDataProvider(emailInfo.getBody().getBytes(PREVIEW_CHARSET)), emailInfo.getCaption() + ".html");
     }
 
     public void onSendButtonClick() throws TemplateNotFoundException, ReportParameterTypeChangedException {
