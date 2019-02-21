@@ -257,16 +257,21 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
                 .filter(pv -> pv.getAlias().equals(alias))
                 .findFirst()
                 .orElse(null);
-        if (parameterValue == null) {
-            parameterValue = metadata.create(ParameterValue.class);
-            parameterValue.setAlias(alias);
-            parameterValue.setParameterType(parameter.getType());
-            parameterValue.setTemplateParameters(templateReport);
-            templateReport.getParameterValues().add(parameterValue);
+
+        if (fieldValue instanceof Collection && ((Collection) fieldValue).isEmpty()) {
+            templateReport.getParameterValues().remove(parameterValue);
+        } else {
+            if (parameterValue == null) {
+                parameterValue = metadata.create(ParameterValue.class);
+                parameterValue.setAlias(alias);
+                parameterValue.setParameterType(parameter.getType());
+                parameterValue.setTemplateParameters(templateReport);
+                templateReport.getParameterValues().add(parameterValue);
+            }
+            Class parameterClass = classResolver.resolveClass(parameter);
+            String stringValue = templateParametersExtractorService.convertToString(parameter.getType(), parameterClass, fieldValue);
+            parameterValue.setDefaultValue(stringValue);
         }
-        Class parameterClass = classResolver.resolveClass(parameter);
-        String stringValue = templateParametersExtractorService.convertToString(parameter.getType(), parameterClass, fieldValue);
-        parameterValue.setDefaultValue(stringValue);
     }
 
 }
