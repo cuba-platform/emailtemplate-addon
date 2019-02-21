@@ -143,27 +143,34 @@ public class TemplateParametersExtractor {
     }
 
     public String convertToString(ParameterType parameterType, Class parameterClass, Object paramValue) {
-        if (ParameterType.ENTITY_LIST == parameterType) {
-            if (paramValue instanceof Collection) {
-                return (String) ((Collection) paramValue).stream()
-                        .map(e -> objectToStringConverter.convertToString(parameterClass, e))
-                        .collect(Collectors.joining(","));
-            }
-        } else {
-            return objectToStringConverter.convertToString(parameterClass, paramValue);
+        if (paramValue != null) {
+            if (ParameterType.ENTITY_LIST == parameterType) {
+                if (paramValue instanceof Collection) {
+                    return (String) ((Collection) paramValue).stream()
+                            .map(e -> objectToStringConverter.convertToString(parameterClass, e))
+                            .collect(Collectors.joining(","));
+                }
+            } else {
+                return objectToStringConverter.convertToString(parameterClass, paramValue);
 
+            }
         }
         return null;
     }
 
     public Object convertFromString(ParameterType parameterType, Class parameterClass, String paramValueStr) {
         if (ParameterType.ENTITY_LIST == parameterType) {
+            if (StringUtils.isBlank(paramValueStr)) {
+                return null;
+            }
             String[] strValues = paramValueStr.split(",");
             List tokenListValues = new ArrayList();
             for (String s : strValues) {
-                Object colValue = objectToStringConverter.convertFromString(parameterClass, s);
-                if (colValue != null) {
-                    tokenListValues.add(colValue);
+                if (StringUtils.isNotBlank(s)) {
+                    Object colValue = objectToStringConverter.convertFromString(parameterClass, s);
+                    if (colValue != null) {
+                        tokenListValues.add(colValue);
+                    }
                 }
             }
             return tokenListValues;
