@@ -41,7 +41,7 @@ import java.util.Objects;
 
 public class EmailTemplateSender extends AbstractWindow {
 
-    private final Charset PREVIEW_CHARSET = StandardCharsets.UTF_16;
+    private final static Charset PREVIEW_CHARSET = StandardCharsets.UTF_16;
 
     @WindowParam
     private EmailTemplate emailTemplate;
