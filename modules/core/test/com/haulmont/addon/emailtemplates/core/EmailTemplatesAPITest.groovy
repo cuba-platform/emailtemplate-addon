@@ -4,11 +4,14 @@ import com.haulmont.addon.emailtemplates.EmailtemplatesTestContainer
 import com.haulmont.addon.emailtemplates.dto.ExtendedEmailInfo
 import com.haulmont.addon.emailtemplates.dto.ReportWithParams
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate
+import com.haulmont.addon.emailtemplates.entity.JsonEmailTemplate
 import com.haulmont.addon.emailtemplates.entity.ParameterValue
 import com.haulmont.addon.emailtemplates.exceptions.ReportParameterTypeChangedException
 import com.haulmont.addon.emailtemplates.exceptions.TemplateNotFoundException
 import com.haulmont.cuba.core.global.AppBeans
+import com.haulmont.cuba.core.global.EmailInfo
 import com.haulmont.reports.entity.ParameterType
+import com.haulmont.reports.entity.Report
 import com.haulmont.reports.entity.ReportInputParameter
 import org.junit.ClassRule
 import spock.lang.Shared
@@ -16,7 +19,8 @@ import spock.lang.Specification
 
 class EmailTemplatesAPITest extends Specification {
 
-    @ClassRule @Shared
+    @ClassRule
+    @Shared
     EmailtemplatesTestContainer container = EmailtemplatesTestContainer.Common.INSTANCE
 
     @Shared
@@ -38,6 +42,7 @@ class EmailTemplatesAPITest extends Specification {
 
         parameter = new ReportInputParameter()
         parameter.setType(ParameterType.ENTITY)
+        parameter.setReport(new Report())
         value = new ParameterValue()
         value.setParameterType(ParameterType.TEXT)
     }
@@ -50,26 +55,9 @@ class EmailTemplatesAPITest extends Specification {
         thrown(TemplateNotFoundException)
 
         where:
-        template             | params
-        null                 | paramsList
-        new EmailTemplate()  | paramsList
-        null                 | null
-        new EmailTemplate()  | null
-    }
-
-    def "check that method generateEmail with map params throw exception with empty template"() {
-        when:
-        delegate.generateEmail(template, params as Map<String, Object>)
-
-        then:
-        thrown(TemplateNotFoundException)
-
-        where:
-        template             | params
-        null                 | paramsMap
-        new EmailTemplate()  | paramsMap
-        null                 | null
-        new EmailTemplate()  | null
+        template                | params
+        null                    | paramsList
+        null                    | null
     }
 
     def "check that method checkParameterTypeChanged throw exception if parameter type was changed"() {
@@ -81,9 +69,33 @@ class EmailTemplatesAPITest extends Specification {
 
         where:
         inputParameter             | parameterValue
-        new ReportInputParameter() | new ParameterValue()
         parameter                  | new ParameterValue()
         parameter                  | value
+    }
+
+    def "check builder methods"() {
+        when:
+        EmailTemplate template = new JsonEmailTemplate()
+        template.setName("Test")
+        template.setCode("Test")
+        template.setHtml("\${paramValue}")
+        template.setTo("address1")
+        template.setCc("addressCC")
+        template.initReport()
+        ExtendedEmailInfo emailInfo = delegate.buildFromTemplate(template)
+                .setSubject("Subject")
+                .setBodyParameter("paramValue", "New value")
+                .addTo("address2")
+                .setCc("newAddressCC")
+                .generateEmail()
+
+
+        then:
+        emailInfo.caption == "Subject"
+        emailInfo.addresses == "address1, address2"
+        emailInfo.cc == "newAddressCC"
+        emailInfo.body == "New value"
+
     }
 
 }
