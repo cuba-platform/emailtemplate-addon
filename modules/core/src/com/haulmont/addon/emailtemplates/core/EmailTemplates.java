@@ -56,9 +56,12 @@ public class EmailTemplates implements EmailTemplatesAPI {
         ReportWithParams bodyReportWithParams = bodyReport != null ? getReportWithParams(bodyReport, parameters) : null;
 
         Map<TemplateReport, ReportWithParams> attachmentsWithParams = new HashMap<>();
-        for (TemplateReport templateReport : emailTemplate.getAttachedTemplateReports()) {
-            ReportWithParams reportWithParams = getReportWithParams(templateReport, parameters);
-            attachmentsWithParams.put(templateReport, reportWithParams);
+        List<TemplateReport> attachedTemplateReports = emailTemplate.getAttachedTemplateReports();
+        if (attachedTemplateReports != null) {
+            for (TemplateReport templateReport : attachedTemplateReports) {
+                ReportWithParams reportWithParams = getReportWithParams(templateReport, parameters);
+                attachmentsWithParams.put(templateReport, reportWithParams);
+            }
         }
         EmailInfo emailInfo = generateEmailInfoWithoutAttachments(bodyReportWithParams);
         List<EmailAttachment> templateAttachments = new ArrayList<>();

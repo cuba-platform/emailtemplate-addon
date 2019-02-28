@@ -203,7 +203,7 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
                 .orElse(null);
 
         reportParams.clear();
-        if (reportWithParams!=null){
+        if (reportWithParams != null) {
             reportParams.add(reportWithParams);
         }
         reportParams.addAll(reportsWithParams);
@@ -224,10 +224,13 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
         EmailTemplate clonedTemplate = metadata.create(emailTemplate.getClass());
         BeanUtils.copyProperties(emailTemplate, clonedTemplate);
         List<TemplateReport> attachedTemplateReports = new ArrayList<>();
-        for (TemplateReport templateReport : emailTemplate.getAttachedTemplateReports()) {
-            TemplateReport newTemplateReport = metadata.create(templateReport.getClass());
-            BeanUtils.copyProperties(templateReport, newTemplateReport);
-            attachedTemplateReports.add(newTemplateReport);
+        List<TemplateReport> templateAttachedTemplateReports = emailTemplate.getAttachedTemplateReports();
+        if (templateAttachedTemplateReports != null) {
+            for (TemplateReport templateReport : templateAttachedTemplateReports) {
+                TemplateReport newTemplateReport = metadata.create(templateReport.getClass());
+                BeanUtils.copyProperties(templateReport, newTemplateReport);
+                attachedTemplateReports.add(newTemplateReport);
+            }
         }
         clonedTemplate.setAttachedTemplateReports(attachedTemplateReports);
         return clonedTemplate;

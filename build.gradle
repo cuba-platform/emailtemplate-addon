@@ -62,16 +62,33 @@ dependencies {
 def hsql = 'org.hsqldb:hsqldb:2.2.9'
 
 def dbNameParam = 'emailtemplates'
-def dbTestNameParam = 'emailtemplates-test'
 
 configure([globalModule, coreModule, webModule]) {
     apply(plugin: 'java')
+    apply(plugin: 'groovy')
     apply(plugin: 'maven')
     apply(plugin: 'cuba')
     apply(plugin: 'addon-gradle-plugin')
 
+    sourceSets {
+        main {
+            java { srcDirs = ["src"] }
+            resources {
+                srcDir 'resources'
+            }
+        }
+        test {
+            java {
+                srcDirs = ['test']
+            }
+            groovy {
+                srcDirs = ['test']
+            }
+        }
+    }
+
     dependencies {
-        compile('net.sf.jtidy:jtidy:r938')
+        compile('org.jsoup:jsoup:1.11.3')
         testCompile('junit:junit:4.12')
         testCompile('org.spockframework:spock-core:1.1-groovy-2.4')
     }
