@@ -39,6 +39,7 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
     @Override
     public EmailTemplateBuilder setSubject(String subject) {
         emailTemplate.setSubject(subject);
+        emailTemplate.setUseReportSubject(false);
         return this;
     }
 
