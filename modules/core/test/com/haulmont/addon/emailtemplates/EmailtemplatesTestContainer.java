@@ -29,7 +29,7 @@ public class EmailtemplatesTestContainer extends TestContainer {
                 // Add this file which is located in CUBA and defines some properties
                 // specifically for test environment. You can replace it with your own
                 // or add another one in the end.
-                "com/haulmont/cuba/testsupport/test-app.properties");
+                "test-app.properties");
         initDbProperties();
     }
 
