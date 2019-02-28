@@ -1,6 +1,7 @@
 package com.haulmont.addon.emailtemplates.core
 
 import com.haulmont.addon.emailtemplates.EmailtemplatesTestContainer
+import com.haulmont.addon.emailtemplates.dto.ExtendedEmailInfo
 import com.haulmont.addon.emailtemplates.dto.ReportWithParams
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate
 import com.haulmont.addon.emailtemplates.entity.ParameterValue
