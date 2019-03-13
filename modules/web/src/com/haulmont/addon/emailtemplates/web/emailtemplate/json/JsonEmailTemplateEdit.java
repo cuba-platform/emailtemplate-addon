@@ -3,12 +3,14 @@ package com.haulmont.addon.emailtemplates.web.emailtemplate.json;
 import com.haulmont.addon.emailtemplates.entity.JsonEmailTemplate;
 import com.haulmont.addon.emailtemplates.service.TemplateConverterService;
 import com.haulmont.addon.emailtemplates.web.emailtemplate.AbstractTemplateEditor;
+import com.haulmont.addon.emailtemplates.web.screens.HtmlSourceCodeWindow;
 import com.haulmont.addon.grapesjs.web.gui.components.GrapesJsHtmlEditor;
 import com.haulmont.bali.util.ParamsMap;
 import com.haulmont.chile.core.model.MetaClass;
 import com.haulmont.chile.core.model.MetaPropertyPath;
 import com.haulmont.chile.core.model.MetadataObject;
 import com.haulmont.cuba.core.global.Metadata;
+import com.haulmont.cuba.gui.Notifications;
 import com.haulmont.cuba.gui.Screens;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.*;
@@ -48,6 +50,10 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
 
     @Inject
     private Screens screens;
+
+    @Inject
+    private Notifications notifications;
+
     @Inject
     private GrapesJsHtmlEditor templateEditor;
 
@@ -135,7 +141,6 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
     }
 
 
-
     private void createParameters() {
         List<ReportInputParameter> newParameters = new ArrayList<>();
         newParameters.addAll(createEntityParameters());
@@ -147,7 +152,9 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
             List<String> newParamNames = newParameters.stream()
                     .map(ReportInputParameter::getName)
                     .collect(Collectors.toList());
-            showNotification(formatMessage("newParametersCreated", StringUtils.join(newParamNames, ", ")), NotificationType.TRAY);
+            notifications.create(Notifications.NotificationType.TRAY)
+                    .withCaption(formatMessage("newParametersCreated", StringUtils.join(newParamNames, ", ")))
+                    .show();
         }
     }
 
@@ -441,10 +448,16 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
     }
 
     public void exportHtml() {
-        screens.create("emailtemplates$htmlSourceCode",
+        HtmlSourceCodeWindow sourceCodeWindow = screens.create(HtmlSourceCodeWindow.class,
                 OpenMode.DIALOG,
-                new MapScreenOptions(ParamsMap.of("html", getItem().getHtml())))
-                .show();
+                new MapScreenOptions(ParamsMap.of("html", getItem().getHtml())));
+        sourceCodeWindow.addAfterCloseListener(e -> {
+            if (e.getCloseAction().equals(WINDOW_COMMIT_AND_CLOSE_ACTION)) {
+                getItem().setHtml(sourceCodeWindow.getValue());
+                templateEditor.setValue(sourceCodeWindow.getValue());
+            }
+        });
+        sourceCodeWindow.show();
     }
 
     public void viewHtml() {

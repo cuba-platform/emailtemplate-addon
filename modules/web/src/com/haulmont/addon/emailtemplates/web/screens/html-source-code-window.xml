@@ -5,10 +5,13 @@
         messagesPack="com.haulmont.addon.emailtemplates.web.screens">
     <dialogMode height="600"
                 width="800"/>
-    <layout>
+    <layout expand="sourceCode" spacing="true">
         <sourceCodeEditor id="sourceCode"
-                          height="100%"
                           mode="HTML"
                           width="100%"/>
+        <hbox id="buttons" spacing="true" stylename="c-edit-window-actions">
+            <button id="windowCommit" caption="msg://save" icon="EDITOR_OK"/>
+            <button id="windowClose" caption="msg://close" icon="EDITOR_CANCEL"/>
+        </hbox>
     </layout>
 </window>
