@@ -320,7 +320,7 @@ public class Emailer implements EmailerAPI {
         try (Transaction tx = persistence.createTransaction()) {
             EntityManager em = persistence.getEntityManager();
             TypedQuery<ExtendedSendingMessage> query = em.createQuery(
-                    "select sm from email$SendingMessage sm" +
+                    "select sm from emailtemplates$ExtendedSendingMessage sm" +
                             " where sm.status = :statusQueue or (sm.status = :statusSending and sm.updateTs < :time)" +
                             " order by sm.createTs",
                     ExtendedSendingMessage.class
