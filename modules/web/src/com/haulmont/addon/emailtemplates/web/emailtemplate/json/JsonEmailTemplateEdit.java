@@ -42,8 +42,8 @@ import java.util.stream.Collectors;
 
 public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTemplate> {
 
-    private static final Pattern SIMPLE_FIELD_PATTERN = Pattern.compile("\\$\\{([a-zA-Z0-9]+)[^}]*}");
-    private static final Pattern ENTITY_FIELD_PATTERN = Pattern.compile("\\$\\{([a-zA-Z0-9]+)\\.([a-zA-Z0-9]*)[^}]*}");
+    private static final Pattern SIMPLE_FIELD_PATTERN = Pattern.compile("\\$\\{([a-zA-Z0-9]+)([?][^}]*|)}");
+    private static final Pattern ENTITY_FIELD_PATTERN = Pattern.compile("\\$\\{([a-zA-Z0-9]+)\\.([a-zA-Z0-9]+)([?][^}]*|)}");
 
 
     @Inject
