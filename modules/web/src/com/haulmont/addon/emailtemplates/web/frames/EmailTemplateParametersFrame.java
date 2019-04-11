@@ -40,7 +40,7 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
     public static final String TEMPLATE_REPORT = "templateReport";
 
     @WindowParam(name = IS_DEFAULT_PARAM_VALUES)
-    protected Boolean isDefaultValues;
+    protected Boolean isDefaultValues = false;
 
     @WindowParam(name = HIDE_REPORT_CAPTION)
     protected Boolean hideReportCaption = false;
@@ -260,8 +260,8 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
         label.setStyleName("c-report-parameter-caption");
 
         if (currentGridRow == 0) {
-            if (field instanceof Focusable){
-                ((Focusable)field).focus();
+            if (field instanceof Focusable) {
+                ((Focusable) field).focus();
             }
         }
 
