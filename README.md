@@ -40,7 +40,7 @@ The complete add-ons installation guide see in [CUBA Platform documentation](htt
 
 | Platform Version  | Component Version |
 |-------------------|-------------------|
-| 6.10.X            | 1.0.0             |
+| 6.10.X            | 1.0.3             |
 
 4. Click **OK** in the dialog. Studio will try to find the add-on binaries in the repository currently selected for the project. In case they are found, the dialog will be closed and the add-on will appear in the list of custom components.
 
