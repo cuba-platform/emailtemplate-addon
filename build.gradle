@@ -1,6 +1,6 @@
 
 buildscript {
-    ext.cubaVersion = '7.0.0'
+    ext.cubaVersion = '7.0.4'
     repositories {
         
         mavenLocal()
@@ -167,7 +167,7 @@ configure(coreModule) {
         dbName = dbNameParam
         dbUser = 'sa'
         dbPassword = ''
-    }
+        }
 
     task updateDb(dependsOn: assembleDbScripts, description: 'Updates local database', type: CubaDbUpdate) {
         dbName = 'emailtemplates'
@@ -176,7 +176,7 @@ configure(coreModule) {
         dbName = dbNameParam
         dbUser = 'sa'
         dbPassword = ''
-    }
+        }
 }
     
 configure(webModule) {
