@@ -34,14 +34,14 @@ The complete add-ons installation guide see in [CUBA Platform documentation](htt
 
 3. Paste the add-on coordinates in the coordinates field as follows: `group:name:version`. For example:
 
- `com.haulmont.addon.emailtemplates:yet-global:1.0.0`
+ `com.haulmont.addon.emailtemplates:yet-global:1.1.3`
 
  Specify the add-on version compatible with the used version of the CUBA platform.
 
 | Platform Version  | Component Version |
 |-------------------|-------------------|
-| 6.10.X            | 1.0.2            |
-|  7.0.X            | 1.1.2            |
+| 6.10.X            | 1.0.3            |
+|  7.0.X            | 1.1.3            |
 
 4. Click *OK* in the dialog. Studio will try to find the add-on binaries in the repository currently selected for the project. In case they are found, the dialog will be closed and the add-on will appear in the list of custom components.
 
