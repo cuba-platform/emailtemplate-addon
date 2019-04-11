@@ -39,7 +39,7 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
     public static final String TEMPLATE_REPORTS = "templateReports";
     public static final String TEMPLATE_REPORT = "templateReport";
 
-    @WindowParam(name = IS_DEFAULT_PARAM_VALUES, required = true)
+    @WindowParam(name = IS_DEFAULT_PARAM_VALUES)
     protected Boolean isDefaultValues;
 
     @WindowParam(name = HIDE_REPORT_CAPTION)
