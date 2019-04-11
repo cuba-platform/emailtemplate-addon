@@ -13,10 +13,14 @@ import com.haulmont.cuba.gui.components.actions.EditAction;
 import com.haulmont.cuba.gui.components.actions.ItemTrackingAction;
 import com.haulmont.cuba.gui.screen.MapScreenOptions;
 import com.haulmont.cuba.gui.screen.OpenMode;
+import com.haulmont.cuba.gui.screen.UiController;
+import com.haulmont.cuba.gui.screen.UiDescriptor;
 
 import javax.inject.Inject;
 import java.util.Map;
 
+@UiController("emailtemplates$EmailTemplate.browse")
+@UiDescriptor("email-template-browse.xml")
 public class EmailTemplateBrowse extends AbstractLookup {
 
     @Inject

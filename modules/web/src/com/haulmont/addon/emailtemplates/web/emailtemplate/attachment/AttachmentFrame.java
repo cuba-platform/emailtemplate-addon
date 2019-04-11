@@ -3,10 +3,10 @@ package com.haulmont.addon.emailtemplates.web.emailtemplate.attachment;
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.TemplateReport;
 import com.haulmont.addon.emailtemplates.web.frames.EmailTemplateParametersFrame;
-import com.haulmont.bali.util.ParamsMap;
 import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.AppConfig;
+import com.haulmont.cuba.gui.Fragments;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.actions.AddAction;
 import com.haulmont.cuba.gui.components.actions.ItemTrackingAction;
@@ -23,6 +23,9 @@ public class AttachmentFrame extends AbstractFrame {
 
     @Inject
     protected Metadata metadata;
+
+    @Inject
+    protected Fragments fragments;
 
     @Inject
     private Datasource<EmailTemplate> emailTemplateDs;
@@ -61,9 +64,11 @@ public class AttachmentFrame extends AbstractFrame {
             }
         });
 
-        parametersFrame = (EmailTemplateParametersFrame) openFrame(defaultValuesBox, "emailtemplates$parametersFrame",
-                ParamsMap.of(EmailTemplateParametersFrame.IS_DEFAULT_PARAM_VALUES, true,
-                        EmailTemplateParametersFrame.HIDE_REPORT_CAPTION, true));
+        parametersFrame = fragments.create(this, EmailTemplateParametersFrame.class)
+                .setHideReportCaption(true)
+                .setIsDefaultValues(true)
+                .createComponents();
+        defaultValuesBox.add(parametersFrame);
 
         attachedReportsDs.addItemChangeListener(e -> {
             TemplateReport templateReport = e.getItem();

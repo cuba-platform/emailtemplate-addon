@@ -11,9 +11,9 @@ import com.haulmont.cuba.core.global.DeletePolicy;
 import com.haulmont.reports.entity.Report;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import org.hibernate.validator.constraints.Email;
 
 @NamePattern("%s (%s)|name,code")
 @Table(name = "EMAILTEMPLATES_EMAIL_TEMPLATE")

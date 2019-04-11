@@ -8,19 +8,25 @@ import com.haulmont.addon.emailtemplates.exceptions.ReportParameterTypeChangedEx
 import com.haulmont.addon.emailtemplates.exceptions.TemplateNotFoundException;
 import com.haulmont.addon.emailtemplates.service.EmailTemplatesService;
 import com.haulmont.addon.emailtemplates.web.frames.EmailTemplateParametersFrame;
-import com.haulmont.bali.util.ParamsMap;
 import com.haulmont.cuba.client.ClientConfig;
 import com.haulmont.cuba.core.app.EmailService;
 import com.haulmont.cuba.core.global.EmailException;
 import com.haulmont.cuba.core.global.EmailInfo;
 import com.haulmont.cuba.core.global.Metadata;
+import com.haulmont.cuba.gui.Fragments;
 import com.haulmont.cuba.gui.Notifications;
 import com.haulmont.cuba.gui.WindowParam;
-import com.haulmont.cuba.gui.components.*;
+import com.haulmont.cuba.gui.components.AbstractWindow;
+import com.haulmont.cuba.gui.components.GroupBoxLayout;
+import com.haulmont.cuba.gui.components.TextField;
+import com.haulmont.cuba.gui.components.VBoxLayout;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.export.ByteArrayDataProvider;
 import com.haulmont.cuba.gui.export.ExportDisplay;
+import com.haulmont.cuba.gui.screen.FrameOwner;
 import com.haulmont.cuba.gui.screen.MessageBundle;
+import com.haulmont.cuba.gui.screen.UiController;
+import com.haulmont.cuba.gui.screen.UiDescriptor;
 import com.haulmont.reports.app.service.ReportService;
 import com.haulmont.reports.entity.ParameterType;
 import com.haulmont.reports.entity.ReportInputParameter;
@@ -39,6 +45,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+@UiController("emailtemplates$EmailTemplate.send")
+@UiDescriptor("email-template-send.xml")
 public class EmailTemplateSender extends AbstractWindow {
 
     private final static Charset PREVIEW_CHARSET = StandardCharsets.UTF_16;
@@ -77,6 +85,9 @@ public class EmailTemplateSender extends AbstractWindow {
     private Metadata metadata;
 
     @Inject
+    private Fragments fragments;
+
+    @Inject
     private Notifications notifications;
 
     @Inject
@@ -91,6 +102,14 @@ public class EmailTemplateSender extends AbstractWindow {
     @Named("defaultGroup.subject")
     private TextField<String> subjectField;
 
+    public EmailTemplate getEmailTemplate() {
+        return emailTemplate;
+    }
+
+    public void setEmailTemplate(EmailTemplate emailTemplate) {
+        this.emailTemplate = emailTemplate;
+    }
+
     @Override
     public void init(Map<String, Object> params) {
         super.init(params);
@@ -99,17 +118,19 @@ public class EmailTemplateSender extends AbstractWindow {
         }
         emailTemplateDs.setItem(emailTemplate);
 
-        updateDefaultTemplateParameters(params);
+        setParameters(params);
 
-        defaultBodyParametersFrame = (EmailTemplateParametersFrame) openFrame(defaultBodyParameters, "emailtemplates$parametersFrame",
-                ParamsMap.of(EmailTemplateParametersFrame.TEMPLATE_REPORT, emailTemplate.getEmailBodyReport(),
-                        EmailTemplateParametersFrame.HIDE_REPORT_CAPTION, true));
-        defaultBodyParametersFrame.createComponents();
+        defaultBodyParametersFrame = fragments.create(this, EmailTemplateParametersFrame.class)
+                .setTemplateReport(emailTemplate.getEmailBodyReport())
+                .setHideReportCaption(true)
+                .createComponents();
+        defaultBodyParameters.add(defaultBodyParametersFrame);
 
         if (!emailTemplate.getAttachedTemplateReports().isEmpty()) {
-            attachmentParametersFrame = (EmailTemplateParametersFrame) openFrame(attachmentParameters, "emailtemplates$parametersFrame",
-                    ParamsMap.of(EmailTemplateParametersFrame.TEMPLATE_REPORTS, emailTemplate.getAttachedTemplateReports()));
-            attachmentParametersFrame.createComponents();
+            attachmentParametersFrame = fragments.create(this, EmailTemplateParametersFrame.class)
+                    .setTemplateReports(emailTemplate.getAttachedTemplateReports())
+                    .createComponents();
+            attachmentParameters.add(attachmentParametersFrame);
         } else {
             attachmentGroupBox.setVisible(false);
         }
@@ -121,38 +142,42 @@ public class EmailTemplateSender extends AbstractWindow {
         });
     }
 
-    private void updateDefaultTemplateParameters(Map<String, Object> params) {
+    public void setParameters(Map<String, Object> params) {
+        for (String alias : params.keySet()) {
+            Object value = params.get(alias);
+            setParameter(alias, value);
+        }
+    }
+
+    public void setParameter(String alias, Object value) {
         List<TemplateReport> templateReports = new ArrayList<>();
         if (emailTemplate.getEmailBodyReport() != null) {
             templateReports.add(emailTemplate.getEmailBodyReport());
         }
         templateReports.addAll(emailTemplate.getAttachedTemplateReports());
-        for (String alias : params.keySet()) {
-            for (TemplateReport templateReport : templateReports) {
-                ReportInputParameter inputParameter = templateReport.getReport().getInputParameters().stream()
-                        .filter(e -> alias.equals(e.getAlias()))
+        for (TemplateReport templateReport : templateReports) {
+            ReportInputParameter inputParameter = templateReport.getReport().getInputParameters().stream()
+                    .filter(e -> alias.equals(e.getAlias()))
+                    .findFirst()
+                    .orElse(null);
+            if (inputParameter != null) {
+                ParameterValue parameterValue = templateReport.getParameterValues().stream()
+                        .filter(pv -> pv.getAlias().equals(alias))
                         .findFirst()
                         .orElse(null);
-                if (inputParameter != null) {
-                    ParameterValue parameterValue = templateReport.getParameterValues().stream()
-                            .filter(pv -> pv.getAlias().equals(alias))
-                            .findFirst()
-                            .orElse(null);
-                    if (parameterValue == null) {
-                        parameterValue = metadata.create(ParameterValue.class);
-                        parameterValue.setAlias(alias);
-                        parameterValue.setParameterType(inputParameter.getType());
-                        parameterValue.setTemplateParameters(templateReport);
-                        templateReport.getParameterValues().add(parameterValue);
-                    }
-                    Class parameterClass = classResolver.resolveClass(inputParameter);
-                    if (!ParameterType.ENTITY_LIST.equals(inputParameter.getType())) {
-                        String stringValue = reportService.convertToString(parameterClass, params.get(alias));
-                        parameterValue.setDefaultValue(stringValue);
-                    }
+                if (parameterValue == null) {
+                    parameterValue = metadata.create(ParameterValue.class);
+                    parameterValue.setAlias(alias);
+                    parameterValue.setParameterType(inputParameter.getType());
+                    parameterValue.setTemplateParameters(templateReport);
+                    templateReport.getParameterValues().add(parameterValue);
+                }
+                Class parameterClass = classResolver.resolveClass(inputParameter);
+                if (!ParameterType.ENTITY_LIST.equals(inputParameter.getType())) {
+                    String stringValue = reportService.convertToString(parameterClass, value);
+                    parameterValue.setDefaultValue(stringValue);
                 }
             }
-
         }
     }
 
@@ -196,7 +221,7 @@ public class EmailTemplateSender extends AbstractWindow {
     }
 
     public void onCancelButtonClick() {
-        close(Window.CLOSE_ACTION_ID);
+        close(FrameOwner.WINDOW_CLOSE_ACTION);
     }
 
     public void onTestButtonClick() throws TemplateNotFoundException, ReportParameterTypeChangedException {

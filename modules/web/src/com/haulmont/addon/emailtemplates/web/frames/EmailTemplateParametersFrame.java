@@ -8,11 +8,14 @@ import com.haulmont.addon.emailtemplates.exceptions.ReportParameterTypeChangedEx
 import com.haulmont.addon.emailtemplates.service.TemplateParametersExtractorService;
 import com.haulmont.cuba.core.entity.Entity;
 import com.haulmont.cuba.core.global.Metadata;
+import com.haulmont.cuba.gui.Notifications;
 import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.WindowParam;
 import com.haulmont.cuba.gui.components.*;
-import com.haulmont.cuba.gui.data.CollectionDatasource;
+import com.haulmont.cuba.gui.components.data.value.LegacyCollectionDsValueSource;
 import com.haulmont.cuba.gui.data.DataSupplier;
+import com.haulmont.cuba.gui.screen.UiController;
+import com.haulmont.cuba.gui.screen.UiDescriptor;
 import com.haulmont.reports.app.service.ReportService;
 import com.haulmont.reports.entity.Report;
 import com.haulmont.reports.entity.ReportInputParameter;
@@ -27,6 +30,8 @@ import javax.inject.Inject;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@UiController("emailtemplates$parametersFrame")
+@UiDescriptor("email-template-parameters-frame.xml")
 public class EmailTemplateParametersFrame extends AbstractFrame {
     public static final String IS_DEFAULT_PARAM_VALUES = "isDefault";
     public static final String HIDE_REPORT_CAPTION = "hideReportCaption";
@@ -52,6 +57,8 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
     private UiComponents componentsFactory;
     @Inject
     protected ParameterClassResolver classResolver;
+    @Inject
+    protected Notifications notifications;
 
     @Inject
     private TemplateParametersExtractorService templateParametersExtractorService;
@@ -77,6 +84,21 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
         }
     }
 
+    public EmailTemplateParametersFrame setHideReportCaption(Boolean hideReportCaption) {
+        this.hideReportCaption = hideReportCaption;
+        return this;
+    }
+
+    public EmailTemplateParametersFrame setTemplateReports(List<TemplateReport> templateReports) {
+        this.templateReports = templateReports;
+        return this;
+    }
+
+    public EmailTemplateParametersFrame setIsDefaultValues(Boolean defaultValues) {
+        isDefaultValues = defaultValues;
+        return this;
+    }
+
     private List<ReportWithParams> getTemplateDefaultValues() throws ReportParameterTypeChangedException {
         List<ReportWithParams> reportWithParams = new ArrayList<>();
         for (TemplateReport templateReport : templateReports) {
@@ -86,20 +108,21 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
         return reportWithParams;
     }
 
-    public void setTemplateReport(TemplateReport templateReport) {
+    public EmailTemplateParametersFrame setTemplateReport(TemplateReport templateReport) {
         if (templateReport != null) {
             this.templateReports = Collections.singletonList(templateReport);
         }
+        return this;
     }
 
-    public void createComponents() {
+    public EmailTemplateParametersFrame createComponents() {
         clearComponents();
 
         try {
             List<ReportWithParams> parameters = getTemplateDefaultValues();
 
             if (parameters == null) {
-                return;
+                return this;
             }
 
             List<Report> reports = parameters.stream()
@@ -134,8 +157,11 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
             }
 
         } catch (ReportParameterTypeChangedException e) {
-            showNotification(e.getMessage());
+            notifications.create(Notifications.NotificationType.ERROR)
+                    .withCaption(e.getMessage())
+                    .show();
         }
+        return this;
     }
 
     public void clearComponents() {
@@ -215,11 +241,11 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
         }
 
         if (field instanceof TokenList) {
-            CollectionDatasource datasource = (CollectionDatasource) field.getDatasource();
+            LegacyCollectionDsValueSource valueSource = (LegacyCollectionDsValueSource) field.getValueSource();
             if (value instanceof Collection) {
                 Collection collection = (Collection) value;
                 for (Object selected : collection) {
-                    datasource.includeItem((Entity) selected);
+                    valueSource.getDatasource().includeItem((Entity) selected);
                 }
             }
         } else {
@@ -234,7 +260,9 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
         label.setStyleName("c-report-parameter-caption");
 
         if (currentGridRow == 0) {
-            field.requestFocus();
+            if (field instanceof Focusable){
+                ((Focusable)field).focus();
+            }
         }
 
         parametersGrid.add(label, 0, currentGridRow);
