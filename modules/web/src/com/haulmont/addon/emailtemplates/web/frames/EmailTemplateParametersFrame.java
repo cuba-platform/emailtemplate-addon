@@ -121,10 +121,6 @@ public class EmailTemplateParametersFrame extends AbstractFrame {
         try {
             List<ReportWithParams> parameters = getTemplateDefaultValues();
 
-            if (parameters == null) {
-                return this;
-            }
-
             List<Report> reports = parameters.stream()
                     .map(ReportWithParams::getReport)
                     .collect(Collectors.toList());

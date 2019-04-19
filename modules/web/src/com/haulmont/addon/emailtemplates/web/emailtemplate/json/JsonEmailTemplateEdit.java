@@ -189,7 +189,8 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
         Map<String, List<String>> entityWithProperties = new HashMap<>();
         extractEntityParams(entityWithProperties, getItem().getHtml());
         extractEntityParams(entityWithProperties, getItem().getSubject());
-        for (String entityAlias : entityWithProperties.keySet()) {
+        for (Map.Entry<String, List<String>> entry : entityWithProperties.entrySet()) {
+            String entityAlias = entry.getKey();
             ReportInputParameter parameter = getParameter(entityAlias);
             if (parameter == null) {
                 parameter = initNewParameter(entityAlias);
@@ -197,7 +198,7 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
                 newParameters.add(parameter);
             }
             if (parameter.getEntityMetaClass() == null) {
-                List<String> fields = entityWithProperties.get(entityAlias);
+                List<String> fields = entry.getValue();
                 MetaClass metaClass = findMetaclassForFields(fields);
                 if (metaClass != null) {
                     parameter.setEntityMetaClass(metaClass.getName());
@@ -467,7 +468,7 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
     public void viewHtml() {
         String name = getItem().getName() != null ? getItem().getName() : "template";
         String html = getItem().getHtml() != null ? getItem().getHtml() : "";
-        exportDisplay.show(new ByteArrayDataProvider(html.getBytes()), name + ".html");
+        exportDisplay.show(new ByteArrayDataProvider(html.getBytes(StandardCharsets.UTF_8)), name + ".html");
     }
 
 

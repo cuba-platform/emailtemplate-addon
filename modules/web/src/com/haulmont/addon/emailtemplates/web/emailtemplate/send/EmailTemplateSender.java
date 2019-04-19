@@ -143,8 +143,9 @@ public class EmailTemplateSender extends AbstractWindow {
     }
 
     public void setParameters(Map<String, Object> params) {
-        for (String alias : params.keySet()) {
-            Object value = params.get(alias);
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
+            String alias = entry.getKey();
+            Object value = entry.getValue();
             setParameter(alias, value);
         }
     }

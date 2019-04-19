@@ -26,7 +26,7 @@ buildscript {
     }
     dependencies {
         classpath "com.haulmont.gradle:cuba-plugin:$cubaVersion"
-        classpath "com.haulmont.gradle:addon-gradle-plugin:1.0.4"
+        classpath "com.haulmont.gradle:addon-gradle-plugin:1.0.7"
     }
 }
 
