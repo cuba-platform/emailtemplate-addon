@@ -17,12 +17,20 @@
 - [4. Email Templates API](#api)  
   - [4.1 Email Templates Builder](#builder)
 
-
-
 # 1. Introduction <a name="introduction"></a>
-This component provides the ability to create outbound email based on generating by YARG reporting templates. Using the component, you can create, edit and delete templates, set groups for templates, and send emails.  
 
-Sample application, using this component can be found here: https://github.com/cuba-platform/emailtemplate-addon-demo.
+The add-on enables creating and configuring outbound email templates containing a constant body and variable parameters. A template is created in the visual HTML designer or by using reports. The add-on provides a visual HTML editor with the extensive set of HTML elements.
+
+Sending emails from templates can be set as a reaction to different events in your application. You can preset recipients, configure parameters and upload attachment files to be sent with emails.
+
+Key features:
+- Visual HTML templates builder based on [GrapesJS](https://grapesjs.com/) JavaScript library.
+- HTML [reports](https://github.com/cuba-platform/reports) as a base for outbound emails body.
+- Downloading/uploading HTML code of a template.
+- User interface for configuring and managing templates.
+
+
+See [sample application](https://github.com/cuba-platform/emailtemplate-addon-demo), using this add-on.
 
 # 2. Installation <a name="installation"></a>
 
@@ -31,24 +39,27 @@ The complete add-ons installation guide see in [CUBA Platform documentation](htt
 
 ## 2.1. Adding the Repository and the Component in CUBA Studio <a name="adding-cuba"></a>
 
-1. Click *Edit* in the *Project properties* panel.
+1. Open your application in CUBA Studio.
 
-2. On the *App components* panel click the *Plus* button next to *Custom components*.
+2. Edit *Project properties*.
 
-3. Paste the add-on coordinates in the coordinates field as follows: `group:name:version`. For example:
+2. Click the plus button in the *App components* section of the *Main* tab.
 
- `com.haulmont.addon.emailtemplates:yet-global:1.1.3`
+3. Specify the coordinates of the component in the corresponding field as follows: group:name:version.
 
- Specify the add-on version compatible with the used version of the CUBA platform.
+  * Artifact group: *com.haulmont.addon.emailtemplates*
+  * Artifact name: *yet-global*
+  * Version: *add-on version*  
+
+   When specifying the component version, you should select the one, which is compatible with the platform version used
+   in your project.
 
 | Platform Version  | Component Version |
 |-------------------|-------------------|
-| 6.10.X            | 1.0.3            |
-|  7.0.X            | 1.1.3            |
+| 6.10.X            | 1.0.3             |
+| 7.0.X             | 1.1.3             |
 
-4. Click *OK* in the dialog. Studio will try to find the add-on binaries in the repository currently selected for the project. In case they are found, the dialog will be closed and the add-on will appear in the list of custom components.
-
-5. Click *OK* to save the project properties.
+4. Click *OK* to confirm the operation.
 
 ## 2.2. Adding the Repository and the Component in build.gradle <a name="adding-build"></a>
 
