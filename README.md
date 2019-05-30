@@ -43,13 +43,13 @@ The complete add-ons installation guide see in [CUBA Platform documentation](htt
 
 2. Edit *Project properties*.
 
-2. Click the plus button in the *App components* section of the *Main* tab.
+3. Click the plus button in the *App components* section of the *Main* tab.
 
-3. Specify the coordinates of the component in the corresponding field as follows: group:name:version.
+4. Specify the coordinates of the component in the corresponding field as follows: group:name:version.
 
-  * Artifact group: *com.haulmont.addon.emailtemplates*
-  * Artifact name: *yet-global*
-  * Version: *add-on version*  
+   * Artifact group: *com.haulmont.addon.emailtemplates*
+   * Artifact name: *yet-global*
+   * Version: *add-on version*  
 
    When specifying the component version, you should select the one, which is compatible with the platform version used
    in your project.
@@ -59,7 +59,7 @@ The complete add-ons installation guide see in [CUBA Platform documentation](htt
 | 6.10.X            | 1.0.3             |
 | 7.0.X             | 1.1.3             |
 
-4. Click *OK* to confirm the operation.
+5. Click *OK* to confirm the operation.
 
 ## 2.2. Adding the Repository and the Component in build.gradle <a name="adding-build"></a>
 
