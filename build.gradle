@@ -16,7 +16,7 @@
  */
 
 buildscript {
-    ext.cubaVersion = '7.1-SNAPSHOT'
+    ext.cubaVersion = '7.1.0'
     repositories {
         
         mavenLocal()
@@ -42,7 +42,7 @@ buildscript {
     }
     dependencies {
         classpath "com.haulmont.gradle:cuba-plugin:$cubaVersion"
-        classpath "com.haulmont.gradle:addon-gradle-plugin:1.0.8"
+        classpath "com.haulmont.gradle:addon-gradle-plugin:1.1.1"
     }
 }
 
@@ -88,7 +88,7 @@ limitations under the License.'''
 dependencies {
     appComponent("com.haulmont.cuba:cuba-global:$cubaVersion")
     appComponent("com.haulmont.reports:reports-global:$cubaVersion")
-    appComponent("com.haulmont.addon.grapesjs:grapesjs-global:0.2.0")
+    appComponent("com.haulmont.addon.grapesjs:grapesjs-global:0.3-SNAPSHOT")
 
 }
 
