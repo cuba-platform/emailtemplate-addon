@@ -88,13 +88,11 @@ limitations under the License.'''
 dependencies {
     appComponent("com.haulmont.cuba:cuba-global:$cubaVersion")
     appComponent("com.haulmont.reports:reports-global:$cubaVersion")
-    appComponent("com.haulmont.addon.grapesjs:grapesjs-global:0.3-SNAPSHOT")
+    appComponent("com.haulmont.addon.grapesjs:grapesjs-global:0.3.0")
 
 }
 
 def hsql = 'org.hsqldb:hsqldb:2.4.1'
-
-def dbNameParam = 'emailtemplates'
 
 configure([globalModule, coreModule, webModule]) {
     apply(plugin: 'java')
@@ -193,7 +191,6 @@ configure(coreModule) {
         dbName = 'emailtemplates'
         dbms = 'hsql'
         host = 'localhost:9010'
-        dbName = dbNameParam
         dbUser = 'sa'
         dbPassword = ''
         }
@@ -202,7 +199,6 @@ configure(coreModule) {
         dbName = 'emailtemplates'
         dbms = 'hsql'
         host = 'localhost:9010'
-        dbName = dbNameParam
         dbUser = 'sa'
         dbPassword = ''
         }
