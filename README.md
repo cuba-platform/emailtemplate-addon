@@ -31,6 +31,7 @@ Key features:
 
 
 See [sample application](https://github.com/cuba-platform/emailtemplate-addon-demo), using this add-on.
+See [webinar](https://www.youtube.com/watch?v=JqRexrg4mAs) on the CUBA Platform channel.
 
 # 2. Installation <a name="installation"></a>
 
