@@ -57,8 +57,10 @@ The complete add-ons installation guide see in [CUBA Platform documentation](htt
 
 | Platform Version  | Component Version |
 |-------------------|-------------------|
-| 6.10.X            | 1.0.3             |
+| 7.1.X             | 1.2.0             |
 | 7.0.X             | 1.1.3             |
+| 6.10.X            | 1.0.3             |
+
 
 5. Click *OK* to confirm the operation.
 
