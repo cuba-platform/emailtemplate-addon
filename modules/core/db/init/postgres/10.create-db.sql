@@ -84,10 +84,39 @@ create table EMAILTEMPLATES_PARAMETER_VALUE (
     primary key (ID)
 )^
 -- end EMAILTEMPLATES_PARAMETER_VALUE
--- begin EMAILTEMPLATES_EMAIL_TEMPLATE_FILE_DESCRIPTOR_LINK
-create table EMAILTEMPLATES_EMLTPTE_FDLINK (
-    EMAIL_TEMPLATE_ID uuid,
-    FILE_DESCRIPTOR_ID uuid,
-    primary key (EMAIL_TEMPLATE_ID, FILE_DESCRIPTOR_ID)
+-- begin EMAILTEMPLATES_TEMPLATE_BLOCK
+create table EMAILTEMPLATES_TEMPLATE_BLOCK (
+    ID uuid,
+    VERSION integer not null,
+    CREATE_TS timestamp,
+    CREATED_BY varchar(50),
+    UPDATE_TS timestamp,
+    UPDATED_BY varchar(50),
+    DELETE_TS timestamp,
+    DELETED_BY varchar(50),
+    --
+    NAME varchar(255) not null,
+    LABEL varchar(255) not null,
+    CATEGORY_ID uuid,
+    CONTENT text,
+    ATTRIBUTES text,
+    --
+    primary key (ID)
 )^
--- end EMAILTEMPLATES_EMAIL_TEMPLATE_FILE_DESCRIPTOR_LINK
+-- end EMAILTEMPLATES_TEMPLATE_BLOCK
+-- begin EMAILTEMPLATES_TEMPLATE_BLOCK
+create table EMAILTEMPLATES_BLOCK_GROUP (
+    ID uuid,
+    VERSION integer not null,
+    CREATE_TS timestamp,
+    CREATED_BY varchar(50),
+    UPDATE_TS timestamp,
+    UPDATED_BY varchar(50),
+    DELETE_TS timestamp,
+    DELETED_BY varchar(50),
+    --
+    NAME varchar(255) not null,
+    --
+    primary key (ID)
+)^
+-- end EMAILTEMPLATES_TEMPLATE_BLOCK

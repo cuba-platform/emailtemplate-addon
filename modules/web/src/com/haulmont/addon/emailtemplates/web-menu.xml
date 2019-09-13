@@ -16,7 +16,8 @@
   -->
 
 <menu-config xmlns="http://schemas.haulmont.com/cuba/menu.xsd">
-    <separator/>
     <item id="emailtemplates$EmailTemplate.browse"
           insertAfter="performanceStatistics"/>
+    <item id="emailtemplates_TemplateBlock.browse" insertAfter="emailtemplates$EmailTemplate.browse"/>
+    <separator/>
 </menu-config>

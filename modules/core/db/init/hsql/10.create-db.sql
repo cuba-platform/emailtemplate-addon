@@ -68,13 +68,6 @@ create table EMAILTEMPLATES_PARAMETER_VALUE (
 )^
 -- end EMAILTEMPLATES_PARAMETER_VALUE
 
--- begin EMAILTEMPLATES_EMAIL_TEMPLATE_FILE_DESCRIPTOR_LINK
-create table EMAILTEMPLATES_EMLTPTE_FDLINK (
-    EMAIL_TEMPLATE_ID varchar(36) not null,
-    FILE_DESCRIPTOR_ID varchar(36) not null,
-    primary key (EMAIL_TEMPLATE_ID, FILE_DESCRIPTOR_ID)
-)^
--- end EMAILTEMPLATES_EMAIL_TEMPLATE_FILE_DESCRIPTOR_LINK
 -- begin EMAILTEMPLATES_TEMPLATE_REPORT
 create table EMAILTEMPLATES_TEMPLATE_REPORT (
     ID varchar(36) not null,
@@ -94,3 +87,39 @@ create table EMAILTEMPLATES_TEMPLATE_REPORT (
 )^
 -- end EMAILTEMPLATES_TEMPLATE_REPORT
 
+-- begin EMAILTEMPLATES_TEMPLATE_BLOCK
+create table EMAILTEMPLATES_TEMPLATE_BLOCK (
+    ID varchar(36) not null,
+    VERSION integer not null,
+    CREATE_TS timestamp,
+    CREATED_BY varchar(50),
+    UPDATE_TS timestamp,
+    UPDATED_BY varchar(50),
+    DELETE_TS timestamp,
+    DELETED_BY varchar(50),
+    --
+    NAME varchar(255) not null,
+    LABEL varchar(255) not null,
+    CATEGORY_ID varchar(36),
+    CONTENT longvarchar,
+    ATTRIBUTES longvarchar,
+    --
+    primary key (ID)
+)^
+-- end EMAILTEMPLATES_TEMPLATE_BLOCK
+-- begin EMAILTEMPLATES_TEMPLATE_BLOCK
+create table EMAILTEMPLATES_BLOCK_GROUP (
+    ID varchar(36) not null,
+    VERSION integer not null,
+    CREATE_TS timestamp,
+    CREATED_BY varchar(50),
+    UPDATE_TS timestamp,
+    UPDATED_BY varchar(50),
+    DELETE_TS timestamp,
+    DELETED_BY varchar(50),
+    --
+    NAME varchar(255) not null,
+    --
+    primary key (ID)
+)^
+-- end EMAILTEMPLATES_TEMPLATE_BLOCK

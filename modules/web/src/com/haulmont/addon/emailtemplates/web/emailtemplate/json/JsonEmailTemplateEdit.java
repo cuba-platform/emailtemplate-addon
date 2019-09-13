@@ -17,9 +17,11 @@
 package com.haulmont.addon.emailtemplates.web.emailtemplate.json;
 
 import com.haulmont.addon.emailtemplates.entity.JsonEmailTemplate;
+import com.haulmont.addon.emailtemplates.entity.TemplateBlock;
 import com.haulmont.addon.emailtemplates.service.TemplateConverterService;
 import com.haulmont.addon.emailtemplates.web.emailtemplate.AbstractTemplateEditor;
 import com.haulmont.addon.emailtemplates.web.screens.HtmlSourceCodeWindow;
+import com.haulmont.addon.grapesjs.web.gui.components.GjsBlock;
 import com.haulmont.addon.grapesjs.web.gui.components.GrapesJsHtmlEditor;
 import com.haulmont.bali.util.ParamsMap;
 import com.haulmont.chile.core.model.MetaClass;
@@ -67,6 +69,8 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
     private static final Pattern SIMPLE_FIELD_PATTERN = Pattern.compile("\\$\\{([a-zA-Z0-9]+)([?][^}]*|)}");
     private static final Pattern ENTITY_FIELD_PATTERN = Pattern.compile("\\$\\{([a-zA-Z0-9]+)\\.([a-zA-Z0-9]+)([?][^}]*|)}");
 
+    @Inject
+    private CollectionDatasource<TemplateBlock, UUID> templateBlocksDs;
 
     @Inject
     private Screens screens;
@@ -123,6 +127,23 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
         super.init(params);
         initParameters();
         initValuesFormats();
+        initBlocks();
+    }
+
+    private void initBlocks() {
+        templateBlocksDs.refresh();
+
+        List<GjsBlock> gjsBlocks = new ArrayList<>();
+        for (TemplateBlock templateBlock : templateBlocksDs.getItems()) {
+            GjsBlock gjsBlock = new GjsBlock();
+            gjsBlock.setName(templateBlock.getName());
+            gjsBlock.setLabel(templateBlock.getLabel());
+            gjsBlock.setCategory(templateBlock.getCategory() != null ? templateBlock.getCategory().getName() : null);
+            gjsBlock.setContent(templateBlock.getContent());
+            gjsBlock.setAttributes(templateBlock.getAttributes());
+            gjsBlocks.add(gjsBlock);
+        }
+        templateEditor.addBlocks(gjsBlocks);
     }
 
     @Override

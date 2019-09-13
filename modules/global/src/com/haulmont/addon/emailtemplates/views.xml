@@ -86,4 +86,7 @@
         <property name="parameterValues"
                   view="_local"/>
     </view>
+    <view entity="emailtemplates_TemplateBlock" name="templateBlock-view" extends="_local">
+        <property name="category" view="_minimal"/>
+    </view>
 </views>

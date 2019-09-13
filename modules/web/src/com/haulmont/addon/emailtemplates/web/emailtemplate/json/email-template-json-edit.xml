@@ -58,6 +58,13 @@
                 <![CDATA[select e from emailtemplates$TemplateGroup e]]>
             </query>
         </collectionDatasource>
+        <collectionDatasource id="templateBlocksDs"
+                              class="com.haulmont.addon.emailtemplates.entity.TemplateBlock"
+                              view="templateBlock-view">
+            <query>
+                <![CDATA[select e from emailtemplates_TemplateBlock e order by e.name]]>
+            </query>
+        </collectionDatasource>
     </dsContext>
     <dialogMode height="600"
                 width="800"/>
@@ -128,29 +135,38 @@
                                         <field contextHelpText="msg://separatedAddresses"
                                                property="to"
                                                rows="2">
-                                            <validator class="com.haulmont.cuba.gui.components.validators.EmailValidator"/>
+                                            <validator
+                                                    class="com.haulmont.cuba.gui.components.validators.EmailValidator"/>
                                         </field>
                                         <field contextHelpText="msg://separatedAddresses"
                                                property="cc"
                                                rows="2">
-                                            <validator class="com.haulmont.cuba.gui.components.validators.EmailValidator"/>
+                                            <validator
+                                                    class="com.haulmont.cuba.gui.components.validators.EmailValidator"/>
                                         </field>
                                         <field contextHelpText="msg://separatedAddresses"
                                                property="bcc"
                                                rows="2">
-                                            <validator class="com.haulmont.cuba.gui.components.validators.EmailValidator"/>
+                                            <validator
+                                                    class="com.haulmont.cuba.gui.components.validators.EmailValidator"/>
                                         </field>
                                     </column>
                                 </fieldGroup>
                             </groupBox>
                         </vbox>
                     </scrollBox>
-                    <et:grapesJsHtmlEditor id="templateEditor"
-                                           height="100%" width="100%">
-                        <et:disabledBlocks>
-                            map,tabs
-                        </et:disabledBlocks>
-                    </et:grapesJsHtmlEditor>
+                    <et:grapesJsNewsletterHtmlEditor id="templateEditor"
+                                                     inlineCss="true"
+                                                     height="100%" width="100%">
+                        <et:plugin name="ckeditor"/>
+                        <et:plugin name="forms"/>
+                        <et:plugin name="flexBlocks"/>
+                        <et:plugin name="tuiImageEditor"/>
+                        <et:plugin name="customcode"/>
+                        <et:plugin name="postcss"/>
+                        <et:plugin name="touch"/>
+                        <et:plugin name="styleFilter"/>
+                    </et:grapesJsNewsletterHtmlEditor>
                 </split>
             </tab>
             <tab id="parametersAndFormatsTab"

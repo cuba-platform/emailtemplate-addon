@@ -25,5 +25,7 @@
         <class>com.haulmont.addon.emailtemplates.entity.ParameterValue</class>
         <class>com.haulmont.addon.emailtemplates.entity.ReportEmailTemplate</class>
         <class>com.haulmont.addon.emailtemplates.entity.JsonEmailTemplate</class>
+        <class>com.haulmont.addon.emailtemplates.entity.TemplateBlockGroup</class>
+        <class>com.haulmont.addon.emailtemplates.entity.TemplateBlock</class>
     </persistence-unit>
 </persistence>

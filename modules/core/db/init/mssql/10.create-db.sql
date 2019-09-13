@@ -91,3 +91,39 @@ create table EMAILTEMPLATES_EMLTPTE_FDLINK (
     primary key (EMAIL_TEMPLATE_ID, FILE_DESCRIPTOR_ID)
 )^
 -- end EMAILTEMPLATES_EMLTPTE_FDLINK
+-- begin EMAILTEMPLATES_TEMPLATE_BLOCK
+create table EMAILTEMPLATES_TEMPLATE_BLOCK (
+    ID uniqueidentifier,
+    VERSION integer not null,
+    CREATE_TS datetime2,
+    CREATED_BY varchar(50),
+    UPDATE_TS datetime2,
+    UPDATED_BY varchar(50),
+    DELETE_TS datetime2,
+    DELETED_BY varchar(50),
+    --
+    NAME varchar(255) not null,
+    LABEL varchar(255) not null,
+    CATEGORY_ID uniqueidentifier,
+    CONTENT varchar(max),
+    ATTRIBUTES varchar(max),
+    --
+    primary key nonclustered (ID)
+)^
+-- end EMAILTEMPLATES_TEMPLATE_BLOCK
+-- begin EMAILTEMPLATES_TEMPLATE_BLOCK
+create table EMAILTEMPLATES_BLOCK_GROUP (
+    ID uniqueidentifier,
+    VERSION integer not null,
+    CREATE_TS datetime2,
+    CREATED_BY varchar(50),
+    UPDATE_TS datetime2,
+    UPDATED_BY varchar(50),
+    DELETE_TS datetime2,
+    DELETED_BY varchar(50),
+    --
+    NAME varchar(255) not null,
+    --
+    primary key nonclustered (ID)
+)^
+-- end EMAILTEMPLATES_TEMPLATE_BLOCK
