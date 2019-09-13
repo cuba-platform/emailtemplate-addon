@@ -204,8 +204,8 @@ public class EmailTemplateBuilderImpl implements EmailTemplateBuilder {
 
     @Override
     public EmailTemplateBuilder setBodyParameters(Map<String, Object> params) {
-        for (String alias : params.keySet()) {
-            setBodyParameter(alias, params.get(alias));
+        for (Map.Entry<String,Object> entry : params.entrySet()) {
+            setBodyParameter(entry.getKey(), entry.getValue());
         }
         return this;
     }

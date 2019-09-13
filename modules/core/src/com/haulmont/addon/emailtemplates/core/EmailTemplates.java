@@ -44,6 +44,8 @@ import javax.inject.Inject;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 @Component(EmailTemplatesAPI.NAME)
 public class EmailTemplates implements EmailTemplatesAPI {
 
@@ -209,7 +211,7 @@ public class EmailTemplates implements EmailTemplatesAPI {
             ReportOutputDocument outputDocument = reportingApi.createReport(
                     reportWithParams.getReport(),
                     reportWithParams.getParams());
-            body = new String(outputDocument.getContent());
+            body = new String(outputDocument.getContent(), UTF_8);
             caption = outputDocument.getDocumentName();
         }
         return new EmailInfo(null, caption, body, EmailInfo.HTML_CONTENT_TYPE);
@@ -217,8 +219,9 @@ public class EmailTemplates implements EmailTemplatesAPI {
 
     protected List<EmailAttachment> createReportAttachments(Map<TemplateReport, ReportWithParams> reportsWithParams) {
         List<EmailAttachment> attachmentsList = new ArrayList<>();
-        for (TemplateReport templateReport : reportsWithParams.keySet()) {
-            ReportWithParams reportWithParams = reportsWithParams.get(templateReport);
+        for (Map.Entry<TemplateReport,ReportWithParams> entry: reportsWithParams.entrySet()) {
+            TemplateReport templateReport = entry.getKey();
+            ReportWithParams reportWithParams = entry.getValue();
             EmailAttachment emailAttachment = createEmailAttachment(templateReport.getName(), reportWithParams);
             attachmentsList.add(emailAttachment);
         }

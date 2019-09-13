@@ -31,6 +31,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 @Service(TemplateConverterService.NAME)
 public class TemplateConverterServiceBean implements TemplateConverterService {
 
@@ -53,7 +55,7 @@ public class TemplateConverterServiceBean implements TemplateConverterService {
         report.setName(template.getName());
         report.setCode(template.getCode());
         updateReportOutputName(report, template);
-        report.getDefaultTemplate().setContent(getHtmlReportTemplate(template).getBytes());
+        report.getDefaultTemplate().setContent(getHtmlReportTemplate(template).getBytes(UTF_8));
         report.setIsTmp(true);
         return report;
     }
@@ -78,7 +80,7 @@ public class TemplateConverterServiceBean implements TemplateConverterService {
         template.setName("template.html");
         String html = jsonTemplate.getHtml();
         if (html != null) {
-            template.setContent(html.getBytes());
+            template.setContent(html.getBytes(UTF_8));
         }
         report.setTemplates(Collections.singletonList(template));
         report.setDefaultTemplate(template);
