@@ -3,11 +3,13 @@
     <a href="https://travis-ci.org/cuba-platform/emailtemplate-addon"><img src="https://travis-ci.org/cuba-platform/emailtemplate-addon.svg?branch=master" alt="Build Status" title=""></a>
 </p>
 
-- [1. Introduction](#introduction)
+# Email Templates
+
+- [1. Overview](#Overview)
 - [2. Installation](#installation)  
-  - [2.1. Adding the Repository and the Component in CUBA Studio](#adding-cuba)  
-  - [2.2. Adding the Repository and the Component in build.gradle](#adding-build)  
-- [3. Using the component](#using-the-component)  
+  - [2.1. From the Marketplace](#from-the-marketplace)  
+  - [2.2. By Coordinates](#by-coordinates)  
+- [3. Usage](#usage)  
   - [3.1. Creating Email Templates](#creating-email-templates)  
     - [3.1.1. Creating Email Template From Report](#creating-from-report)  
     - [3.1.2. Creating Email Template From Designer](#creating-from-designer)  
@@ -17,7 +19,7 @@
 - [4. Email Templates API](#api)  
   - [4.1 Email Templates Builder](#builder)
 
-# 1. Introduction <a name="introduction"></a>
+# 1. Overview <a name="Overview"></a>
 
 The add-on enables creating and configuring outbound email templates containing a constant body and variable parameters. A template is created in the visual HTML designer or by using reports. The add-on provides a visual HTML editor with the extensive set of HTML elements.
 
@@ -25,69 +27,59 @@ Sending emails from templates can be set as a reaction to different events in yo
 
 Key features:
 - Visual HTML templates builder based on [GrapesJS](https://grapesjs.com/) JavaScript library.
-- HTML [reports](https://github.com/cuba-platform/reports) as a base for outbound emails body.
+- HTML [reports](https://www.cuba-platform.com/marketplace/reporting/) as a base for outbound emails body.
 - Downloading/uploading HTML code of a template.
 - User interface for configuring and managing templates.
 
 
-See [sample application](https://github.com/cuba-platform/emailtemplate-addon-demo), using this add-on.
+See [sample application](https://github.com/cuba-platform/emailtemplate-addon-demo) using this add-on.
 See [webinar](https://www.youtube.com/watch?v=JqRexrg4mAs) on the CUBA Platform channel.
 
 # 2. Installation <a name="installation"></a>
 
-To install the component it is necessary to add repository and component in CUBA Studio or in a `build.gradle` file.
-The complete add-ons installation guide see in [CUBA Platform documentation](https://doc.cuba-platform.com/manual-latest/app_components_usage.html).
+The add-on can be added to your project in one of the ways described below. Installation from the Marketplace is the simplest way. The last version of the add-on compatible with the used version of the platform will be installed.
+Also, you can install the add-on by coordinates choosing the required version of the add-on from the table.
 
-## 2.1. Adding the Repository and the Component in CUBA Studio <a name="adding-cuba"></a>
+In case you want to install the add-on by manual editing or by building from sources see the complete add-ons installation guide in [CUBA Platform documentation](https://doc.cuba-platform.com/manual-latest/manual.html#app_components_usage).
 
-1. Open your application in CUBA Studio.
+## 2.1. From the Marketplace <a name="from-the-marketplace"></a>
 
-2. Edit *Project properties*.
+1. Open your application in CUBA Studio. Check the latest version of CUBA Studio on the [CUBA Platform site](https://www.cuba-platform.com/download/previous-studio/).
+2. Go to *CUBA -> Marketplace* in the main menu.
 
-3. Click the plus button in the *App components* section of the *Main* tab.
+ ![marketplace](img/marketplace.png)
 
-4. Specify the coordinates of the component in the corresponding field as follows: group:name:version.
+3. Find the *Email Templates* add-on there.
 
-   * Artifact group: *com.haulmont.addon.emailtemplates*
-   * Artifact name: *yet-global*
-   * Version: *add-on version*  
+ ![addons](img/addons.png)
 
-   When specifying the component version, you should select the one, which is compatible with the platform version used
-   in your project.
+4. Click *Install* and apply the changes. The addon corresponding to the used platform version will be installed.
 
-| Platform Version  | Component Version |
+## 2.2. By Сoordinates <a name="by-coordinates"></a>
+
+1. Open your application in CUBA Studio. Check the latest version of CUBA Studio on the [CUBA Platform site](https://www.cuba-platform.com/download/previous-studio/).
+
+2. Go to *CUBA -> Marketplace* in the main menu.
+
+3. Click the icon in the upper-right corner.
+
+ ![by-coordinates](img/by-coordinates.png)
+
+4. Paste the add-on coordinates in the corresponding field as follows:
+
+ `com.haulmont.addon.emailtemplates:yet-global:<add-on version>`
+
+ where `<add-on version>` is compatible with the used version of the CUBA platform.
+
+ | Platform Version  | Component Version |
 |-------------------|-------------------|
 | 7.1.X             | 1.2.0             |
 | 7.0.X             | 1.1.3             |
 | 6.10.X            | 1.0.3             |
 
+5. Click *Install* and apply the changes. The add-on will be installed to your project.
 
-5. Click *OK* to confirm the operation.
-
-## 2.2. Adding the Repository and the Component in build.gradle <a name="adding-build"></a>
-
-1. Edit `build.gradle` and specify the add-on coordinates in the root `dependencies` section:
-
-```groovy
-dependencies {
-    appComponent("com.haulmont.cuba:cuba-global:$cubaVersion")
-    // your add-ons go here
-    appComponent("com.haulmont.addon.emailtemplates:yet-global:1.0.0")
-}
-```
-
-2. Execute `gradlew idea` in the command line to include the add-on in your project’s development environment.
-
-3. Edit `web.xml` files in the directory with **core** and **web** modules.  Add the add-on identifier (which is equal to Maven `groupId`) to the space-separated list of application components in the `appComponents` context parameter:
-
-```xml
-<context-param>
-    <param-name>appComponents</param-name>
-    <param-value>com.haulmont.cuba com.haulmont.addon.emailtemplates</param-value>
-</context-param>
-```
-
-# 3. Using the component <a name="using-the-component"></a>
+# 3. Usage <a name="usage"></a>
 
 You can use the following component features.
 
