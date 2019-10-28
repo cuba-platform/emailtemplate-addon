@@ -61,13 +61,17 @@
                         action="emailTemplatesTable.edit"/>
                 <button id="removeBtn"
                         action="emailTemplatesTable.remove"/>
-                <button id="groupsButton"
-                        caption="msg://groups"
-                        invoke="onGroupsButtonClick"/>
+
                 <button id="sendButton"
                         action="emailTemplatesTable.sendAction"
                         caption="msg://send"
                         icon="ENVELOPE"/>
+                <button id="groupsButton"
+                        caption="msg://groups"
+                        invoke="onGroupsButtonClick"/>
+                <button id="blocksButton"
+                        caption="msg://blocks"
+                        icon="CODE"/>
             </buttonsPanel>
         </groupTable>
     </layout>

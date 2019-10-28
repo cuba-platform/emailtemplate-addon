@@ -106,7 +106,7 @@ create table EMAILTEMPLATES_TEMPLATE_BLOCK (
     LABEL varchar(255) not null,
     CATEGORY_ID varchar(32),
     CONTENT longtext,
-    ATTRIBUTES longtext,
+    ICON varchar(20),
     --
     primary key (ID)
 )^

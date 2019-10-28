@@ -24,6 +24,10 @@
             template="com/haulmont/addon/emailtemplates/web/emailtemplate/send/email-template-send.xml"/>
     <screen id="emailtemplates$EmailTemplate.browse"
             template="com/haulmont/addon/emailtemplates/web/emailtemplate/browse/email-template-browse.xml"/>
+    <screen id="emailtemplates$JsonEmailTemplate.browse"
+            template="com/haulmont/addon/emailtemplates/web/emailtemplate/browse/email-template-browse.xml"/>
+    <screen id="emailtemplates$ReportEmailTemplate.browse"
+            template="com/haulmont/addon/emailtemplates/web/emailtemplate/browse/email-template-browse.xml"/>
     <screen id="emailtemplates$parametersFrame"
             template="com/haulmont/addon/emailtemplates/web/frames/email-template-parameters-frame.xml"/>
     <screen id="emailtemplates$JsonEmailTemplate.edit"

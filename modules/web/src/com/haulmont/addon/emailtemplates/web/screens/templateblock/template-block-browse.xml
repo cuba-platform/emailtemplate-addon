@@ -52,8 +52,6 @@
                 <column id="name"/>
                 <column id="label"/>
                 <column id="category"/>
-                <column id="content"/>
-                <column id="attributes"/>
             </columns>
             <rowsCount/>
             <buttonsPanel id="buttonsPanel"

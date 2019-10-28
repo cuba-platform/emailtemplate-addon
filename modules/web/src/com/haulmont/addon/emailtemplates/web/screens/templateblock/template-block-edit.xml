@@ -16,6 +16,7 @@
   -->
 
 <window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd"
+        xmlns:et="http://schemas.haulmont.com/grapesjs/0.1/ui-component.xsd"
         caption="msg://editorCaption"
         focusComponent="form"
         messagesPack="com.haulmont.addon.emailtemplates.web.screens.templateblock">
@@ -38,18 +39,39 @@
     </data>
     <dialogMode height="AUTO"
                 width="AUTO"
-                modal="true"
-                forceDialog="true"/>
-    <layout expand="editActions" spacing="true">
+                modal="true"/>
+    <layout expand="contentTabs" spacing="true">
         <form id="form" dataContainer="templateBlockDc">
             <column width="400px">
                 <textField id="nameField" property="name"/>
                 <textField id="labelField" property="label"/>
+            </column>
+            <column width="400px">
+                <lookupField id="iconLookup" property="icon"/>
                 <lookupField id="categoryField" property="category" optionsContainer="templateBlockGroupsDc"/>
-                <sourceCodeEditor id="contentField" property="content" mode="HTML"/>
-                <sourceCodeEditor id="attributesField" property="attributes"  mode="JavaScript"/>
             </column>
         </form>
+
+        <tabSheet id="contentTabs" width="100%">
+            <tab id="grapesJs" caption="msg://visual">
+                <et:grapesJsNewsletterHtmlEditor id="visualTemplate"
+                                                 inlineCss="true"
+                                                 height="100%" width="100%">
+                    <et:plugin name="ckeditor"/>
+                    <et:plugin name="forms"/>
+                    <et:plugin name="flexBlocks"/>
+                    <et:plugin name="tuiImageEditor"/>
+                    <et:plugin name="customcode"/>
+                    <et:plugin name="postcss"/>
+                    <et:plugin name="touch"/>
+                    <et:plugin name="styleFilter"/>
+                </et:grapesJsNewsletterHtmlEditor>
+            </tab>
+            <tab id="html" expand="htmlTemplate" caption="msg://html">
+                <sourceCodeEditor id="htmlTemplate" width="100%" property="content" dataContainer="templateBlockDc"
+                                  mode="HTML"/>
+            </tab>
+        </tabSheet>
         <hbox id="editActions" spacing="true">
             <button action="windowCommitAndClose"/>
             <button action="windowClose"/>

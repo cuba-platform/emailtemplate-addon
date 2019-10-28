@@ -44,16 +44,15 @@ public class TemplateBlock extends StandardEntity {
     @Column(name = "CONTENT")
     protected String content;
 
-    @Lob
-    @Column(name = "ATTRIBUTES")
-    protected String attributes;
+    @Column(name = "ICON", length = 20)
+    protected String icon;
 
-    public String getAttributes() {
-        return attributes;
+    public String getIcon() {
+        return icon;
     }
 
-    public void setAttributes(String attributes) {
-        this.attributes = attributes;
+    public void setIcon(String icon) {
+        this.icon = icon;
     }
 
     public String getContent() {

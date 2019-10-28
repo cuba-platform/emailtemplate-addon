@@ -19,6 +19,7 @@ package com.haulmont.addon.emailtemplates.web.emailtemplate.browse;
 import com.haulmont.addon.emailtemplates.entity.EmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.JsonEmailTemplate;
 import com.haulmont.addon.emailtemplates.entity.ReportEmailTemplate;
+import com.haulmont.addon.emailtemplates.web.screens.templateblock.TemplateBlockBrowse;
 import com.haulmont.bali.util.ParamsMap;
 import com.haulmont.cuba.core.entity.Entity;
 import com.haulmont.cuba.core.global.DataManager;
@@ -27,10 +28,7 @@ import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.actions.CreateAction;
 import com.haulmont.cuba.gui.components.actions.EditAction;
 import com.haulmont.cuba.gui.components.actions.ItemTrackingAction;
-import com.haulmont.cuba.gui.screen.MapScreenOptions;
-import com.haulmont.cuba.gui.screen.OpenMode;
-import com.haulmont.cuba.gui.screen.UiController;
-import com.haulmont.cuba.gui.screen.UiDescriptor;
+import com.haulmont.cuba.gui.screen.*;
 
 import javax.inject.Inject;
 import java.util.Map;
@@ -41,8 +39,10 @@ public class EmailTemplateBrowse extends AbstractLookup {
 
     @Inject
     private Screens screens;
+
     @Inject
     protected DataManager dataManager;
+
     @Inject
     private GroupTable<EmailTemplate> emailTemplatesTable;
 
@@ -98,6 +98,11 @@ public class EmailTemplateBrowse extends AbstractLookup {
                 return template.getMetaClass().getName() + ".edit";
             }
         });
+    }
+
+    @Subscribe("blocksButton")
+    private void onBlocksButtonClick(Button.ClickEvent event) {
+        screens.create(TemplateBlockBrowse.class, OpenMode.NEW_TAB).show();
     }
 
     protected void onSendEmailClick() {

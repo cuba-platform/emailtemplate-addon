@@ -140,7 +140,13 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
             gjsBlock.setLabel(templateBlock.getLabel());
             gjsBlock.setCategory(templateBlock.getCategory() != null ? templateBlock.getCategory().getName() : null);
             gjsBlock.setContent(templateBlock.getContent());
-            gjsBlock.setAttributes(templateBlock.getAttributes());
+            String icon = templateBlock.getIcon().startsWith("font-icon:") ?
+                    templateBlock.getIcon().substring("font-icon:".length()) :
+                    templateBlock.getIcon();
+            gjsBlock.setAttributes(String.format("{\n" +
+                    "              title: '%s',\n" +
+                    "              class:'fa fa-%s'\n" +
+                    "           }", templateBlock.getLabel(), icon.toLowerCase()));
             gjsBlocks.add(gjsBlock);
         }
         templateEditor.addBlocks(gjsBlocks);

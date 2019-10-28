@@ -110,12 +110,12 @@ create table EMAILTEMPLATES_TEMPLATE_BLOCK (
     LABEL varchar(255) not null,
     CATEGORY_ID varchar(36),
     CONTENT longvarchar,
-    ATTRIBUTES longvarchar,
+    ICON varchar(20),
     --
     primary key (ID)
 )^
 -- end EMAILTEMPLATES_TEMPLATE_BLOCK
--- begin EMAILTEMPLATES_TEMPLATE_BLOCK
+-- begin EMAILTEMPLATES_BLOCK_GROUP
 create table EMAILTEMPLATES_BLOCK_GROUP (
     ID varchar(36) not null,
     VERSION integer not null,
@@ -130,4 +130,4 @@ create table EMAILTEMPLATES_BLOCK_GROUP (
     --
     primary key (ID)
 )^
--- end EMAILTEMPLATES_TEMPLATE_BLOCK
+-- end EMAILTEMPLATES_BLOCK_GROUP
