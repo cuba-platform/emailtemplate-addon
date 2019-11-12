@@ -12,7 +12,7 @@ create table EMAILTEMPLATES_TEMPLATE_BLOCK (
     LABEL varchar2(255 char) not null,
     CATEGORY_ID varchar2(32),
     CONTENT clob,
-    ICON varchar(20),
+    ICON varchar(50),
     --
     primary key (ID)
 )^

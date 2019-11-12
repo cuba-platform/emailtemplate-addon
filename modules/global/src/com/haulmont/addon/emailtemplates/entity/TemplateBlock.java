@@ -44,7 +44,7 @@ public class TemplateBlock extends StandardEntity {
     @Column(name = "CONTENT")
     protected String content;
 
-    @Column(name = "ICON", length = 20)
+    @Column(name = "ICON", length = 50)
     protected String icon;
 
     public String getIcon() {
