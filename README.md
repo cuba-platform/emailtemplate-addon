@@ -13,9 +13,10 @@
   - [3.1. Creating Email Templates](#creating-email-templates)  
     - [3.1.1. Creating Email Template From Report](#creating-from-report)  
     - [3.1.2. Creating Email Template From Designer](#creating-from-designer)  
-    - [3.1.3. Setting attachments](#setting-attachments)  
-  - [3.2. Setting Groups](#setting-groups)  
-  - [3.3. Sending Emails](#sending-emails)  
+    - [3.1.3. Setting attachments](#setting-attachments)
+  - [3.2. Setting Groups](#setting-groups)
+  - [3.3. Custom Blocks](#custom-blocks)  
+  - [3.4. Sending Emails](#sending-emails)  
 - [4. Email Templates API](#api)  
   - [4.1 Email Templates Builder](#builder)
 
@@ -180,7 +181,21 @@ To create or edit the group enter the name of the group.
 
 After setting groups, you can specify a group for a template.
 
-## 3.3. Sending Emails <a name="sending-emails"></a>
+## 3.3. Custom Blocks <a name="custom-blocks"></a>
+
+The add-on enables creating custom blocks. Go *Administration -> Email templates* and click the *Blocks* button.
+
+To create a new block click the *Create* button and in the *Template Block editor* screen you can move predefined HTML elements and change them on the canvas. Or you can see and set HTML code on the *HTML* tab.
+
+![custom-blocks-editor](img/custom-blocks-editor.png)
+
+You can put the created custom block to the predefined groups or create your own. Go *Administration -> Email templates* and click the *Blocks* button and then *Groups* button.
+
+Your created custom HTML elements will appear in the *Email template* editing screen while creating an email template from designer.
+
+![from-designer-blocks](img/from-designer-blocks.png)
+
+## 3.4. Sending Emails <a name="sending-emails"></a>
 
 To send an email select a template in the list and click *Send*.
 
