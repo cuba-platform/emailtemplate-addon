@@ -74,6 +74,7 @@ In case you want to install the add-on by manual editing or by building from sou
 
  | Platform Version  | Component Version |
 |-------------------|-------------------|
+| 7.2.0.BETA1       | 1.3.0.BETA1       |
 | 7.1.X             | 1.2.0             |
 | 7.0.X             | 1.1.3             |
 | 6.10.X            | 1.0.3             |
