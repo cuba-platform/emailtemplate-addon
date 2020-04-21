@@ -19,6 +19,7 @@
   - [3.4. Sending Emails](#sending-emails)  
 - [4. Email Templates API](#api)  
   - [4.1 Email Templates Builder](#builder)
+- [5. Predefined roles](#roles)  
 
 # 1. Overview <a name="Overview"></a>
 
@@ -266,3 +267,7 @@ Example of using the builder:
             .setAttachmentParameters(reportsWithParams)
             .build();
 ```
+
+# 5. Predefined roles <a name="roles"></a>
+- **Email templates admin** - Email templates configuration role
+- **Can send email templates** - user will able to send created email templates as emails
