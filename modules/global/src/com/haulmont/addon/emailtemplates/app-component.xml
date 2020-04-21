@@ -31,6 +31,8 @@
                   value="+com/haulmont/addon/emailtemplates/metadata.xml"/>
         <property name="cuba.viewsConfig"
                   value="+com/haulmont/addon/emailtemplates/views.xml"/>
+        <property name="cuba.creditsConfig"
+                  value="+com/haulmont/addon/emailtemplates/credits.xml"/>
     </module>
     <module blocks="core"
             dependsOn="global"
