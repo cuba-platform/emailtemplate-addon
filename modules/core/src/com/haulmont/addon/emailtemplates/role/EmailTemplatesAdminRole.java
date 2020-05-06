@@ -31,8 +31,13 @@ import com.haulmont.reports.entity.ReportInputParameter;
 import com.haulmont.reports.entity.ReportValueFormat;
 import com.haulmont.reports.role.ReportsMinimalRoleDefinition;
 
-@Role(name = "Email templates admin")
+@Role(name = "email-templates-admin")
 public class EmailTemplatesAdminRole extends ReportsMinimalRoleDefinition {
+
+    @Override
+    public String getLocName() {
+        return "Email templates admin";
+    }
 
     @EntityAccess(entityClass = Report.class,
             operations = {EntityOp.READ})

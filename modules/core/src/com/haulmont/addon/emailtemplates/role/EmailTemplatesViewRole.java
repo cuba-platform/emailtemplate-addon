@@ -25,8 +25,13 @@ import com.haulmont.cuba.security.role.EntityPermissionsContainer;
 import com.haulmont.cuba.security.role.ScreenComponentPermissionsContainer;
 import com.haulmont.cuba.security.role.ScreenPermissionsContainer;
 
-@Role(name = "Can send email templates")
+@Role(name = "email-templates-can-send-templates")
 public class EmailTemplatesViewRole extends AnnotatedRoleDefinition {
+
+    @Override
+    public String getLocName() {
+        return "Can send email templates";
+    }
 
     @EntityAccess(entityClass = TemplateReport.class, operations = EntityOp.READ)
     @EntityAccess(entityClass = ReportEmailTemplate.class, operations = EntityOp.READ)
