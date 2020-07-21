@@ -160,7 +160,7 @@
                       width="100%">
                     <frame id="parametersFrame"
                            height="100%"
-                           src="/com/haulmont/reports/gui/report/edit/tabs/parameters.xml"/>
+                           src="/com/haulmont/addon/emailtemplates/web/emailtemplate/parameters/parameters.xml"/>
                     <frame id="formatsFrame"
                            height="100%"
                            src="/com/haulmont/reports/gui/report/edit/tabs/formats.xml"/>
