@@ -145,12 +145,18 @@
                             </groupBox>
                         </vbox>
                     </scrollBox>
-                    <et:grapesJsHtmlEditor id="templateEditor"
-                                           height="100%" width="100%">
-                        <et:disabledBlocks>
-                            map,tabs
-                        </et:disabledBlocks>
-                    </et:grapesJsHtmlEditor>
+                    <et:grapesJsNewsletterHtmlEditor id="templateEditor"
+                                                     inlineCss="true"
+                                                     height="100%" width="100%">
+                        <et:plugin name="ckeditor"/>
+                        <et:plugin name="forms"/>
+                        <et:plugin name="flexBlocks"/>
+                        <et:plugin name="tuiImageEditor"/>
+                        <et:plugin name="customcode"/>
+                        <et:plugin name="postcss"/>
+                        <et:plugin name="touch"/>
+                        <et:plugin name="styleFilter"/>
+                    </et:grapesJsNewsletterHtmlEditor>
                 </split>
             </tab>
             <tab id="parametersAndFormatsTab"
