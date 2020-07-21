@@ -170,12 +170,9 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
         templateEditor.setValue(getItem().getHtml());
 
         templateEditor.addValueChangeListener(e -> {
-            String value = (String) e.getValue();
+            String value = e.getValue();
             getItem().setHtml(value);
-            createParameters();
         });
-
-        subjectField.addValueChangeListener(e -> createParameters());
 
         fileUpload.addFileUploadSucceedListener(fileUploadSucceedEvent -> {
             UUID fileID = fileUpload.getFileId();
@@ -185,7 +182,6 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
                 fileUploadingApi.deleteFile(fileID);
                 getItem().setHtml(new String(bytes, StandardCharsets.UTF_8));
                 templateEditor.setValue(getItem().getHtml());
-                createParameters();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -324,6 +320,14 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
     }
 
     protected void initParameters() {
+        parametersTable.addAction(new AbstractAction("createFromTemplate") {
+            @Override
+            public void actionPerform(Component component) {
+                createParameters();
+                orderParameters();
+            }
+        });
+        
         parametersTable.addAction(
                 new CreateAction(parametersTable, WindowManager.OpenType.DIALOG) {
                     @Override

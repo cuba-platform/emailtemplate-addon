@@ -154,6 +154,8 @@ To add parameters and value formats go to the *Parameters and Formats* tab.
 
 ![email-template-editor-designer-parameters-formats](img/email-template-editor-designer-parameters-formats.png)
 
+To create parameters automatically from template use `Create from template` action from parameters table.
+
 See the complete parameter guide in [CUBA Platform. Report Generator | External Report Parameters](https://doc.cuba-platform.com/reporting-6.10/parameters.html).
 
 See the complete value format guide in [CUBA Platform. Report Generator | Field Value Formats](https://doc.cuba-platform.com/reporting-6.10/formatters.html).
