@@ -19,7 +19,8 @@
   - [3.4. Sending Emails](#sending-emails)  
 - [4. Email Templates API](#api)  
   - [4.1 Email Templates Builder](#builder)
-- [5. Predefined roles](#roles)  
+- [5. Predefined roles](#roles) 
+- [Release notes](https://github.com/cuba-platform/emailtemplate-addon/releases) 
 
 # 1. Overview <a name="Overview"></a>
 
