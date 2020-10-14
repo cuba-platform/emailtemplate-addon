@@ -19,8 +19,8 @@
   - [3.4. Sending Emails](#sending-emails)  
 - [4. Email Templates API](#api)  
   - [4.1 Email Templates Builder](#builder)
-- [5. Predefined roles](#roles) 
-- [Release notes](https://github.com/cuba-platform/emailtemplate-addon/releases) 
+- [5. Predefined Roles](#roles)
+- [Release notes](https://github.com/cuba-platform/emailtemplate-addon/releases)
 
 # 1. Overview <a name="Overview"></a>
 
@@ -155,11 +155,11 @@ To add parameters and value formats go to the *Parameters and Formats* tab.
 
 ![email-template-editor-designer-parameters-formats](img/email-template-editor-designer-parameters-formats.png)
 
-To create parameters automatically from template use `Create from template` action from parameters table.
+To create parameters automatically from template use *Create from template* button in the *Parameters* section.
 
-See the complete parameter guide in [CUBA Platform. Report Generator | External Report Parameters](https://doc.cuba-platform.com/reporting-6.10/parameters.html).
+See the complete parameter guide in [CUBA Platform. Report Generator | External Report Parameters](https://doc.cuba-platform.com/reporting-latest/parameters.html).
 
-See the complete value format guide in [CUBA Platform. Report Generator | Field Value Formats](https://doc.cuba-platform.com/reporting-6.10/formatters.html).
+See the complete value format guide in [CUBA Platform. Report Generator | Field Value Formats](https://doc.cuba-platform.com/reporting-latest/formatters.html).
 
 ### 3.1.3. Setting attachments <a name="setting-attachments"></a>
 You can add or remove attachments on the *Attachments* tab for both types of templates: from report and from designer. You can attach a report or a file.
@@ -271,6 +271,6 @@ Example of using the builder:
             .build();
 ```
 
-# 5. Predefined roles <a name="roles"></a>
-- **Email templates admin** - Email templates configuration role
-- **Can send email templates** - user will able to send created email templates as emails
+# 5. Predefined Roles <a name="roles"></a>
+- **email-templates-admin** - grants access to all Email templates screens and entities.
+- **email-templates-can-send-templates** - allows user to send created email templates as emails.
