@@ -88,7 +88,7 @@ limitations under the License.'''
 dependencies {
     appComponent("com.haulmont.cuba:cuba-global:$cubaVersion")
     appComponent("com.haulmont.reports:reports-global:$cubaVersion")
-    appComponent("com.haulmont.addon.grapesjs:grapesjs-global:0.6.0")
+    appComponent("com.haulmont.addon.grapesjs:grapesjs-global:0.6-SNAPSHOT")
 
 }
 
